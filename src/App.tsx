@@ -1,14 +1,36 @@
 import { useState, useCallback } from 'react';
-import type { Task, TaskInput } from './types';
-import { analyzeTask, getApiKey } from './api/deepseek';
+import type { Task, TaskInput, ImageTaskDraft } from './types';
+import { analyzeTask, analyzeOcrText, getApiKey } from './api/deepseek';
+import { recognizeTextFromImage } from './api/ocr';
 import ApiKeyInput from './components/ApiKeyInput';
 import TaskInputForm from './components/TaskInputForm';
 import QuadrantChart from './components/QuadrantChart';
 import TaskList from './components/TaskList';
+import ImageTaskPreview from './components/ImageTaskPreview';
+
+const TASKS_STORAGE_KEY = 'quadrant_tasks';
 
 let taskIdCounter = 0;
 function nextId(): string {
   return `task_${Date.now()}_${++taskIdCounter}`;
+}
+
+function loadStoredTasks(): Task[] {
+  try {
+    const raw = localStorage.getItem(TASKS_STORAGE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw) as Array<Omit<Task, 'createdAt'> & { createdAt: string }>;
+    return parsed.map(task => ({
+      ...task,
+      createdAt: new Date(task.createdAt),
+    }));
+  } catch {
+    return [];
+  }
+}
+
+function saveStoredTasks(tasks: Task[]) {
+  localStorage.setItem(TASKS_STORAGE_KEY, JSON.stringify(tasks));
 }
 
 function getQuadrant(urgency: number, importance: number): 1 | 2 | 3 | 4 {
@@ -19,15 +41,19 @@ function getQuadrant(urgency: number, importance: number): 1 | 2 | 3 | 4 {
 }
 
 export default function App() {
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const [tasks, setTasks] = useState<Task[]>(loadStoredTasks);
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [hasKey, setHasKey] = useState(!!getApiKey());
+  const [imageDrafts, setImageDrafts] = useState<ImageTaskDraft[] | null>(null);
+  const [lastOcrText, setLastOcrText] = useState('');
 
   const handleAddTask = useCallback(async (input: TaskInput) => {
     setError(null);
     setLoading(true);
+    setLoadingMessage('正在调用 AI 分析任务...');
     try {
       const result = await analyzeTask(input);
       const quadrant = getQuadrant(result.urgency, result.importance);
@@ -40,13 +66,70 @@ export default function App() {
         quadrant,
         createdAt: new Date(),
       };
-      setTasks(prev => [task, ...prev]);
+      setTasks(prev => {
+        const next = [task, ...prev];
+        saveStoredTasks(next);
+        return next;
+      });
       setSelectedTaskId(task.id);
     } catch (err) {
       setError(err instanceof Error ? err.message : '未知错误');
     } finally {
       setLoading(false);
+      setLoadingMessage('');
     }
+  }, []);
+
+  const handleImageSubmit = useCallback(async (base64: string) => {
+    setError(null);
+    setLoading(true);
+    setLoadingMessage('正在识别图片文字...');
+    try {
+      const ocrText = await recognizeTextFromImage(base64);
+      setLastOcrText(ocrText);
+      setLoadingMessage('正在调用 AI 拆分并分类任务...');
+      const drafts = await analyzeOcrText(ocrText);
+      if (drafts.length === 0) {
+        setError('未从图片中识别出任何未完成任务，请检查图片内容或重试');
+        return;
+      }
+      setImageDrafts(drafts);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '未知错误');
+    } finally {
+      setLoading(false);
+      setLoadingMessage('');
+    }
+  }, []);
+
+  const handleConfirmImageTasks = useCallback((drafts: ImageTaskDraft[]) => {
+    const newTasks: Task[] = drafts.map(draft => {
+      const quadrant = getQuadrant(draft.urgency, draft.importance);
+      return {
+        id: nextId(),
+        title: draft.title,
+        description: draft.description,
+        urgency: draft.urgency,
+        importance: draft.importance,
+        quadrant,
+        createdAt: new Date(),
+      };
+    });
+    setTasks(prev => {
+      const next = [...newTasks, ...prev];
+      saveStoredTasks(next);
+      return next;
+    });
+    if (newTasks.length > 0) {
+      setSelectedTaskId(newTasks[0].id);
+    }
+    setImageDrafts(null);
+    setLastOcrText('');
+  }, []);
+
+  const handleCancelImageTasks = useCallback(() => {
+    setImageDrafts(null);
+    setLastOcrText('');
   }, []);
 
   const handleTaskClick = useCallback((task: Task) => {
@@ -54,7 +137,11 @@ export default function App() {
   }, []);
 
   const handleTaskDelete = useCallback((id: string) => {
-    setTasks(prev => prev.filter(t => t.id !== id));
+    setTasks(prev => {
+      const next = prev.filter(t => t.id !== id);
+      saveStoredTasks(next);
+      return next;
+    });
     setSelectedTaskId(prev => prev === id ? null : prev);
   }, []);
 
@@ -69,7 +156,7 @@ export default function App() {
             <span className="text-2xl">📊</span>
             <div>
               <h1 className="text-lg font-bold text-white">四象限任务管理</h1>
-              <p className="text-xs text-gray-500">Eisenhower Matrix · Powered by DeepSeek AI</p>
+              <p className="text-xs text-gray-500">Eisenhower Matrix · OpenAI Compatible API</p>
             </div>
           </div>
           <div className="text-xs text-gray-600 hidden sm:block">
@@ -108,7 +195,7 @@ export default function App() {
             {hasKey && (
               <div className="flex items-center gap-2 text-xs text-gray-600">
                 <span className="w-2 h-2 rounded-full bg-green-500" />
-                DeepSeek API 已连接
+                API 已连接
                 <button
                   onClick={() => { setHasKey(false); }}
                   className="ml-auto text-gray-500 hover:text-gray-300 underline"
@@ -119,7 +206,12 @@ export default function App() {
             )}
 
             {/* Input form */}
-            <TaskInputForm onSubmit={handleAddTask} loading={loading} />
+            <TaskInputForm
+              onSubmit={handleAddTask}
+              onImageSubmit={handleImageSubmit}
+              loading={loading}
+              loadingMessage={loadingMessage}
+            />
 
             {/* Task list */}
             <div>
@@ -187,8 +279,18 @@ export default function App() {
 
       {/* Footer */}
       <footer className="border-t border-gray-800 mt-8 py-4 text-center text-xs text-gray-700">
-        Powered by DeepSeek AI · 四象限法则（Eisenhower Matrix）
+        Powered by Compatible AI API · 四象限法则（Eisenhower Matrix）
       </footer>
+
+      {/* Image Task Preview Modal */}
+      {imageDrafts && (
+        <ImageTaskPreview
+          drafts={imageDrafts}
+          ocrText={lastOcrText}
+          onConfirm={handleConfirmImageTasks}
+          onCancel={handleCancelImageTasks}
+        />
+      )}
     </div>
   );
 }

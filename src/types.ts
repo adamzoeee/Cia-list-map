@@ -29,3 +29,16 @@ export interface QuadrantInfo {
   bgColor: string;
   borderColor: string;
 }
+
+export type AnalysisMode = 'text' | 'image';
+
+export interface ImageTaskDraft {
+  title: string;
+  description: string;
+  urgency: number;
+  importance: number;
+}
+
+export interface ImageAnalysisResult {
+  tasks: ImageTaskDraft[];
+}
