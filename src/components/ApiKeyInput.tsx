@@ -10,6 +10,7 @@ import {
   MODEL_SUGGESTIONS,
   testApiConnection,
 } from '../api/deepseek';
+import { Badge, Button, Panel, TextInput } from './ui';
 
 interface Props {
   onKeySet: () => void;
@@ -94,96 +95,96 @@ export default function ApiKeyInput({ onKeySet }: Props) {
   };
 
   return (
-    <div className="bg-gray-900 border border-gray-700 rounded-xl p-4 mb-6">
+    <Panel className="mb-6 p-4">
       <div className="flex items-center justify-between mb-2">
         <h3 className="text-sm font-semibold text-gray-300">
-          🔑 兼容 API 设置
+          兼容 API 设置
         </h3>
         {saved && (
-          <span className="text-xs text-green-400 bg-green-400/10 px-2 py-0.5 rounded-full">
+          <Badge tone="success">
             已保存
-          </span>
+          </Badge>
         )}
       </div>
 
       <div className="space-y-3">
         <div className="flex gap-2">
-          <input
+          <TextInput
             type={show ? 'text' : 'password'}
             value={key}
             onChange={(e) => { setKey(e.target.value); setSaved(false); }}
             placeholder="sk-xxxxxxxxxxxxxxxx"
-            className="flex-1 bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+            className="flex-1"
           />
-          <button
+          <Button
             onClick={() => setShow(!show)}
-            className="px-3 py-2 text-sm text-gray-400 hover:text-gray-200 bg-gray-800 border border-gray-600 rounded-lg"
+            variant="ghost"
+            className="px-3"
             title={show ? '隐藏' : '显示'}
           >
             {show ? '🙈' : '👁'}
-          </button>
+          </Button>
         </div>
 
         <div>
-          <input
+          <TextInput
             type="text"
             value={baseUrl}
             onChange={(e) => { setBaseUrlState(e.target.value); setSaved(false); }}
             placeholder="Base URL，例如 https://api.deepseek.com"
-            className="w-full bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
           />
         </div>
 
         <div className="flex flex-wrap gap-2">
           {PLATFORM_PRESETS.map((preset) => (
-            <button
+            <Button
               key={preset.id}
               onClick={() => applyPreset(preset)}
-              className={`px-2.5 py-1 text-xs rounded-md border transition-colors ${
+              variant={currentPreset?.id === preset.id ? 'primary' : 'secondary'}
+              className={`px-2.5 py-1 text-xs ${
                 currentPreset?.id === preset.id
-                  ? 'bg-indigo-600/20 border-indigo-500 text-indigo-300'
-                  : 'bg-gray-800 border-gray-600 text-gray-400 hover:text-gray-200 hover:border-gray-500'
+                  ? ''
+                  : 'text-slate-400'
               }`}
             >
               {preset.name}
-            </button>
+            </Button>
           ))}
         </div>
 
         <div className="flex gap-2">
-          <input
+          <TextInput
             list="model-suggestions"
             type="text"
             value={model}
             onChange={(e) => { setModelState(e.target.value); setSaved(false); }}
             placeholder="模型名称，例如 deepseek-chat"
-            className="flex-1 bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-sm text-gray-200 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+            className="flex-1"
           />
           <datalist id="model-suggestions">
             {modelSuggestions.map((name) => (
               <option key={name} value={name} />
             ))}
           </datalist>
-          <button
+          <Button
             onClick={handleSave}
-            className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg transition-colors"
+            variant="primary"
           >
             保存
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={handleTest}
             disabled={testing || !key.trim() || !baseUrl.trim() || !model.trim()}
-            className="px-4 py-2 text-sm font-medium text-gray-200 bg-gray-800 border border-gray-600 hover:border-indigo-500 disabled:text-gray-600 disabled:border-gray-700 rounded-lg transition-colors"
           >
             {testing ? '测试中...' : '测试'}
-          </button>
+          </Button>
           {saved && (
-            <button
+            <Button
               onClick={handleClear}
-              className="px-3 py-2 text-sm text-red-400 hover:text-red-300 bg-gray-800 border border-gray-600 rounded-lg"
+              variant="danger"
             >
               清除
-            </button>
+            </Button>
           )}
         </div>
 
@@ -196,6 +197,6 @@ export default function ApiKeyInput({ onKeySet }: Props) {
           </p>
         )}
       </div>
-    </div>
+    </Panel>
   );
 }

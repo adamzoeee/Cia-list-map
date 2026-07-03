@@ -5,16 +5,21 @@
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #1f2937;
+  background: #020617;
 }
 ::-webkit-scrollbar-thumb {
-  background: #4b5563;
+  background: #334155;
   border-radius: 3px;
 }
 
 /* Smooth transitions */
 * {
   transition: background-color 0.2s, border-color 0.2s;
+}
+
+body {
+  min-width: 320px;
+  background: #020617;
 }
 
 /* Quadrant grid lines */

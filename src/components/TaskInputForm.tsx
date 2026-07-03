@@ -1,5 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import type { TaskInput } from '../types';
+import { Button, Panel, TextArea, TextInput, cn } from './ui';
 
 interface Props {
   onSubmit: (input: TaskInput) => void;
@@ -114,54 +115,55 @@ export default function TaskInputForm({ onSubmit, onImageSubmit, loading, loadin
   };
 
   return (
-    <div className="bg-gray-900 border border-gray-700 rounded-xl p-4">
+    <Panel className="p-4">
       {/* Mode tabs */}
-      <div className="flex gap-1 mb-3 bg-gray-800 rounded-lg p-1">
+      <div className="mb-3 flex gap-1 rounded-xl border border-slate-800 bg-slate-950/60 p-1">
         <button
           onClick={() => setMode('text')}
-          className={`flex-1 py-1.5 text-xs font-medium rounded-md transition-colors ${
+          className={`flex-1 rounded-lg py-1.5 text-xs font-medium transition-colors ${
             mode === 'text'
-              ? 'bg-indigo-600 text-white'
-              : 'text-gray-400 hover:text-gray-200'
+              ? 'bg-cyan-400/15 text-cyan-100'
+              : 'text-slate-500 hover:text-slate-200'
           }`}
         >
-          ✍️ 文字输入
+          文字输入
         </button>
         <button
           onClick={() => setMode('image')}
-          className={`flex-1 py-1.5 text-xs font-medium rounded-md transition-colors ${
+          className={`flex-1 rounded-lg py-1.5 text-xs font-medium transition-colors ${
             mode === 'image'
-              ? 'bg-indigo-600 text-white'
-              : 'text-gray-400 hover:text-gray-200'
+              ? 'bg-cyan-400/15 text-cyan-100'
+              : 'text-slate-500 hover:text-slate-200'
           }`}
           title="上传截图或手写任务单，本地 OCR 后交给当前 API 分类"
         >
-          📷 图片识别
+          图片识别
         </button>
       </div>
 
       {mode === 'text' ? (
         <form onSubmit={handleSubmitText}>
-          <input
+          <TextInput
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="任务名称（例如：完成季度报告）"
-            className="w-full bg-gray-800 border border-gray-600 rounded-lg px-3 py-2.5 text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 mb-2"
+            className="mb-2"
             disabled={loading}
           />
-          <textarea
+          <TextArea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="补充描述（可选，例如：需要收集各部门数据，下周五前提交）"
             rows={2}
-            className="w-full bg-gray-800 border border-gray-600 rounded-lg px-3 py-2.5 text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 mb-3 resize-none"
+            className="mb-3"
             disabled={loading}
           />
-          <button
+          <Button
             type="submit"
             disabled={loading || !title.trim()}
-            className="w-full py-2.5 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-500 disabled:bg-gray-700 disabled:text-gray-500 rounded-lg transition-colors flex items-center justify-center gap-2"
+            variant="primary"
+            className="w-full py-2.5"
           >
             {loading ? (
               <>
@@ -172,9 +174,9 @@ export default function TaskInputForm({ onSubmit, onImageSubmit, loading, loadin
                 {loadingMessage || 'AI 分析中...'}
               </>
             ) : (
-              <>🤖 AI 分析并添加</>
+              <>AI 分析并添加</>
             )}
-          </button>
+          </Button>
         </form>
       ) : (
         <div>
@@ -184,29 +186,30 @@ export default function TaskInputForm({ onSubmit, onImageSubmit, loading, loadin
               onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
               onDragLeave={() => setDragOver(false)}
               onClick={loading ? undefined : () => fileInputRef.current?.click()}
-              className={`border-2 border-dashed rounded-xl p-6 text-center transition-colors ${
+              className={cn(
+                'rounded-2xl border border-dashed p-6 text-center transition-colors',
                 loading
-                  ? 'border-indigo-500/50 bg-gray-800/50 cursor-not-allowed'
+                  ? 'cursor-not-allowed border-cyan-400/40 bg-slate-900/60'
                   : dragOver
-                    ? 'border-indigo-500 bg-indigo-500/10 cursor-pointer'
-                    : 'border-gray-600 hover:border-gray-500 bg-gray-800/50 cursor-pointer'
-              }`}
+                    ? 'cursor-pointer border-cyan-400 bg-cyan-400/10'
+                    : 'cursor-pointer border-slate-700 bg-slate-950/50 hover:border-slate-500',
+              )}
             >
               {loading ? (
                 <>
                   <div className="flex justify-center mb-2">
-                    <svg className="animate-spin h-6 w-6 text-indigo-400" viewBox="0 0 24 24">
+                    <svg className="animate-spin h-6 w-6 text-cyan-300" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                     </svg>
                   </div>
-                  <p className="text-sm text-indigo-400 mb-1">{loadingMessage || 'AI 分析中...'}</p>
+                  <p className="text-sm text-cyan-300 mb-1">{loadingMessage || 'AI 分析中...'}</p>
                 </>
               ) : (
                 <>
-                  <div className="text-3xl mb-2">📤</div>
-                  <p className="text-sm text-gray-400 mb-1">点击上传或拖拽图片到此处</p>
-                  <p className="text-xs text-gray-600">支持 jpg、png、gif，也支持直接 Ctrl+V 粘贴截图</p>
+                  <div className="mb-2 text-2xl text-cyan-200">▧</div>
+                  <p className="text-sm text-slate-300 mb-1">点击上传或拖拽图片到此处</p>
+                  <p className="text-xs text-slate-600">支持 jpg、png、gif，也支持直接 Ctrl+V 粘贴截图</p>
                 </>
               )}
               <input
@@ -232,10 +235,11 @@ export default function TaskInputForm({ onSubmit, onImageSubmit, loading, loadin
                   ✕
                 </button>
               </div>
-              <button
+              <Button
                 onClick={handleSubmitImage}
                 disabled={loading || !compressedBase64}
-                className="w-full py-2.5 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-500 disabled:bg-gray-700 disabled:text-gray-500 rounded-lg transition-colors flex items-center justify-center gap-2"
+                variant="primary"
+                className="w-full py-2.5"
               >
                 {loading ? (
                   <>
@@ -246,9 +250,9 @@ export default function TaskInputForm({ onSubmit, onImageSubmit, loading, loadin
                     {loadingMessage || 'OCR 与 AI 分析中...'}
                   </>
                 ) : (
-                  <>🤖 AI 识别任务</>
+                  <>OCR 识别并分析</>
                 )}
-              </button>
+              </Button>
               {loading && loadingMessage && (
                 <p className="text-xs text-gray-500 text-center">{loadingMessage}</p>
               )}
@@ -256,6 +260,6 @@ export default function TaskInputForm({ onSubmit, onImageSubmit, loading, loadin
           )}
         </div>
       )}
-    </div>
+    </Panel>
   );
 }

@@ -5,36 +5,53 @@ const QUADRANTS: QuadrantInfo[] = [
   {
     id: 2,
     name: '重要不紧急',
-    strategy: '📅 计划去做',
-    color: '#f59e0b',
-    bgColor: 'rgba(245,158,11,0.08)',
-    borderColor: 'rgba(245,158,11,0.2)',
+    strategy: '计划去做',
+    color: '#f6b73c',
+    bgColor: 'rgba(246,183,60,0.07)',
+    borderColor: 'rgba(246,183,60,0.18)',
   },
   {
     id: 1,
     name: '重要且紧急',
-    strategy: '🔥 立即去做',
-    color: '#ef4444',
-    bgColor: 'rgba(239,68,68,0.08)',
-    borderColor: 'rgba(239,68,68,0.2)',
+    strategy: '立即去做',
+    color: '#fb7185',
+    bgColor: 'rgba(251,113,133,0.07)',
+    borderColor: 'rgba(251,113,133,0.18)',
   },
   {
     id: 3,
     name: '不重要不紧急',
-    strategy: '🗑️ 减少/消除',
-    color: '#6b7280',
-    bgColor: 'rgba(107,114,128,0.08)',
-    borderColor: 'rgba(107,114,128,0.2)',
+    strategy: '减少或消除',
+    color: '#94a3b8',
+    bgColor: 'rgba(148,163,184,0.055)',
+    borderColor: 'rgba(148,163,184,0.16)',
   },
   {
     id: 4,
     name: '紧急不重要',
-    strategy: '🔀 委派他人',
-    color: '#3b82f6',
-    bgColor: 'rgba(59,130,246,0.08)',
-    borderColor: 'rgba(59,130,246,0.2)',
+    strategy: '委派或压缩',
+    color: '#38bdf8',
+    bgColor: 'rgba(56,189,248,0.07)',
+    borderColor: 'rgba(56,189,248,0.18)',
   },
 ];
+
+function getTimeHint(task: Task): string | null {
+  const text = `${task.title} ${task.description}`;
+  const patterns = [
+    '今天', '今日', '今晚',
+    '明天', '明日',
+    '后天',
+    '本周', '这周', '周一', '周二', '周三', '周四', '周五', '周六', '周日',
+    '下周', '月底', '月末',
+    'DDL', 'deadline', 'Deadline',
+  ];
+  return patterns.find(pattern => text.includes(pattern)) || null;
+}
+
+function shortText(text: string, max: number): string {
+  return text.length > max ? `${text.slice(0, max)}…` : text;
+}
 
 interface Props {
   tasks: Task[];
@@ -142,37 +159,108 @@ export default function QuadrantChart({ tasks, onTaskClick, selectedTaskId }: Pr
           任务重要性 →
         </text>
 
-        {/* Task bubbles */}
+        {/* Task cards */}
         {tasks.map((task) => {
           const cx = toX(task.urgency);
           const cy = toY(task.importance);
-          const isSelected = task.id === selectedTaskId;
-          const r = isSelected ? 11 : 8;
+          const isSelected = task.id === selectedTaskId && !task.completed;
           const qColor = QUADRANTS.find(q => q.id === task.quadrant)?.color || '#6b7280';
+          const cardW = tasks.length > 14 ? 88 : 108;
+          const cardH = tasks.length > 14 ? 36 : 42;
+          const cardX = Math.max(margin + 4, Math.min(cx - cardW / 2, margin + plotW - cardW - 4));
+          const cardY = Math.max(margin + 4, Math.min(cy - cardH / 2, margin + plotH - cardH - 4));
+          const titleMax = tasks.length > 14 ? 6 : 8;
+          const title = shortText(task.title, titleMax);
+          const timeHint = getTimeHint(task);
+          const meta = timeHint
+            ? `U${task.urgency} · I${task.importance} · ${shortText(timeHint, 4)}`
+            : `U${task.urgency} · I${task.importance}`;
+          const baseOpacity = task.completed ? 0.35 : 1;
 
           return (
             <g
               key={task.id}
               onClick={() => onTaskClick(task)}
-              className="cursor-pointer"
+              className="cursor-pointer transition-transform"
+              opacity={baseOpacity}
             >
-              {/* Glow for selected */}
               {isSelected && (
-                <circle cx={cx} cy={cy} r={r + 6} fill={qColor} opacity={0.2} />
+                <rect
+                  x={cardX - 5}
+                  y={cardY - 5}
+                  width={cardW + 10}
+                  height={cardH + 10}
+                  rx={14}
+                  fill={qColor}
+                  opacity={0.12}
+                />
               )}
-              <circle cx={cx} cy={cy} r={r} fill={qColor} opacity={isSelected ? 1 : 0.8}
-                stroke={isSelected ? '#fff' : qColor} strokeWidth={isSelected ? 2 : 0} />
-              <text x={cx} y={cy + 1} textAnchor="middle" fill="#fff" fontSize={9} fontWeight={700}
+              <rect
+                x={cardX}
+                y={cardY}
+                width={cardW}
+                height={cardH}
+                rx={12}
+                fill={qColor}
+                opacity={isSelected ? 0.24 : 0.16}
+                stroke={qColor}
+                strokeWidth={isSelected ? 1.8 : 1}
+              />
+              <rect
+                x={cardX + 1}
+                y={cardY + 1}
+                width={cardW - 2}
+                height={cardH - 2}
+                rx={11}
+                fill="#020617"
+                opacity={isSelected ? 0.72 : 0.62}
+              />
+              <rect
+                x={cardX + 7}
+                y={cardY + 8}
+                width={3}
+                height={cardH - 16}
+                rx={2}
+                fill={qColor}
+                opacity={0.95}
+              />
+              <text
+                x={cardX + 16}
+                y={cardY + (tasks.length > 14 ? 14 : 16)}
+                fill="#f8fafc"
+                fontSize={tasks.length > 14 ? 9 : 10.5}
+                fontWeight={700}
                 style={{ pointerEvents: 'none' }}>
-                {task.title.length > 3 ? task.title.slice(0, 3) + '…' : task.title}
+                {title}
               </text>
-              {/* Tooltip label */}
-              {(isSelected || tasks.length <= 6) && (
-                <text x={cx} y={cy - r - 6} textAnchor="middle" fill="#d1d5db" fontSize={10}
-                  style={{ pointerEvents: 'none' }}>
-                  {task.title.length > 8 ? task.title.slice(0, 8) + '…' : task.title}
-                </text>
+              {task.completed && (
+                <line
+                  x1={cardX + 16}
+                  y1={cardY + (tasks.length > 14 ? 14 : 16) - 1}
+                  x2={cardX + 16 + title.length * (tasks.length > 14 ? 5.4 : 6.3)}
+                  y2={cardY + (tasks.length > 14 ? 14 : 16) - 1}
+                  stroke="#94a3b8"
+                  strokeWidth={1}
+                  opacity={0.7}
+                />
               )}
+              <text
+                x={cardX + 16}
+                y={cardY + (tasks.length > 14 ? 28 : 32)}
+                fill={qColor}
+                fontSize={tasks.length > 14 ? 8 : 9}
+                fontWeight={600}
+                opacity={0.95}
+                style={{ pointerEvents: 'none' }}>
+                {meta}
+              </text>
+              {task.completed && (
+                <g transform={`translate(${cardX + cardW - 14}, ${cardY + 4})`}>
+                  <circle cx="5" cy="5" r="5" fill="#10b981" opacity={0.9} />
+                  <polyline points="2.5,5 4,6.5 7.5,3.5" fill="none" stroke="#020617" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+                </g>
+              )}
+              <title>{`${task.title}${task.completed ? ' (已完成)' : ''}\n紧迫度 ${task.urgency} · 重要性 ${task.importance}${timeHint ? ` · ${timeHint}` : ''}`}</title>
             </g>
           );
         })}

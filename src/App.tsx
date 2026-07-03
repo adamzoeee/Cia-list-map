@@ -6,7 +6,9 @@ import ApiKeyInput from './components/ApiKeyInput';
 import TaskInputForm from './components/TaskInputForm';
 import QuadrantChart from './components/QuadrantChart';
 import TaskList from './components/TaskList';
+import ActionPanel from './components/ActionPanel';
 import ImageTaskPreview from './components/ImageTaskPreview';
+import { Badge, Button, Panel, SectionTitle } from './components/ui';
 
 const TASKS_STORAGE_KEY = 'quadrant_tasks';
 
@@ -19,9 +21,10 @@ function loadStoredTasks(): Task[] {
   try {
     const raw = localStorage.getItem(TASKS_STORAGE_KEY);
     if (!raw) return [];
-    const parsed = JSON.parse(raw) as Array<Omit<Task, 'createdAt'> & { createdAt: string }>;
+    const parsed = JSON.parse(raw) as Array<Omit<Task, 'createdAt'> & { createdAt: string; completed?: boolean }>;
     return parsed.map(task => ({
       ...task,
+      completed: task.completed ?? false,
       createdAt: new Date(task.createdAt),
     }));
   } catch {
@@ -64,6 +67,7 @@ export default function App() {
         urgency: result.urgency,
         importance: result.importance,
         quadrant,
+        completed: false,
         createdAt: new Date(),
       };
       setTasks(prev => {
@@ -112,6 +116,7 @@ export default function App() {
         urgency: draft.urgency,
         importance: draft.importance,
         quadrant,
+        completed: false,
         createdAt: new Date(),
       };
     });
@@ -145,21 +150,42 @@ export default function App() {
     setSelectedTaskId(prev => prev === id ? null : prev);
   }, []);
 
+  const handleToggleComplete = useCallback((id: string) => {
+    setTasks(prev => {
+      const next = prev.map(t => t.id === id ? { ...t, completed: !t.completed } : t);
+      saveStoredTasks(next);
+      return next;
+    });
+  }, []);
+
+  const handleUpdateTask = useCallback((id: string, updates: Partial<Pick<Task, 'urgency' | 'importance'>>) => {
+    setTasks(prev => {
+      const next = prev.map(t => {
+        if (t.id !== id) return t;
+        const urgency = updates.urgency ?? t.urgency;
+        const importance = updates.importance ?? t.importance;
+        return { ...t, urgency, importance, quadrant: getQuadrant(urgency, importance) };
+      });
+      saveStoredTasks(next);
+      return next;
+    });
+  }, []);
+
   const selectedTask = tasks.find(t => t.id === selectedTaskId) || null;
 
   return (
-    <div className="min-h-screen bg-gray-950 text-gray-100">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(34,211,238,0.12),transparent_32%),linear-gradient(135deg,#020617_0%,#0f172a_48%,#020617_100%)] text-slate-100">
       {/* Header */}
-      <header className="border-b border-gray-800 bg-gray-900/50 backdrop-blur-sm sticky top-0 z-10">
+      <header className="sticky top-0 z-10 border-b border-slate-800/80 bg-slate-950/70 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <span className="text-2xl">📊</span>
+            <span className="grid h-9 w-9 place-items-center rounded-xl border border-cyan-400/20 bg-cyan-400/10 text-cyan-200">Q</span>
             <div>
-              <h1 className="text-lg font-bold text-white">四象限任务管理</h1>
-              <p className="text-xs text-gray-500">Eisenhower Matrix · OpenAI Compatible API</p>
+              <h1 className="text-lg font-bold text-white">优先级矩阵</h1>
+              <p className="text-xs text-slate-500">AI Task Prioritization Workspace</p>
             </div>
           </div>
-          <div className="text-xs text-gray-600 hidden sm:block">
+          <div className="text-xs text-slate-500 hidden sm:block">
             {tasks.length} 个任务
           </div>
         </div>
@@ -173,18 +199,19 @@ export default function App() {
 
         {/* Error */}
         {error && (
-          <div className="bg-red-900/30 border border-red-700 rounded-xl p-4 mb-6 flex items-start gap-3">
-            <span className="text-red-400 flex-shrink-0 mt-0.5">⚠️</span>
+          <Panel className="mb-6 flex items-start gap-3 border-red-400/25 bg-red-500/10 p-4">
+            <span className="text-red-300 flex-shrink-0 mt-0.5">!</span>
             <div className="flex-1 min-w-0">
-              <p className="text-sm text-red-300">{error}</p>
+              <p className="text-sm text-red-200">{error}</p>
             </div>
-            <button
+            <Button
               onClick={() => setError(null)}
-              className="text-red-400 hover:text-red-300 flex-shrink-0"
+              variant="ghost"
+              className="h-7 px-2 text-red-300"
             >
               ✕
-            </button>
-          </div>
+            </Button>
+          </Panel>
         )}
 
         {/* Main layout */}
@@ -193,12 +220,11 @@ export default function App() {
           <div className="lg:col-span-4 xl:col-span-3 space-y-6 order-2 lg:order-1">
             {/* API Key (collapsed when set) */}
             {hasKey && (
-              <div className="flex items-center gap-2 text-xs text-gray-600">
-                <span className="w-2 h-2 rounded-full bg-green-500" />
-                API 已连接
+              <div className="flex items-center gap-2 text-xs text-slate-500">
+                <Badge tone="success">API 已连接</Badge>
                 <button
                   onClick={() => { setHasKey(false); }}
-                  className="ml-auto text-gray-500 hover:text-gray-300 underline"
+                  className="ml-auto text-slate-500 underline-offset-4 hover:text-slate-300 hover:underline"
                 >
                   更换 Key
                 </button>
@@ -215,38 +241,36 @@ export default function App() {
 
             {/* Task list */}
             <div>
-              <h3 className="text-sm font-semibold text-gray-400 mb-3 uppercase tracking-wider">
-                📋 任务列表
-              </h3>
+              <SectionTitle eyebrow="Tasks" title="任务列表" />
               <TaskList
                 tasks={tasks}
                 selectedTaskId={selectedTaskId}
                 onTaskClick={handleTaskClick}
                 onTaskDelete={handleTaskDelete}
+                onToggleComplete={handleToggleComplete}
+                onUpdateTask={handleUpdateTask}
               />
             </div>
           </div>
 
           {/* Right / Main: Chart */}
           <div className="lg:col-span-8 xl:col-span-9 order-1 lg:order-2">
-            <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 lg:p-6 sticky top-20">
+            <Panel className="sticky top-20 p-4 lg:p-6">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-sm font-semibold text-gray-300">
-                  🎯 四象限矩阵
-                </h2>
+                <SectionTitle eyebrow="Matrix" title="四象限矩阵" />
                 {selectedTask && (
-                  <div className="text-xs text-gray-500">
-                    已选：<span className="text-gray-300 font-medium">{selectedTask.title}</span>
+                  <div className="text-xs text-slate-500">
+                    已选：<span className="text-slate-200 font-medium">{selectedTask.title}</span>
                   </div>
                 )}
               </div>
 
               {tasks.length === 0 ? (
-                <div className="flex items-center justify-center h-64 text-gray-600">
+                <div className="flex items-center justify-center h-64 text-slate-600">
                   <div className="text-center">
-                    <div className="text-5xl mb-3">🗺️</div>
-                    <p className="text-sm">输入任务后，这里将展示四象限分布</p>
-                    <p className="text-xs mt-1 text-gray-700">AI 会自动分析紧迫度和重要性</p>
+                    <div className="mx-auto mb-4 h-12 w-12 rounded-2xl border border-slate-800 bg-slate-950/70" />
+                    <p className="text-sm text-slate-500">输入任务后，这里将展示四象限分布</p>
+                    <p className="text-xs mt-1 text-slate-700">AI 会自动分析紧迫度和重要性</p>
                   </div>
                 </div>
               ) : (
@@ -265,20 +289,25 @@ export default function App() {
                   { label: '不重要不紧急', color: '#6b7280', desc: '减少/消除' },
                   { label: '紧急不重要', color: '#3b82f6', desc: '委派他人' },
                 ].map(item => (
-                  <div key={item.label} className="flex items-center gap-2 text-xs text-gray-500">
+                  <div key={item.label} className="flex items-center gap-2 text-xs text-slate-500">
                     <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: item.color }} />
                     <span>{item.label}</span>
-                    <span className="text-gray-700">· {item.desc}</span>
+                    <span className="text-slate-700">· {item.desc}</span>
                   </div>
                 ))}
               </div>
+            </Panel>
+
+            {/* Action Advice Panel */}
+            <div className="mt-6">
+              <ActionPanel tasks={tasks} />
             </div>
           </div>
         </div>
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-gray-800 mt-8 py-4 text-center text-xs text-gray-700">
+      <footer className="border-t border-slate-800/70 mt-8 py-4 text-center text-xs text-slate-700">
         Powered by Compatible AI API · 四象限法则（Eisenhower Matrix）
       </footer>
 
