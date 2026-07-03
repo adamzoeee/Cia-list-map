@@ -37,9 +37,9 @@ function saveStoredTasks(tasks: Task[]) {
 }
 
 function getQuadrant(urgency: number, importance: number): 1 | 2 | 3 | 4 {
-  if (urgency >= 5 && importance >= 5) return 1; // 重要且紧急
-  if (urgency < 5 && importance >= 5) return 2;  // 重要不紧急
-  if (urgency < 5 && importance < 5) return 3;   // 不重要不紧急
+  if (urgency >= 0 && importance >= 0) return 1; // 重要且紧急
+  if (urgency < 0 && importance >= 0) return 2;  // 重要不紧急
+  if (urgency < 0 && importance < 0) return 3;   // 不重要不紧急
   return 4; // 紧急不重要
 }
 
@@ -171,7 +171,6 @@ export default function App() {
     });
   }, []);
 
-  const selectedTask = tasks.find(t => t.id === selectedTaskId) || null;
 
   return (
     <div className="min-h-screen bg-[#111827] text-slate-100">
@@ -250,15 +249,6 @@ export default function App() {
           {/* Right / Main: Chart + Task List */}
           <div className="lg:col-span-8 xl:col-span-9 order-1 lg:order-2">
             <Panel className="sticky top-20 p-4 lg:p-6">
-              <div className="flex items-center justify-between mb-4">
-                <SectionTitle eyebrow="Matrix" title="四象限矩阵" />
-                {selectedTask && (
-                  <div className="text-xs text-slate-500">
-                    已选：<span className="text-slate-200 font-medium">{selectedTask.title}</span>
-                  </div>
-                )}
-              </div>
-
               {tasks.length === 0 ? (
                 <div className="flex items-center justify-center h-64 text-slate-600">
                   <div className="text-center">

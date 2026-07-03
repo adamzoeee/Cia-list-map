@@ -66,7 +66,7 @@ export default function QuadrantChart({ tasks, onTaskClick, selectedTaskId }: Pr
   const measure = useCallback(() => {
     if (containerRef.current) {
       const w = containerRef.current.clientWidth;
-      const size = Math.min(w, 500);
+      const size = w;
       setDims({ width: size, height: size });
     }
   }, []);
@@ -82,12 +82,12 @@ export default function QuadrantChart({ tasks, onTaskClick, selectedTaskId }: Pr
   const plotW = width - margin * 2;
   const plotH = height - margin * 2;
 
-  const toX = (urgency: number) => margin + (urgency / 10) * plotW;
-  const toY = (importance: number) => margin + plotH - (importance / 10) * plotH;
+  const toX = (urgency: number) => margin + ((urgency + 5) / 10) * plotW;
+  const toY = (importance: number) => margin + plotH - ((importance + 5) / 10) * plotH;
 
   // Axis ticks
-  const xTicks = [0, 2, 4, 6, 8, 10];
-  const yTicks = [0, 2, 4, 6, 8, 10];
+  const xTicks = [-5, -3, -1, 0, 1, 3, 5];
+  const yTicks = [-5, -3, -1, 0, 1, 3, 5];
 
   return (
     <div ref={containerRef} className="w-full">
