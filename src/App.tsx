@@ -248,7 +248,7 @@ export default function App() {
 
           {/* Right / Main: Chart + Task List */}
           <div className="lg:col-span-8 xl:col-span-9 order-1 lg:order-2">
-            <Panel className="sticky top-20 p-4 lg:p-6">
+            <Panel className="p-4 lg:p-6">
               {tasks.length === 0 ? (
                 <div className="flex items-center justify-center h-64 text-slate-600">
                   <div className="text-center">
