@@ -259,7 +259,7 @@ export default function App() {
                 </div>
               ) : (
                 <QuadrantChart
-                  tasks={tasks}
+                  tasks={tasks.filter(t => !t.completed)}
                   onTaskClick={handleTaskClick}
                   selectedTaskId={selectedTaskId}
                 />
