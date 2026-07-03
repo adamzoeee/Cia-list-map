@@ -10,7 +10,6 @@ export function cn(...classes: Array<string | false | null | undefined>) {
   return classes.filter(Boolean).join(' ');
 }
 
-/* ── Neumorphic raised panel ── */
 export function Panel({
   className,
   children,
@@ -18,7 +17,10 @@ export function Panel({
 }: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn('neu-raised rounded-2xl', className)}
+      className={cn(
+        'rounded-2xl border border-slate-800/80 bg-slate-950/70 shadow-[0_18px_60px_rgba(2,6,23,0.28)] backdrop-blur-xl',
+        className,
+      )}
       {...props}
     >
       {children}
@@ -26,23 +28,6 @@ export function Panel({
   );
 }
 
-/* ── Neumorphic inset panel (for chart areas, wells) ── */
-export function InsetPanel({
-  className,
-  children,
-  ...props
-}: HTMLAttributes<HTMLDivElement>) {
-  return (
-    <div
-      className={cn('neu-inset rounded-2xl', className)}
-      {...props}
-    >
-      {children}
-    </div>
-  );
-}
-
-/* ── Button variants ── */
 type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -56,22 +41,16 @@ export function Button({
   ...props
 }: ButtonProps) {
   const variants: Record<ButtonVariant, string> = {
-    primary:
-      'text-cyan-300 font-semibold',
-    secondary:
-      'text-slate-300',
-    ghost:
-      'text-slate-500 hover:text-slate-200',
-    danger:
-      'text-rose-400 font-semibold',
+    primary: 'border-cyan-400/30 bg-cyan-400/15 text-cyan-100 hover:bg-cyan-400/25 hover:border-cyan-300/50',
+    secondary: 'border-slate-700 bg-slate-900/80 text-slate-200 hover:border-slate-500 hover:bg-slate-800',
+    ghost: 'border-transparent bg-transparent text-slate-400 hover:text-slate-100 hover:bg-slate-800/70',
+    danger: 'border-red-500/20 bg-red-500/10 text-red-300 hover:bg-red-500/15 hover:border-red-400/40',
   };
 
   return (
     <button
       className={cn(
-        'neu-raised inline-flex items-center justify-center gap-2 rounded-xl px-3.5 py-2 text-sm font-medium outline-none transition-all',
-        'active:neu-pressed',
-        'disabled:opacity-40 disabled:cursor-not-allowed disabled:active:shadow-[6px_6px_14px_#15171c,-6px_-6px_14px_#272b33]',
+        'inline-flex items-center justify-center gap-2 rounded-xl border px-3.5 py-2 text-sm font-medium outline-none transition-all disabled:cursor-not-allowed disabled:border-slate-800 disabled:bg-slate-900/40 disabled:text-slate-600',
         variants[variant],
         className,
       )}
@@ -82,7 +61,6 @@ export function Button({
   );
 }
 
-/* ── Text input with inset style ── */
 export function TextInput({
   className,
   ...props
@@ -90,9 +68,7 @@ export function TextInput({
   return (
     <input
       className={cn(
-        'neu-inset w-full rounded-xl px-3.5 py-2.5 text-sm text-slate-200 placeholder-slate-500 outline-none transition-all',
-        'focus:shadow-[inset_4px_4px_10px_#15171c,inset_-4px_-4px_10px_#272b33]',
-        'disabled:cursor-not-allowed disabled:opacity-40',
+        'w-full rounded-xl border border-slate-700 bg-slate-950/70 px-3.5 py-2.5 text-sm text-slate-100 placeholder-slate-500 outline-none transition-all focus:border-cyan-400/70 focus:ring-2 focus:ring-cyan-400/10 disabled:cursor-not-allowed disabled:opacity-60',
         className,
       )}
       {...props}
@@ -100,7 +76,6 @@ export function TextInput({
   );
 }
 
-/* ── Textarea with inset style ── */
 export function TextArea({
   className,
   ...props
@@ -108,9 +83,7 @@ export function TextArea({
   return (
     <textarea
       className={cn(
-        'neu-inset w-full resize-none rounded-xl px-3.5 py-2.5 text-sm text-slate-200 placeholder-slate-500 outline-none transition-all',
-        'focus:shadow-[inset_4px_4px_10px_#15171c,inset_-4px_-4px_10px_#272b33]',
-        'disabled:cursor-not-allowed disabled:opacity-40',
+        'w-full resize-none rounded-xl border border-slate-700 bg-slate-950/70 px-3.5 py-2.5 text-sm text-slate-100 placeholder-slate-500 outline-none transition-all focus:border-cyan-400/70 focus:ring-2 focus:ring-cyan-400/10 disabled:cursor-not-allowed disabled:opacity-60',
         className,
       )}
       {...props}
@@ -118,24 +91,23 @@ export function TextArea({
   );
 }
 
-/* ── Badge ── */
 interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
   tone?: 'neutral' | 'success' | 'warning' | 'danger' | 'accent';
 }
 
 export function Badge({ className, tone = 'neutral', children, ...props }: BadgeProps) {
   const tones = {
-    neutral: 'text-slate-400 bg-[#2a2d33]',
-    success: 'text-emerald-400 bg-emerald-400/10',
-    warning: 'text-amber-400 bg-amber-400/10',
-    danger: 'text-rose-400 bg-rose-400/10',
-    accent: 'text-cyan-400 bg-cyan-400/10',
+    neutral: 'border-slate-700 bg-slate-800/70 text-slate-300',
+    success: 'border-emerald-400/20 bg-emerald-400/10 text-emerald-300',
+    warning: 'border-amber-400/20 bg-amber-400/10 text-amber-300',
+    danger: 'border-red-400/20 bg-red-400/10 text-red-300',
+    accent: 'border-cyan-400/20 bg-cyan-400/10 text-cyan-300',
   };
 
   return (
     <span
       className={cn(
-        'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium',
+        'inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium',
         tones[tone],
         className,
       )}
@@ -146,7 +118,6 @@ export function Badge({ className, tone = 'neutral', children, ...props }: Badge
   );
 }
 
-/* ── Section title ── */
 interface SectionTitleProps {
   title: string;
   eyebrow?: string;
@@ -157,12 +128,8 @@ export function SectionTitle({ title, eyebrow, aside }: SectionTitleProps) {
   return (
     <div className="mb-3 flex items-end justify-between gap-3">
       <div>
-        {eyebrow && (
-          <p className="mb-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-500">
-            {eyebrow}
-          </p>
-        )}
-        <h3 className="text-sm font-semibold text-slate-300">{title}</h3>
+        {eyebrow && <p className="mb-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-500">{eyebrow}</p>}
+        <h3 className="text-sm font-semibold text-slate-200">{title}</h3>
       </div>
       {aside}
     </div>
