@@ -212,7 +212,7 @@ export default function QuadrantChart({ tasks, onTaskClick, selectedTaskId }: Pr
                 width={cardW - 2}
                 height={cardH - 2}
                 rx={11}
-                fill="#020617"
+                fill="#111827"
                 opacity={isSelected ? 0.72 : 0.62}
               />
               <rect
@@ -257,7 +257,7 @@ export default function QuadrantChart({ tasks, onTaskClick, selectedTaskId }: Pr
               {task.completed && (
                 <g transform={`translate(${cardX + cardW - 14}, ${cardY + 4})`}>
                   <circle cx="5" cy="5" r="5" fill="#10b981" opacity={0.9} />
-                  <polyline points="2.5,5 4,6.5 7.5,3.5" fill="none" stroke="#020617" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+                  <polyline points="2.5,5 4,6.5 7.5,3.5" fill="none" stroke="#111827" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
                 </g>
               )}
               <title>{`${task.title}${task.completed ? ' (已完成)' : ''}\n紧迫度 ${task.urgency} · 重要性 ${task.importance}${timeHint ? ` · ${timeHint}` : ''}`}</title>

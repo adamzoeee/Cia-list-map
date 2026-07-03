@@ -97,7 +97,7 @@ export default function ApiKeyInput({ onKeySet }: Props) {
   return (
     <Panel className="mb-6 p-4">
       <div className="flex items-center justify-between mb-2">
-        <h3 className="text-sm font-semibold text-gray-300">
+        <h3 className="text-sm font-semibold text-slate-200">
           兼容 API 设置
         </h3>
         {saved && (
@@ -188,7 +188,7 @@ export default function ApiKeyInput({ onKeySet }: Props) {
           )}
         </div>
 
-        <p className="text-xs text-gray-600">
+        <p className="text-xs text-slate-500">
           图片会先在本地 OCR，再把识别文本发送到当前兼容接口做任务分类；接口不需要支持图片输入。
         </p>
         {testMessage && (
