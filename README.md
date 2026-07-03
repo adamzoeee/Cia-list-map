@@ -400,5 +400,5 @@ furnished to do so, subject to the following conditions: ...
 ---
 
 <p align="center">
-  <sub>Powered by Compatible AI API · 四象限法则（Eisenhower Matrix）· Built with React + TypeScript + Vite</sub>
+  <sub>Powered by Deepseek&Reasonix · 四象限法则（Eisenhower Matrix）· Built with React + TypeScript + Vite</sub>
 </p>
