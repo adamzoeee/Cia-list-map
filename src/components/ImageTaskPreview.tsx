@@ -4,9 +4,9 @@ import { QUADRANTS } from './QuadrantChart';
 import { Badge, Button, Panel, TextInput } from './ui';
 
 function getQuadrant(urgency: number, importance: number): 1 | 2 | 3 | 4 {
-  if (urgency >= 5 && importance >= 5) return 1;
-  if (urgency < 5 && importance >= 5) return 2;
-  if (urgency < 5 && importance < 5) return 3;
+  if (urgency >= 0 && importance >= 0) return 1;
+  if (urgency < 0 && importance >= 0) return 2;
+  if (urgency < 0 && importance < 0) return 3;
   return 4;
 }
 
@@ -25,7 +25,7 @@ export default function ImageTaskPreview({ drafts: initialDrafts, ocrText, onCon
     setDrafts(prev => prev.map((d, i) => {
       if (i !== index) return d;
       if (field === 'urgency' || field === 'importance') {
-        const num = Math.max(0, Math.min(10, Math.round(Number(value) || 0)));
+        const num = Math.max(-5, Math.min(5, Math.round(Number(value) || 0)));
         return { ...d, [field]: num };
       }
       return { ...d, [field]: value };
@@ -45,12 +45,12 @@ export default function ImageTaskPreview({ drafts: initialDrafts, ocrText, onCon
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm p-4">
       <Panel className="w-full max-w-2xl max-h-[85vh] flex flex-col overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-800">
+        <div className="flex items-center justify-between px-5 py-4">
           <div>
-            <h3 className="text-base font-semibold text-white">识别结果预览</h3>
+            <h3 className="text-base font-semibold text-slate-200">识别结果预览</h3>
             <p className="text-xs text-slate-500 mt-0.5">AI 从图片中识别出 {drafts.length} 个未完成任务，你可以编辑或删除后再确认添加</p>
           </div>
           <Button
@@ -65,7 +65,7 @@ export default function ImageTaskPreview({ drafts: initialDrafts, ocrText, onCon
         {/* List */}
         <div className="flex-1 overflow-y-auto px-5 py-4 space-y-3">
           {ocrText && (
-            <div className="bg-slate-950/70 border border-slate-800 rounded-xl overflow-hidden">
+            <div className="neu-inset rounded-xl overflow-hidden">
               <button
                 onClick={() => setShowOcrText(prev => !prev)}
                 className="w-full px-4 py-2.5 text-left text-xs text-slate-400 hover:text-slate-200 flex items-center justify-between"
@@ -82,7 +82,7 @@ export default function ImageTaskPreview({ drafts: initialDrafts, ocrText, onCon
           )}
           {drafts.length === 0 ? (
             <div className="text-center py-10 text-slate-500">
-              <div className="mx-auto mb-3 h-10 w-10 rounded-2xl border border-slate-800 bg-slate-950/70" />
+              <div className="neu-inset mx-auto mb-3 h-10 w-10 rounded-2xl" />
               <p className="text-sm">所有任务已被删除</p>
             </div>
           ) : (
@@ -92,7 +92,7 @@ export default function ImageTaskPreview({ drafts: initialDrafts, ocrText, onCon
               return (
                 <div
                   key={index}
-                  className="bg-slate-950/55 border border-slate-800 rounded-2xl p-4 space-y-3"
+                  className="neu-inset rounded-2xl p-4 space-y-3"
                 >
                   <div className="flex items-start gap-3">
                     <div
@@ -114,30 +114,30 @@ export default function ImageTaskPreview({ drafts: initialDrafts, ocrText, onCon
                       />
                       <div className="flex items-center gap-4">
                         <div className="flex items-center gap-2">
-                          <span className="text-xs text-slate-400">紧迫度</span>
+                          <span className="text-xs text-slate-500">紧迫度</span>
                           <TextInput
                             type="number"
-                            min={0}
-                            max={10}
+                            min={-5}
+                            max={5}
                             value={draft.urgency}
                             onChange={(e) => updateDraft(index, 'urgency', e.target.value)}
                             className="w-14 px-2 py-1 text-center"
                           />
                         </div>
                         <div className="flex items-center gap-2">
-                          <span className="text-xs text-slate-400">重要性</span>
+                          <span className="text-xs text-slate-500">重要性</span>
                           <TextInput
                             type="number"
-                            min={0}
-                            max={10}
+                            min={-5}
+                            max={5}
                             value={draft.importance}
                             onChange={(e) => updateDraft(index, 'importance', e.target.value)}
                             className="w-14 px-2 py-1 text-center"
                           />
                         </div>
                         <Badge
-                          className="border-0"
-                          style={{ backgroundColor: q.color + '20', color: q.color }}
+                          tone="neutral"
+                          style={{ backgroundColor: q.color + '22', color: q.color }}
                         >
                           {q.name}
                         </Badge>
@@ -145,7 +145,7 @@ export default function ImageTaskPreview({ drafts: initialDrafts, ocrText, onCon
                     </div>
                     <button
                       onClick={() => removeDraft(index)}
-                      className="text-slate-700 hover:text-red-300 transition-colors flex-shrink-0"
+                      className="text-slate-500 hover:text-rose-500 transition-colors flex-shrink-0"
                       title="删除此任务"
                     >
                       <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
@@ -161,10 +161,8 @@ export default function ImageTaskPreview({ drafts: initialDrafts, ocrText, onCon
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-end gap-3 px-5 py-4 border-t border-slate-800">
-          <Button
-            onClick={onCancel}
-          >
+        <div className="flex items-center justify-end gap-3 px-5 py-4">
+          <Button onClick={onCancel}>
             取消
           </Button>
           <Button

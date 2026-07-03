@@ -124,9 +124,11 @@ function parseJsonFromContent<T>(content: string): T {
 const SYSTEM_PROMPT = `你是一个任务管理专家。用户会描述一个任务，你需要分析并返回一个 JSON 对象。
 
 分析维度：
-- urgency（时间紧迫度，0-10分）：deadline 有多近？拖延的后果有多严重？0=完全不急，10=火烧眉毛
-- importance（任务重要性，0-10分）：这个任务对目标达成有多关键？0=无关紧要，10=影响深远
+- urgency（时间紧迫度，-5到5分）：-5=完全不急/可以无限拖延，0=正常，5=火烧眉毛/今天必须完成
+- importance（任务重要性，-5到5分）：-5=毫无价值/纯娱乐消遣，0=一般，5=对人生目标至关重要
 - suggestion（建议）：一句话的行动建议（不超过40字）
+
+重要：不要把日常娱乐、休闲活动评成正分，那些应该放在负数区域。只有真正紧急或重要的任务才给正分。
 
 严格要求：
 1. 只返回一个合法的 JSON 对象，不要包含任何其他文字、markdown 标记或代码块
@@ -143,8 +145,10 @@ const OCR_TEXT_SYSTEM_PROMPT = `你是一个任务管理专家。用户会提供
 分析维度：
 - title（精简后的任务名，不超过15个字）
 - description（一句话描述，不超过50个字）
-- urgency（时间紧迫度，0-10分）：0=完全不急，10=火烧眉毛
-- importance（任务重要性，0-10分）：0=无关紧要，10=影响深远
+- urgency（时间紧迫度，-5到5分）：-5=完全不急/可以无限拖延，0=正常，5=火烧眉毛/今天必须完成
+- importance（任务重要性，-5到5分）：-5=毫无价值/纯娱乐消遣，0=一般，5=对人生目标至关重要
+
+重要：不要把日常娱乐、休闲活动评成正分，那些应该放在负数区域。只有真正紧急或重要的任务才给正分。
 
 严格要求：
 1. 只返回一个合法的 JSON 数组，不要包含任何其他文字、markdown 标记或代码块
@@ -191,8 +195,8 @@ export async function analyzeTask(input: TaskInput): Promise<AIAnalysisResult> {
   return {
     title: parsed.title || input.title,
     description: parsed.description || input.description,
-    urgency: Math.max(0, Math.min(10, Math.round(parsed.urgency || 5))),
-    importance: Math.max(0, Math.min(10, Math.round(parsed.importance || 5))),
+    urgency: Math.max(-5, Math.min(5, Math.round(parsed.urgency ?? 0))),
+    importance: Math.max(-5, Math.min(5, Math.round(parsed.importance ?? 0))),
     suggestion: parsed.suggestion || '',
   };
 }
@@ -241,8 +245,8 @@ export async function analyzeOcrText(ocrText: string): Promise<ImageTaskDraft[]>
   return tasks.map((t: ImageTaskDraft) => ({
     title: t.title || '未命名任务',
     description: t.description || '',
-    urgency: Math.max(0, Math.min(10, Math.round(t.urgency ?? 5))),
-    importance: Math.max(0, Math.min(10, Math.round(t.importance ?? 5))),
+    urgency: Math.max(-5, Math.min(5, Math.round(t.urgency ?? 0))),
+    importance: Math.max(-5, Math.min(5, Math.round(t.importance ?? 0))),
   }));
 }
 

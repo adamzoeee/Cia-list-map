@@ -1,30 +1,80 @@
 @import "tailwindcss";
 
+/* Neumorphic base — dark */
+:root {
+  --neu-bg: #1e2127;
+  --neu-shadow-dark: #15171c;
+  --neu-shadow-light: #272b33;
+  --neu-text-primary: #e2e4e9;
+  --neu-text-secondary: #9ca0a8;
+  --neu-text-muted: #6b6f78;
+}
+
+html {
+  overflow-y: scroll;
+}
+
+body {
+  min-width: 320px;
+  background: var(--neu-bg);
+  color: var(--neu-text-primary);
+  font-family: 'Inter', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+
+/* Neumorphic raised element (convex) */
+.neu-raised {
+  background: var(--neu-bg);
+  box-shadow:
+    6px 6px 14px var(--neu-shadow-dark),
+    -6px -6px 14px var(--neu-shadow-light);
+}
+
+/* Neumorphic inset element (concave) */
+.neu-inset {
+  background: var(--neu-bg);
+  box-shadow:
+    inset 4px 4px 8px var(--neu-shadow-dark),
+    inset -4px -4px 8px var(--neu-shadow-light);
+}
+
+/* Neumorphic raised on hover */
+.neu-raised-hover:hover {
+  box-shadow:
+    8px 8px 18px var(--neu-shadow-dark),
+    -8px -8px 18px var(--neu-shadow-light);
+}
+
+/* Neumorphic pressed (button active state) */
+.neu-pressed {
+  box-shadow:
+    inset 3px 3px 6px var(--neu-shadow-dark),
+    inset -3px -3px 6px var(--neu-shadow-light);
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #020617;
+  background: #25282e;
+  border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb {
-  background: #334155;
+  background: #3a3d44;
   border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #4e5158;
 }
 
 /* Smooth transitions */
-* {
-  transition: background-color 0.2s, border-color 0.2s;
-}
-
-body {
-  min-width: 320px;
-  background: #020617;
-}
-
-/* Quadrant grid lines */
-.quadrant-grid {
-  background-image:
-    linear-gradient(to right, #374151 1px, transparent 1px),
-    linear-gradient(to bottom, #374151 1px, transparent 1px);
+.neu-raised,
+.neu-inset,
+.neu-raised-hover,
+.neu-pressed,
+button,
+input,
+textarea,
+select {
+  transition: box-shadow 0.25s ease, background-color 0.2s ease;
 }

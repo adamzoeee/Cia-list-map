@@ -1,4 +1,5 @@
-import { useRef, useEffect, useState, useCallback } from 'react';
+import { useRef, useEffect, useState, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import type { Task, QuadrantInfo } from '../types';
 
 const QUADRANTS: QuadrantInfo[] = [
@@ -6,35 +7,37 @@ const QUADRANTS: QuadrantInfo[] = [
     id: 2,
     name: '重要不紧急',
     strategy: '计划去做',
-    color: '#f6b73c',
-    bgColor: 'rgba(246,183,60,0.07)',
-    borderColor: 'rgba(246,183,60,0.18)',
+    color: '#d97706',
+    bgColor: 'rgba(217,119,6,0.06)',
+    borderColor: 'rgba(217,119,6,0.15)',
   },
   {
     id: 1,
     name: '重要且紧急',
     strategy: '立即去做',
-    color: '#fb7185',
-    bgColor: 'rgba(251,113,133,0.07)',
-    borderColor: 'rgba(251,113,133,0.18)',
+    color: '#dc2626',
+    bgColor: 'rgba(220,38,38,0.06)',
+    borderColor: 'rgba(220,38,38,0.15)',
   },
   {
     id: 3,
     name: '不重要不紧急',
     strategy: '减少或消除',
-    color: '#94a3b8',
-    bgColor: 'rgba(148,163,184,0.055)',
-    borderColor: 'rgba(148,163,184,0.16)',
+    color: '#6b7280',
+    bgColor: 'rgba(107,114,128,0.05)',
+    borderColor: 'rgba(107,114,128,0.12)',
   },
   {
     id: 4,
     name: '紧急不重要',
     strategy: '委派或压缩',
-    color: '#38bdf8',
-    bgColor: 'rgba(56,189,248,0.07)',
-    borderColor: 'rgba(56,189,248,0.18)',
+    color: '#2563eb',
+    bgColor: 'rgba(37,99,235,0.06)',
+    borderColor: 'rgba(37,99,235,0.15)',
   },
 ];
+
+const PARTICLE_COUNT = 14;
 
 function getTimeHint(task: Task): string | null {
   const text = `${task.title} ${task.description}`;
@@ -53,6 +56,12 @@ function shortText(text: string, max: number): string {
   return text.length > max ? `${text.slice(0, max)}…` : text;
 }
 
+interface Explosion {
+  cx: number;
+  cy: number;
+  color: string;
+}
+
 interface Props {
   tasks: Task[];
   onTaskClick: (task: Task) => void;
@@ -62,32 +71,85 @@ interface Props {
 export default function QuadrantChart({ tasks, onTaskClick, selectedTaskId }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [dims, setDims] = useState({ width: 500, height: 500 });
-
-  const measure = useCallback(() => {
-    if (containerRef.current) {
-      const w = containerRef.current.clientWidth;
-      const size = Math.min(w, 500);
-      setDims({ width: size, height: size });
-    }
-  }, []);
+  const prevCompletedRef = useRef<Set<string>>(new Set());
+  const [explosions, setExplosions] = useState<Map<string, Explosion>>(new Map());
 
   useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const measure = () => {
+      const w = el.clientWidth;
+      const size = Math.min(w, 700);
+      setDims({ width: size, height: size });
+    };
+
     measure();
-    window.addEventListener('resize', measure);
-    return () => window.removeEventListener('resize', measure);
-  }, [measure]);
+
+    const ro = new ResizeObserver(() => measure());
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   const { width, height } = dims;
   const margin = 40;
   const plotW = width - margin * 2;
   const plotH = height - margin * 2;
 
-  const toX = (urgency: number) => margin + (urgency / 10) * plotW;
-  const toY = (importance: number) => margin + plotH - (importance / 10) * plotH;
+  const toX = (urgency: number) => margin + ((urgency + 5) / 10) * plotW;
+  const toY = (importance: number) => margin + plotH - ((importance + 5) / 10) * plotH;
 
-  // Axis ticks
-  const xTicks = [0, 2, 4, 6, 8, 10];
-  const yTicks = [0, 2, 4, 6, 8, 10];
+  const xTicks = [-5, -3, -1, 1, 3, 5];
+  const yTicks = [-5, -3, -1, 1, 3, 5];
+
+  // Build card position cache and detect newly completed tasks
+  const cardPositions = useMemo(() => {
+    const map = new Map<string, { cx: number; cy: number; qColor: string }>();
+    tasks.forEach(task => {
+      map.set(task.id, {
+        cx: toX(task.urgency),
+        cy: toY(task.importance),
+        qColor: QUADRANTS.find(q => q.id === task.quadrant)?.color || '#8b8f98',
+      });
+    });
+    return map;
+  }, [tasks, toX, toY]);
+
+  // Detect newly completed tasks and start explosions
+  useEffect(() => {
+    const currentCompleted = new Set(tasks.filter(t => t.completed).map(t => t.id));
+    const prevCompleted = prevCompletedRef.current;
+
+    const newlyCompleted = [...currentCompleted].filter(id => !prevCompleted.has(id));
+    if (newlyCompleted.length > 0) {
+      const newExplosions = new Map(explosions);
+      newlyCompleted.forEach(id => {
+        const pos = cardPositions.get(id);
+        if (pos) {
+          newExplosions.set(id, {
+            cx: pos.cx,
+            cy: pos.cy,
+            color: pos.qColor,
+          });
+        }
+      });
+      setExplosions(newExplosions);
+
+      // Clean up after animation
+      setTimeout(() => {
+        setExplosions(prev => {
+          const next = new Map(prev);
+          newlyCompleted.forEach(id => next.delete(id));
+          return next;
+        });
+      }, 650);
+    }
+
+    prevCompletedRef.current = currentCompleted;
+  }, [tasks, cardPositions, explosions]);
+
+  // Only show tasks that are NOT completed (completed ones explode and vanish)
+  const visibleTasks = tasks.filter(t => !t.completed);
 
   return (
     <div ref={containerRef} className="w-full">
@@ -97,6 +159,15 @@ export default function QuadrantChart({ tasks, onTaskClick, selectedTaskId }: Pr
         viewBox={`0 0 ${width} ${height}`}
         className="select-none"
       >
+        {/* Plot area background */}
+        <rect
+          x={margin} y={margin} width={plotW} height={plotH}
+          rx={8}
+          fill="#1a1d22"
+          stroke="#2d3038"
+          strokeWidth={1}
+        />
+
         {/* Quadrant backgrounds */}
         <rect x={margin} y={margin} width={plotW / 2} height={plotH / 2} fill={QUADRANTS[2].bgColor} />
         <rect x={margin + plotW / 2} y={margin} width={plotW / 2} height={plotH / 2} fill={QUADRANTS[3].bgColor} />
@@ -105,9 +176,9 @@ export default function QuadrantChart({ tasks, onTaskClick, selectedTaskId }: Pr
 
         {/* Quadrant dividing lines */}
         <line x1={margin + plotW / 2} y1={margin} x2={margin + plotW / 2} y2={margin + plotH}
-          stroke="#374151" strokeWidth={1.5} strokeDasharray="6,3" />
+          stroke="#2d3038" strokeWidth={1.5} strokeDasharray="6,3" />
         <line x1={margin} y1={margin + plotH / 2} x2={margin + plotW} y2={margin + plotH / 2}
-          stroke="#374151" strokeWidth={1.5} strokeDasharray="6,3" />
+          stroke="#2d3038" strokeWidth={1.5} strokeDasharray="6,3" />
 
         {/* Quadrant labels */}
         {QUADRANTS.map((q) => {
@@ -117,13 +188,13 @@ export default function QuadrantChart({ tasks, onTaskClick, selectedTaskId }: Pr
           else if (q.id === 3) { qx = margin + plotW * 0.25; qy = margin + plotH * 0.75; }
           else { qx = margin + plotW * 0.75; qy = margin + plotH * 0.75; }
 
-          const count = tasks.filter(t => t.quadrant === q.id).length;
+          const count = visibleTasks.filter(t => t.quadrant === q.id).length;
           return (
             <g key={q.id}>
-              <text x={qx} y={qy - 6} textAnchor="middle" fill={q.color} fontSize={11} fontWeight={600} opacity={0.7}>
+              <text x={qx} y={qy - 6} textAnchor="middle" fill={q.color} fontSize={11} fontWeight={600} opacity={0.8}>
                 {q.name}
               </text>
-              <text x={qx} y={qy + 12} textAnchor="middle" fill="#9ca3af" fontSize={10} opacity={0.6}>
+              <text x={qx} y={qy + 12} textAnchor="middle" fill="#6b6f78" fontSize={10} opacity={0.8}>
                 {q.strategy} {count > 0 && `(${count})`}
               </text>
             </g>
@@ -131,68 +202,66 @@ export default function QuadrantChart({ tasks, onTaskClick, selectedTaskId }: Pr
         })}
 
         {/* X axis */}
-        <line x1={margin} y1={margin + plotH} x2={margin + plotW} y2={margin + plotH} stroke="#4b5563" strokeWidth={1} />
+        <line x1={margin} y1={margin + plotH} x2={margin + plotW} y2={margin + plotH} stroke="#4a4e56" strokeWidth={1} />
         {xTicks.map((t) => (
           <g key={`xt-${t}`}>
-            <line x1={toX(t)} y1={margin + plotH} x2={toX(t)} y2={margin + plotH + 5} stroke="#4b5563" strokeWidth={1} />
-            <text x={toX(t)} y={margin + plotH + 18} textAnchor="middle" fill="#6b7280" fontSize={10}>
+            <line x1={toX(t)} y1={margin + plotH} x2={toX(t)} y2={margin + plotH + 5} stroke="#4a4e56" strokeWidth={1} />
+            <text x={toX(t)} y={margin + plotH + 18} textAnchor="middle" fill="#8b8f98" fontSize={10}>
               {t}
             </text>
           </g>
         ))}
-        <text x={margin + plotW / 2} y={margin + plotH + 35} textAnchor="middle" fill="#9ca3af" fontSize={11} fontWeight={600}>
+        <text x={margin + plotW / 2} y={margin + plotH + 35} textAnchor="middle" fill="#8b8f98" fontSize={11} fontWeight={600}>
           时间紧迫度 →
         </text>
 
         {/* Y axis */}
-        <line x1={margin} y1={margin} x2={margin} y2={margin + plotH} stroke="#4b5563" strokeWidth={1} />
+        <line x1={margin} y1={margin} x2={margin} y2={margin + plotH} stroke="#4a4e56" strokeWidth={1} />
         {yTicks.map((t) => (
           <g key={`yt-${t}`}>
-            <line x1={margin - 5} y1={toY(t)} x2={margin} y2={toY(t)} stroke="#4b5563" strokeWidth={1} />
-            <text x={margin - 8} y={toY(t) + 4} textAnchor="end" fill="#6b7280" fontSize={10}>
+            <line x1={margin - 5} y1={toY(t)} x2={margin} y2={toY(t)} stroke="#4a4e56" strokeWidth={1} />
+            <text x={margin - 8} y={toY(t) + 4} textAnchor="end" fill="#8b8f98" fontSize={10}>
               {t}
             </text>
           </g>
         ))}
-        <text x={14} y={margin + plotH / 2} textAnchor="middle" fill="#9ca3af" fontSize={11} fontWeight={600}
+        <text x={14} y={margin + plotH / 2} textAnchor="middle" fill="#8b8f98" fontSize={11} fontWeight={600}
           transform={`rotate(-90, 14, ${margin + plotH / 2})`}>
           任务重要性 →
         </text>
 
-        {/* Task cards */}
-        {tasks.map((task) => {
+        {/* Visible task cards (non-completed) */}
+        {visibleTasks.map((task) => {
           const cx = toX(task.urgency);
           const cy = toY(task.importance);
-          const isSelected = task.id === selectedTaskId && !task.completed;
-          const qColor = QUADRANTS.find(q => q.id === task.quadrant)?.color || '#6b7280';
-          const cardW = tasks.length > 14 ? 88 : 108;
-          const cardH = tasks.length > 14 ? 36 : 42;
+          const isSelected = task.id === selectedTaskId;
+          const qColor = QUADRANTS.find(q => q.id === task.quadrant)?.color || '#8b8f98';
+          const cardW = visibleTasks.length > 14 ? 88 : 108;
+          const cardH = visibleTasks.length > 14 ? 36 : 42;
           const cardX = Math.max(margin + 4, Math.min(cx - cardW / 2, margin + plotW - cardW - 4));
           const cardY = Math.max(margin + 4, Math.min(cy - cardH / 2, margin + plotH - cardH - 4));
-          const titleMax = tasks.length > 14 ? 6 : 8;
+          const titleMax = visibleTasks.length > 14 ? 6 : 8;
           const title = shortText(task.title, titleMax);
           const timeHint = getTimeHint(task);
           const meta = timeHint
             ? `U${task.urgency} · I${task.importance} · ${shortText(timeHint, 4)}`
             : `U${task.urgency} · I${task.importance}`;
-          const baseOpacity = task.completed ? 0.35 : 1;
 
           return (
             <g
               key={task.id}
               onClick={() => onTaskClick(task)}
               className="cursor-pointer transition-transform"
-              opacity={baseOpacity}
             >
               {isSelected && (
                 <rect
-                  x={cardX - 5}
-                  y={cardY - 5}
-                  width={cardW + 10}
-                  height={cardH + 10}
-                  rx={14}
+                  x={cardX - 4}
+                  y={cardY - 4}
+                  width={cardW + 8}
+                  height={cardH + 8}
+                  rx={12}
                   fill={qColor}
-                  opacity={0.12}
+                  opacity={0.1}
                 />
               )}
               <rect
@@ -200,23 +269,13 @@ export default function QuadrantChart({ tasks, onTaskClick, selectedTaskId }: Pr
                 y={cardY}
                 width={cardW}
                 height={cardH}
-                rx={12}
-                fill={qColor}
-                opacity={isSelected ? 0.24 : 0.16}
-                stroke={qColor}
-                strokeWidth={isSelected ? 1.8 : 1}
+                rx={10}
+                fill="#1e2127"
+                stroke={isSelected ? qColor : '#2d3038'}
+                strokeWidth={isSelected ? 2 : 1}
               />
               <rect
-                x={cardX + 1}
-                y={cardY + 1}
-                width={cardW - 2}
-                height={cardH - 2}
-                rx={11}
-                fill="#020617"
-                opacity={isSelected ? 0.72 : 0.62}
-              />
-              <rect
-                x={cardX + 7}
+                x={cardX + 6}
                 y={cardY + 8}
                 width={3}
                 height={cardH - 16}
@@ -225,45 +284,69 @@ export default function QuadrantChart({ tasks, onTaskClick, selectedTaskId }: Pr
                 opacity={0.95}
               />
               <text
-                x={cardX + 16}
-                y={cardY + (tasks.length > 14 ? 14 : 16)}
-                fill="#f8fafc"
-                fontSize={tasks.length > 14 ? 9 : 10.5}
+                x={cardX + 15}
+                y={cardY + (visibleTasks.length > 14 ? 14 : 16)}
+                fill="#e2e4e9"
+                fontSize={visibleTasks.length > 14 ? 9 : 10.5}
                 fontWeight={700}
                 style={{ pointerEvents: 'none' }}>
                 {title}
               </text>
-              {task.completed && (
-                <line
-                  x1={cardX + 16}
-                  y1={cardY + (tasks.length > 14 ? 14 : 16) - 1}
-                  x2={cardX + 16 + title.length * (tasks.length > 14 ? 5.4 : 6.3)}
-                  y2={cardY + (tasks.length > 14 ? 14 : 16) - 1}
-                  stroke="#94a3b8"
-                  strokeWidth={1}
-                  opacity={0.7}
-                />
-              )}
               <text
-                x={cardX + 16}
-                y={cardY + (tasks.length > 14 ? 28 : 32)}
+                x={cardX + 15}
+                y={cardY + (visibleTasks.length > 14 ? 28 : 32)}
                 fill={qColor}
-                fontSize={tasks.length > 14 ? 8 : 9}
+                fontSize={visibleTasks.length > 14 ? 8 : 9}
                 fontWeight={600}
-                opacity={0.95}
+                opacity={0.9}
                 style={{ pointerEvents: 'none' }}>
                 {meta}
               </text>
-              {task.completed && (
-                <g transform={`translate(${cardX + cardW - 14}, ${cardY + 4})`}>
-                  <circle cx="5" cy="5" r="5" fill="#10b981" opacity={0.9} />
-                  <polyline points="2.5,5 4,6.5 7.5,3.5" fill="none" stroke="#020617" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
-                </g>
-              )}
-              <title>{`${task.title}${task.completed ? ' (已完成)' : ''}\n紧迫度 ${task.urgency} · 重要性 ${task.importance}${timeHint ? ` · ${timeHint}` : ''}`}</title>
+              <title>{`${task.title}\n紧迫度 ${task.urgency} · 重要性 ${task.importance}${timeHint ? ` · ${timeHint}` : ''}`}</title>
             </g>
           );
         })}
+
+        {/* Explosion particles for newly completed tasks */}
+        <AnimatePresence>
+          {[...explosions.entries()].map(([id, exp]) => {
+            const particles = Array.from({ length: PARTICLE_COUNT }, (_, i) => {
+              const angle = (i / PARTICLE_COUNT) * Math.PI * 2;
+              const dist = 35 + Math.random() * 55;
+              return {
+                key: i,
+                dx: Math.cos(angle) * dist,
+                dy: Math.sin(angle) * dist,
+                rotation: (Math.random() - 0.5) * 360,
+                size: 3 + Math.random() * 10,
+                delay: Math.random() * 0.06,
+              };
+            });
+
+            return (
+              <g key={`explosion-${id}`}>
+                {particles.map((p) => (
+                  <motion.rect
+                    key={p.key}
+                    initial={{ x: exp.cx - p.size / 2, y: exp.cy - p.size / 2, opacity: 1, rotate: 0, scale: 0 }}
+                    animate={{
+                      x: exp.cx - p.size / 2 + p.dx,
+                      y: exp.cy - p.size / 2 + p.dy,
+                      opacity: 0,
+                      rotate: p.rotation,
+                      scale: 1,
+                    }}
+                    transition={{ duration: 0.5 + Math.random() * 0.2, delay: p.delay, ease: 'easeOut' }}
+                    width={p.size}
+                    height={p.size}
+                    rx={1.5}
+                    fill={exp.color}
+                  />
+                ))}
+              </g>
+            );
+          })}
+        </AnimatePresence>
       </svg>
     </div>
   );

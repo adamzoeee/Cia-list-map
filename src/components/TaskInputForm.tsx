@@ -117,30 +117,32 @@ export default function TaskInputForm({ onSubmit, onImageSubmit, loading, loadin
   return (
     <Panel className="p-4">
       {/* Mode tabs */}
-      <div className="mb-3 flex gap-1 rounded-xl border border-slate-800 bg-slate-950/60 p-1">
+      <div className="mb-3 flex gap-1 rounded-xl p-1 neu-inset">
         <button
           onClick={() => setMode('text')}
-          className={`flex-1 rounded-lg py-1.5 text-xs font-medium transition-colors ${
+          className={cn(
+            'flex-1 rounded-lg py-1.5 text-xs font-medium transition-all',
             mode === 'text'
-              ? 'bg-cyan-400/15 text-cyan-100'
-              : 'text-slate-500 hover:text-slate-200'
-          }`}
+              ? 'neu-raised text-cyan-300'
+              : 'text-slate-500 hover:text-slate-300',
+          )}
         >
           文字输入
         </button>
         <button
           onClick={() => setMode('image')}
-          className={`flex-1 rounded-lg py-1.5 text-xs font-medium transition-colors ${
+          className={cn(
+            'flex-1 rounded-lg py-1.5 text-xs font-medium transition-all',
             mode === 'image'
-              ? 'bg-cyan-400/15 text-cyan-100'
-              : 'text-slate-500 hover:text-slate-200'
-          }`}
+              ? 'neu-raised text-cyan-300'
+              : 'text-slate-500 hover:text-slate-300',
+          )}
           title="上传截图或手写任务单，本地 OCR 后交给当前 API 分类"
         >
           图片识别
         </button>
       </div>
-
+      <div className="min-h-[195px] min-w-0 w-full">
       {mode === 'text' ? (
         <form onSubmit={handleSubmitText}>
           <TextInput
@@ -179,7 +181,7 @@ export default function TaskInputForm({ onSubmit, onImageSubmit, loading, loadin
           </Button>
         </form>
       ) : (
-        <div>
+        <div className="w-full">
           {!previewUrl ? (
             <div
               onDrop={loading ? undefined : handleDrop}
@@ -187,18 +189,18 @@ export default function TaskInputForm({ onSubmit, onImageSubmit, loading, loadin
               onDragLeave={() => setDragOver(false)}
               onClick={loading ? undefined : () => fileInputRef.current?.click()}
               className={cn(
-                'rounded-2xl border border-dashed p-6 text-center transition-colors',
+                'neu-inset rounded-2xl p-6 text-center transition-all',
                 loading
-                  ? 'cursor-not-allowed border-cyan-400/40 bg-slate-900/60'
+                  ? 'cursor-not-allowed'
                   : dragOver
-                    ? 'cursor-pointer border-cyan-400 bg-cyan-400/10'
-                    : 'cursor-pointer border-slate-700 bg-slate-950/50 hover:border-slate-500',
+                    ? 'cursor-pointer shadow-[inset_6px_6px_14px_#15171c,inset_-6px_-6px_14px_#272b33]'
+                    : 'cursor-pointer hover:shadow-[inset_5px_5px_12px_#15171c,inset_-5px_-5px_12px_#272b33]',
               )}
             >
               {loading ? (
                 <>
                   <div className="flex justify-center mb-2">
-                    <svg className="animate-spin h-6 w-6 text-cyan-300" viewBox="0 0 24 24">
+                    <svg className="animate-spin h-6 w-6 text-cyan-400" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                     </svg>
@@ -207,9 +209,9 @@ export default function TaskInputForm({ onSubmit, onImageSubmit, loading, loadin
                 </>
               ) : (
                 <>
-                  <div className="mb-2 text-2xl text-cyan-200">▧</div>
-                  <p className="text-sm text-slate-300 mb-1">点击上传或拖拽图片到此处</p>
-                  <p className="text-xs text-slate-600">支持 jpg、png、gif，也支持直接 Ctrl+V 粘贴截图</p>
+                  <div className="mb-2 text-2xl text-slate-500">▧</div>
+                  <p className="text-sm text-slate-400 mb-1">点击上传或拖拽图片到此处</p>
+                  <p className="text-xs text-slate-500">支持 jpg、png、gif，也支持直接 Ctrl+V 粘贴截图</p>
                 </>
               )}
               <input
@@ -226,11 +228,11 @@ export default function TaskInputForm({ onSubmit, onImageSubmit, loading, loadin
             </div>
           ) : (
             <div className="space-y-3">
-              <div className="relative rounded-xl overflow-hidden border border-gray-700">
-                <img src={previewUrl} alt="预览" className="w-full max-h-64 object-contain bg-gray-800" />
+              <div className="neu-inset relative rounded-xl overflow-hidden">
+                <img src={previewUrl} alt="预览" className="w-full max-h-64 object-contain" />
                 <button
                   onClick={handleClearImage}
-                  className="absolute top-2 right-2 w-7 h-7 bg-gray-900/80 text-gray-300 rounded-full flex items-center justify-center hover:bg-red-900/80 hover:text-red-300 transition-colors text-xs"
+                  className="absolute top-2 right-2 w-7 h-7 neu-raised rounded-full flex items-center justify-center text-slate-500 hover:text-rose-400 transition-colors text-xs"
                 >
                   ✕
                 </button>
@@ -254,12 +256,13 @@ export default function TaskInputForm({ onSubmit, onImageSubmit, loading, loadin
                 )}
               </Button>
               {loading && loadingMessage && (
-                <p className="text-xs text-gray-500 text-center">{loadingMessage}</p>
+                <p className="text-xs text-slate-500 text-center">{loadingMessage}</p>
               )}
             </div>
           )}
         </div>
       )}
+      </div>
     </Panel>
   );
 }

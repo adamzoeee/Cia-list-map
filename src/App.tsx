@@ -37,10 +37,10 @@ function saveStoredTasks(tasks: Task[]) {
 }
 
 function getQuadrant(urgency: number, importance: number): 1 | 2 | 3 | 4 {
-  if (urgency >= 5 && importance >= 5) return 1; // 重要且紧急
-  if (urgency < 5 && importance >= 5) return 2;  // 重要不紧急
-  if (urgency < 5 && importance < 5) return 3;   // 不重要不紧急
-  return 4; // 紧急不重要
+  if (urgency >= 0 && importance >= 0) return 1;
+  if (urgency < 0 && importance >= 0) return 2;
+  if (urgency < 0 && importance < 0) return 3;
+  return 4;
 }
 
 export default function App() {
@@ -174,15 +174,15 @@ export default function App() {
   const selectedTask = tasks.find(t => t.id === selectedTaskId) || null;
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(34,211,238,0.12),transparent_32%),linear-gradient(135deg,#020617_0%,#0f172a_48%,#020617_100%)] text-slate-100">
+    <div className="flex flex-col min-h-screen" style={{ backgroundColor: '#1e2127' }}>
       {/* Header */}
-      <header className="sticky top-0 z-10 border-b border-slate-800/80 bg-slate-950/70 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+      <header className="neu-raised sticky top-0 z-20 mb-6 rounded-b-2xl px-4 py-3">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <span className="grid h-9 w-9 place-items-center rounded-xl border border-cyan-400/20 bg-cyan-400/10 text-cyan-200">Q</span>
+            <span className="neu-inset grid h-9 w-9 place-items-center rounded-xl text-slate-400 text-sm font-bold">Q</span>
             <div>
-              <h1 className="text-lg font-bold text-white">优先级矩阵</h1>
-              <p className="text-xs text-slate-500">AI Task Prioritization Workspace</p>
+              <h1 className="text-lg font-bold text-slate-200">优先级矩阵</h1>
+              <p className="text-xs text-slate-500">四象限任务管理</p>
             </div>
           </div>
           <div className="text-xs text-slate-500 hidden sm:block">
@@ -191,7 +191,7 @@ export default function App() {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 py-6">
+      <main className="flex-1 max-w-7xl mx-auto px-4 pb-8">
         {/* API Key */}
         {!hasKey && (
           <ApiKeyInput onKeySet={() => setHasKey(true)} />
@@ -199,26 +199,26 @@ export default function App() {
 
         {/* Error */}
         {error && (
-          <Panel className="mb-6 flex items-start gap-3 border-red-400/25 bg-red-500/10 p-4">
-            <span className="text-red-300 flex-shrink-0 mt-0.5">!</span>
+          <div className="neu-raised mb-6 flex items-start gap-3 rounded-2xl p-4 text-rose-600">
+            <span className="flex-shrink-0 mt-0.5 font-bold">!</span>
             <div className="flex-1 min-w-0">
-              <p className="text-sm text-red-200">{error}</p>
+              <p className="text-sm">{error}</p>
             </div>
             <Button
               onClick={() => setError(null)}
               variant="ghost"
-              className="h-7 px-2 text-red-300"
+              className="h-7 px-2"
             >
               ✕
             </Button>
-          </Panel>
+          </div>
         )}
 
-        {/* Main layout */}
-        <div className="grid gap-6 lg:grid-cols-12">
-          {/* Left sidebar: Input + List */}
-          <div className="lg:col-span-4 xl:col-span-3 space-y-6 order-2 lg:order-1">
-            {/* API Key (collapsed when set) */}
+        {/* Main layout: left narrow sidebar + right wide area */}
+        <div className="flex flex-col lg:flex-row gap-6">
+          {/* ── Left sidebar: Input + Action ── */}
+          <aside className="lg:w-[30%] min-w-0 flex-shrink-0 space-y-6">
+            {/* API status */}
             {hasKey && (
               <div className="flex items-center gap-2 text-xs text-slate-500">
                 <Badge tone="success">API 已连接</Badge>
@@ -231,7 +231,7 @@ export default function App() {
               </div>
             )}
 
-            {/* Input form */}
+            {/* Task input form */}
             <TaskInputForm
               onSubmit={handleAddTask}
               onImageSubmit={handleImageSubmit}
@@ -239,38 +239,29 @@ export default function App() {
               loadingMessage={loadingMessage}
             />
 
-            {/* Task list */}
-            <div>
-              <SectionTitle eyebrow="Tasks" title="任务列表" />
-              <TaskList
-                tasks={tasks}
-                selectedTaskId={selectedTaskId}
-                onTaskClick={handleTaskClick}
-                onTaskDelete={handleTaskDelete}
-                onToggleComplete={handleToggleComplete}
-                onUpdateTask={handleUpdateTask}
-              />
-            </div>
-          </div>
+            {/* Action panel */}
+            <ActionPanel tasks={tasks} />
+          </aside>
 
-          {/* Right / Main: Chart */}
-          <div className="lg:col-span-8 xl:col-span-9 order-1 lg:order-2">
-            <Panel className="sticky top-20 p-4 lg:p-6">
+          {/* ── Right main: Chart + Task list ── */}
+          <div className="flex-1 min-w-0 space-y-6">
+            {/* Quadrant chart */}
+            <Panel className="p-4 lg:p-6">
               <div className="flex items-center justify-between mb-4">
                 <SectionTitle eyebrow="Matrix" title="四象限矩阵" />
                 {selectedTask && (
                   <div className="text-xs text-slate-500">
-                    已选：<span className="text-slate-200 font-medium">{selectedTask.title}</span>
+                    已选：<span className="text-slate-300 font-medium">{selectedTask.title}</span>
                   </div>
                 )}
               </div>
 
               {tasks.length === 0 ? (
-                <div className="flex items-center justify-center h-64 text-slate-600">
+                <div className="flex items-center justify-center h-64 text-slate-500">
                   <div className="text-center">
-                    <div className="mx-auto mb-4 h-12 w-12 rounded-2xl border border-slate-800 bg-slate-950/70" />
-                    <p className="text-sm text-slate-500">输入任务后，这里将展示四象限分布</p>
-                    <p className="text-xs mt-1 text-slate-700">AI 会自动分析紧迫度和重要性</p>
+                    <div className="neu-inset mx-auto mb-4 h-12 w-12 rounded-2xl" />
+                    <p className="text-sm text-slate-400">输入任务后，这里将展示四象限分布</p>
+                    <p className="text-xs mt-1 text-slate-500">AI 会自动分析紧迫度和重要性</p>
                   </div>
                 </div>
               ) : (
@@ -289,25 +280,33 @@ export default function App() {
                   { label: '不重要不紧急', color: '#6b7280', desc: '减少/消除' },
                   { label: '紧急不重要', color: '#3b82f6', desc: '委派他人' },
                 ].map(item => (
-                  <div key={item.label} className="flex items-center gap-2 text-xs text-slate-500">
+                  <div key={item.label} className="flex items-center gap-2 text-xs text-slate-400">
                     <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: item.color }} />
                     <span>{item.label}</span>
-                    <span className="text-slate-700">· {item.desc}</span>
+                    <span className="text-slate-500">· {item.desc}</span>
                   </div>
                 ))}
               </div>
             </Panel>
 
-            {/* Action Advice Panel */}
-            <div className="mt-6">
-              <ActionPanel tasks={tasks} />
+            {/* Task list - full width below chart */}
+            <div>
+              <SectionTitle eyebrow="Tasks" title="任务列表" />
+              <TaskList
+                tasks={tasks}
+                selectedTaskId={selectedTaskId}
+                onTaskClick={handleTaskClick}
+                onTaskDelete={handleTaskDelete}
+                onToggleComplete={handleToggleComplete}
+                onUpdateTask={handleUpdateTask}
+              />
             </div>
           </div>
         </div>
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-slate-800/70 mt-8 py-4 text-center text-xs text-slate-700">
+      <footer className="py-4 text-center text-xs text-slate-500">
         Powered by Compatible AI API · 四象限法则（Eisenhower Matrix）
       </footer>
 
