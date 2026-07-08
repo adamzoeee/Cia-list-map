@@ -41,7 +41,7 @@ export default function ActionPanel({ tasks }: Props) {
 
       {topTasks.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-6 text-center">
-          <div className="w-12 h-12 rounded-2xl bg-emerald-400/10 border border-emerald-400/20 flex items-center justify-center mb-3">
+          <div className="neu-raised-sm w-12 h-12 rounded-2xl flex items-center justify-center mb-3 border-emerald-400/15">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#34d399" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
               <polyline points="22 4 12 14.01 9 11.01" />
@@ -57,12 +57,14 @@ export default function ActionPanel({ tasks }: Props) {
             return (
               <div
                 key={task.id}
-                className="flex items-center gap-3 rounded-xl border border-slate-800/60 bg-slate-900/50 px-3 py-2.5"
+                className="neu-raised-sm flex items-center gap-3 rounded-xl px-3 py-2.5"
               >
                 <span
                   className={cn(
                     'flex-shrink-0 w-5 h-5 rounded-md flex items-center justify-center text-[10px] font-bold',
-                    idx === 0 ? 'bg-cyan-400/15 text-cyan-300 border border-cyan-400/25' : 'bg-slate-800 text-slate-400',
+                    idx === 0
+                      ? 'border border-cyan-400/20 text-cyan-300 shadow-[0_0_8px_rgba(34,211,238,0.12)]'
+                      : 'bg-white/3 text-slate-400 shadow-[inset_1px_1px_2px_rgba(0,0,0,0.3)]',
                   )}
                 >
                   {idx + 1}
@@ -91,9 +93,9 @@ export default function ActionPanel({ tasks }: Props) {
       )}
 
       {/* Motivation */}
-      <div className="mt-4 pt-3 border-t border-slate-800/60">
+      <div className="mt-4 pt-3" style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
         <p className="text-xs text-slate-400 italic text-center leading-relaxed">
-          “{motivation}”
+          "{motivation}"
         </p>
       </div>
     </Panel>

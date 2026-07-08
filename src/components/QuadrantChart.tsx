@@ -1,4 +1,5 @@
 import { useRef, useEffect, useState, useCallback } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
 import type { Task, QuadrantInfo } from '../types';
 
 const QUADRANTS: QuadrantInfo[] = [
@@ -66,7 +67,7 @@ export default function QuadrantChart({ tasks, onTaskClick, selectedTaskId }: Pr
   const measure = useCallback(() => {
     if (containerRef.current) {
       const w = containerRef.current.clientWidth;
-      const size = Math.min(w, 500);
+      const size = w;
       setDims({ width: size, height: size });
     }
   }, []);
@@ -82,12 +83,12 @@ export default function QuadrantChart({ tasks, onTaskClick, selectedTaskId }: Pr
   const plotW = width - margin * 2;
   const plotH = height - margin * 2;
 
-  const toX = (urgency: number) => margin + (urgency / 10) * plotW;
-  const toY = (importance: number) => margin + plotH - (importance / 10) * plotH;
+  const toX = (urgency: number) => margin + ((urgency + 5) / 10) * plotW;
+  const toY = (importance: number) => margin + plotH - ((importance + 5) / 10) * plotH;
 
   // Axis ticks
-  const xTicks = [0, 2, 4, 6, 8, 10];
-  const yTicks = [0, 2, 4, 6, 8, 10];
+  const xTicks = [-5, -3, -1, 0, 1, 3, 5];
+  const yTicks = [-5, -3, -1, 0, 1, 3, 5];
 
   return (
     <div ref={containerRef} className="w-full">
@@ -160,10 +161,11 @@ export default function QuadrantChart({ tasks, onTaskClick, selectedTaskId }: Pr
         </text>
 
         {/* Task cards */}
-        {tasks.map((task) => {
+        <AnimatePresence>
+          {tasks.map((task) => {
           const cx = toX(task.urgency);
           const cy = toY(task.importance);
-          const isSelected = task.id === selectedTaskId && !task.completed;
+          const isSelected = task.id === selectedTaskId;
           const qColor = QUADRANTS.find(q => q.id === task.quadrant)?.color || '#6b7280';
           const cardW = tasks.length > 14 ? 88 : 108;
           const cardH = tasks.length > 14 ? 36 : 42;
@@ -175,14 +177,16 @@ export default function QuadrantChart({ tasks, onTaskClick, selectedTaskId }: Pr
           const meta = timeHint
             ? `U${task.urgency} · I${task.importance} · ${shortText(timeHint, 4)}`
             : `U${task.urgency} · I${task.importance}`;
-          const baseOpacity = task.completed ? 0.35 : 1;
 
           return (
-            <g
+            <motion.g
               key={task.id}
               onClick={() => onTaskClick(task)}
-              className="cursor-pointer transition-transform"
-              opacity={baseOpacity}
+              className="cursor-pointer"
+              initial={{ opacity: 0, scale: 0.6, y: -8 }}
+              animate={{ opacity: 1, scale: 1, y: 0, transition: { type: 'spring', stiffness: 400, damping: 22 } }}
+              exit={{ opacity: 0, scale: 1.5, y: -12, transition: { duration: 0.4, ease: 'easeOut' } }}
+              style={{ transformOrigin: `${cardX + cardW / 2}px ${cardY + cardH / 2}px` }}
             >
               {isSelected && (
                 <rect
@@ -212,7 +216,7 @@ export default function QuadrantChart({ tasks, onTaskClick, selectedTaskId }: Pr
                 width={cardW - 2}
                 height={cardH - 2}
                 rx={11}
-                fill="#020617"
+                fill="#111827"
                 opacity={isSelected ? 0.72 : 0.62}
               />
               <rect
@@ -233,17 +237,6 @@ export default function QuadrantChart({ tasks, onTaskClick, selectedTaskId }: Pr
                 style={{ pointerEvents: 'none' }}>
                 {title}
               </text>
-              {task.completed && (
-                <line
-                  x1={cardX + 16}
-                  y1={cardY + (tasks.length > 14 ? 14 : 16) - 1}
-                  x2={cardX + 16 + title.length * (tasks.length > 14 ? 5.4 : 6.3)}
-                  y2={cardY + (tasks.length > 14 ? 14 : 16) - 1}
-                  stroke="#94a3b8"
-                  strokeWidth={1}
-                  opacity={0.7}
-                />
-              )}
               <text
                 x={cardX + 16}
                 y={cardY + (tasks.length > 14 ? 28 : 32)}
@@ -254,16 +247,12 @@ export default function QuadrantChart({ tasks, onTaskClick, selectedTaskId }: Pr
                 style={{ pointerEvents: 'none' }}>
                 {meta}
               </text>
-              {task.completed && (
-                <g transform={`translate(${cardX + cardW - 14}, ${cardY + 4})`}>
-                  <circle cx="5" cy="5" r="5" fill="#10b981" opacity={0.9} />
-                  <polyline points="2.5,5 4,6.5 7.5,3.5" fill="none" stroke="#020617" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
-                </g>
-              )}
-              <title>{`${task.title}${task.completed ? ' (已完成)' : ''}\n紧迫度 ${task.urgency} · 重要性 ${task.importance}${timeHint ? ` · ${timeHint}` : ''}`}</title>
-            </g>
+              <title>{`${task.title}
+紧迫度 ${task.urgency} · 重要性 ${task.importance}${timeHint ? ` · ${timeHint}` : ''}`}</title>
+            </motion.g>
           );
         })}
+        </AnimatePresence>
       </svg>
     </div>
   );

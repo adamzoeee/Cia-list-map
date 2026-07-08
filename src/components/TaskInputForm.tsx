@@ -116,25 +116,27 @@ export default function TaskInputForm({ onSubmit, onImageSubmit, loading, loadin
 
   return (
     <Panel className="p-4">
-      {/* Mode tabs */}
-      <div className="mb-3 flex gap-1 rounded-xl border border-slate-800 bg-slate-950/60 p-1">
+      {/* Mode tabs — neumorphic inset track */}
+      <div className="mb-3 flex gap-1 rounded-xl p-1 neu-inset">
         <button
           onClick={() => setMode('text')}
-          className={`flex-1 rounded-lg py-1.5 text-xs font-medium transition-colors ${
+          className={cn(
+            'flex-1 rounded-lg py-1.5 text-xs font-medium transition-all',
             mode === 'text'
-              ? 'bg-cyan-400/15 text-cyan-100'
-              : 'text-slate-500 hover:text-slate-200'
-          }`}
+              ? 'neu-raised-sm text-cyan-100'
+              : 'text-slate-500 hover:text-slate-200',
+          )}
         >
           文字输入
         </button>
         <button
           onClick={() => setMode('image')}
-          className={`flex-1 rounded-lg py-1.5 text-xs font-medium transition-colors ${
+          className={cn(
+            'flex-1 rounded-lg py-1.5 text-xs font-medium transition-all',
             mode === 'image'
-              ? 'bg-cyan-400/15 text-cyan-100'
-              : 'text-slate-500 hover:text-slate-200'
-          }`}
+              ? 'neu-raised-sm text-cyan-100'
+              : 'text-slate-500 hover:text-slate-200',
+          )}
           title="上传截图或手写任务单，本地 OCR 后交给当前 API 分类"
         >
           图片识别
@@ -187,12 +189,12 @@ export default function TaskInputForm({ onSubmit, onImageSubmit, loading, loadin
               onDragLeave={() => setDragOver(false)}
               onClick={loading ? undefined : () => fileInputRef.current?.click()}
               className={cn(
-                'rounded-2xl border border-dashed p-6 text-center transition-colors',
+                'neu-inset rounded-2xl border-dashed p-6 text-center transition-all',
                 loading
-                  ? 'cursor-not-allowed border-cyan-400/40 bg-slate-900/60'
+                  ? 'cursor-not-allowed border-cyan-400/20'
                   : dragOver
-                    ? 'cursor-pointer border-cyan-400 bg-cyan-400/10'
-                    : 'cursor-pointer border-slate-700 bg-slate-950/50 hover:border-slate-500',
+                    ? 'cursor-pointer !border-cyan-400 !shadow-[inset_3px_3px_8px_rgba(0,0,0,0.3),inset_-2px_-2px_5px_rgba(255,255,255,0.02),0_0_16px_rgba(34,211,238,0.15)]'
+                    : 'cursor-pointer border-white/8 hover:border-white/15',
               )}
             >
               {loading ? (
@@ -226,11 +228,11 @@ export default function TaskInputForm({ onSubmit, onImageSubmit, loading, loadin
             </div>
           ) : (
             <div className="space-y-3">
-              <div className="relative rounded-xl overflow-hidden border border-gray-700">
-                <img src={previewUrl} alt="预览" className="w-full max-h-64 object-contain bg-gray-800" />
+              <div className="neu-raised-sm relative rounded-xl overflow-hidden">
+                <img src={previewUrl} alt="预览" className="w-full max-h-64 object-contain bg-[#0a0f1a]" />
                 <button
                   onClick={handleClearImage}
-                  className="absolute top-2 right-2 w-7 h-7 bg-gray-900/80 text-gray-300 rounded-full flex items-center justify-center hover:bg-red-900/80 hover:text-red-300 transition-colors text-xs"
+                  className="absolute top-2 right-2 w-7 h-7 bg-black/60 text-slate-300 rounded-full flex items-center justify-center hover:bg-red-900/80 hover:text-red-300 transition-colors text-xs"
                 >
                   ✕
                 </button>
@@ -254,7 +256,7 @@ export default function TaskInputForm({ onSubmit, onImageSubmit, loading, loadin
                 )}
               </Button>
               {loading && loadingMessage && (
-                <p className="text-xs text-gray-500 text-center">{loadingMessage}</p>
+                <p className="text-xs text-slate-500 text-center">{loadingMessage}</p>
               )}
             </div>
           )}

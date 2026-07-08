@@ -1,30 +1,151 @@
 @import "tailwindcss";
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-track {
-  background: #020617;
-}
-::-webkit-scrollbar-thumb {
-  background: #334155;
-  border-radius: 3px;
+/* =============================================
+   Dark Neumorphism Foundation
+   Base surface: slate-900 (#111827)
+   ============================================= */
+
+:root {
+  --neu-bg: #111827;
+  --neu-bg-lighter: #1a2332;
+  --neu-shadow-dark: rgba(0, 0, 0, 0.45);
+  --neu-shadow-light: rgba(255, 255, 255, 0.025);
+  --neu-shadow-light-strong: rgba(255, 255, 255, 0.04);
 }
 
-/* Smooth transitions */
+/* --- Global --- */
 * {
-  transition: background-color 0.2s, border-color 0.2s;
+  transition: background-color 0.25s, border-color 0.25s, box-shadow 0.25s;
 }
 
 body {
   min-width: 320px;
-  background: #020617;
+  background: var(--neu-bg);
+  color: #e2e8f0;
 }
 
-/* Quadrant grid lines */
-.quadrant-grid {
-  background-image:
-    linear-gradient(to right, #374151 1px, transparent 1px),
-    linear-gradient(to bottom, #374151 1px, transparent 1px);
+/* --- Custom scrollbar (neumorphic) --- */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--neu-bg);
+  box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 3px;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3), -1px -1px 2px rgba(255,255,255,0.02);
+}
+
+/* =============================================
+   Neumorphism Utility Classes
+   ============================================= */
+
+/* Raised / convex surface — cards, panels */
+.neu-raised {
+  background: var(--neu-bg);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  box-shadow:
+    6px 6px 14px var(--neu-shadow-dark),
+    -4px -4px 10px var(--neu-shadow-light);
+}
+
+.neu-raised-sm {
+  background: var(--neu-bg);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  box-shadow:
+    4px 4px 10px var(--neu-shadow-dark),
+    -2px -2px 6px var(--neu-shadow-light);
+}
+
+/* Raised with stronger highlight — for hover states */
+.neu-raised-hover:hover {
+  box-shadow:
+    8px 8px 18px rgba(0, 0, 0, 0.5),
+    -5px -5px 12px rgba(255, 255, 255, 0.035);
+}
+
+/* Inset / concave surface — inputs, textareas */
+.neu-inset {
+  background: var(--neu-bg);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  box-shadow:
+    inset 3px 3px 8px var(--neu-shadow-dark),
+    inset -2px -2px 5px var(--neu-shadow-light);
+}
+
+/* Inset deeper — for selected/pressed states */
+.neu-pressed {
+  box-shadow:
+    inset 4px 4px 10px rgba(0, 0, 0, 0.55),
+    inset -2px -2px 5px rgba(255, 255, 255, 0.015) !important;
+}
+
+/* Neumorphic button — raised by default, pressed on :active */
+.neu-btn {
+  background: var(--neu-bg);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  box-shadow:
+    5px 5px 12px var(--neu-shadow-dark),
+    -3px -3px 8px var(--neu-shadow-light);
+  transition: box-shadow 0.15s, transform 0.1s, background-color 0.2s;
+}
+
+.neu-btn:hover {
+  box-shadow:
+    7px 7px 16px rgba(0, 0, 0, 0.5),
+    -4px -4px 10px rgba(255, 255, 255, 0.035);
+}
+
+.neu-btn:active {
+  box-shadow:
+    inset 3px 3px 8px rgba(0, 0, 0, 0.5),
+    inset -2px -2px 5px rgba(255, 255, 255, 0.015);
+  transform: scale(0.98);
+}
+
+/* Primary accent button — with cyan tint */
+.neu-btn-accent {
+  background: rgba(34, 211, 238, 0.06);
+  border: 1px solid rgba(34, 211, 238, 0.15);
+  box-shadow:
+    5px 5px 12px rgba(0, 0, 0, 0.4),
+    -3px -3px 8px rgba(34, 211, 238, 0.05);
+}
+
+.neu-btn-accent:hover {
+  background: rgba(34, 211, 238, 0.1);
+  box-shadow:
+    7px 7px 16px rgba(0, 0, 0, 0.45),
+    -4px -4px 10px rgba(34, 211, 238, 0.08);
+}
+
+.neu-btn-accent:active {
+  box-shadow:
+    inset 3px 3px 8px rgba(0, 0, 0, 0.45),
+    inset -2px -2px 5px rgba(34, 211, 238, 0.02);
+  transform: scale(0.98);
+}
+
+/* Neumorphic selected state — subtle inset glow */
+.neu-selected {
+  border-color: rgba(34, 211, 238, 0.3) !important;
+  box-shadow:
+    inset 2px 2px 6px rgba(0, 0, 0, 0.3),
+    0 0 14px rgba(34, 211, 238, 0.1),
+    4px 4px 10px rgba(0, 0, 0, 0.3),
+    -2px -2px 6px rgba(255, 255, 255, 0.02) !important;
+}
+
+/* Divider line — subtle groove */
+.neu-divider {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.04),
+    transparent
+  );
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
 }
