@@ -1,0 +1,3650 @@
+[
+  {
+    "title": "十天后想去天台吹风发呆",
+    "description": "",
+    "urgency": 0,
+    "importance": 1
+  },
+  {
+    "title": "三天后《广告学》提案展示需设计平面稿和文",
+    "description": "案",
+    "urgency": 4,
+    "importance": 2
+  },
+  {
+    "title": "八天后想整理一下旧杂志剪报",
+    "description": "",
+    "urgency": 1,
+    "importance": -2
+  },
+  {
+    "title": "独居者整理阳台花架",
+    "description": "",
+    "urgency": -3,
+    "importance": 1
+  },
+  {
+    "title": "下周某视频平台有免费会员体验一天看看剧",
+    "description": "",
+    "urgency": 2,
+    "importance": 0
+  },
+  {
+    "title": "小学女儿参加校运动会",
+    "description": "",
+    "urgency": 2,
+    "importance": 2
+  },
+  {
+    "title": "代替产品经理参加\"用户吐槽大会\"并记录",
+    "description": "",
+    "urgency": 4,
+    "importance": -2
+  },
+  {
+    "title": "下周有个免费线上烹饪课学一道菜",
+    "description": "",
+    "urgency": 2,
+    "importance": 1
+  },
+  {
+    "title": "优化\"拼多多\"果园浇水任务积分算法",
+    "description": "",
+    "urgency": 5,
+    "importance": 3
+  },
+  {
+    "title": "八天后想听一期哲学播客催眠",
+    "description": "",
+    "urgency": 1,
+    "importance": 0
+  },
+  {
+    "title": "大学生女儿选调生体检",
+    "description": "",
+    "urgency": -1,
+    "importance": 5
+  },
+  {
+    "title": "两个月后想去爬山看红叶但时间还早",
+    "description": "",
+    "urgency": -2,
+    "importance": 2
+  },
+  {
+    "title": "招商证券\"智远理财\"投顾服务费扣款,9月",
+    "description": "10日,每月200元",
+    "urgency": 0,
+    "importance": 2
+  },
+  {
+    "title": "下周某音乐App有新歌榜单听一下",
+    "description": "",
+    "urgency": 2,
+    "importance": 1
+  },
+  {
+    "title": "审核\"亿纬锂能\"电池针刺测试报告",
+    "description": "",
+    "urgency": 4,
+    "importance": 4
+  },
+  {
+    "title": "个人所得税\"继续教育\"扣除(博士在读)需",
+    "description": "在7月25日提交学籍证明",
+    "urgency": 4,
+    "importance": 3
+  },
+  {
+    "title": "四天后截止的\"互联网+\"创新创业大赛院赛",
+    "description": "提交商业计划书",
+    "urgency": 4,
+    "importance": 3
+  },
+  {
+    "title": "七天后校心理情景剧大赛初赛彩排需确认道具",
+    "description": "和音效",
+    "urgency": 2,
+    "importance": 1
+  },
+  {
+    "title": "今晚原神做每日任务顺便采点矿",
+    "description": "",
+    "urgency": 5,
+    "importance": -1
+  },
+  {
+    "title": "下周有个免费线上画画课水一下",
+    "description": "",
+    "urgency": 2,
+    "importance": 0
+  },
+  {
+    "title": "省肿瘤医院肿瘤标志物异常患者PET-CT",
+    "description": "复诊（CEA持续升高）",
+    "urgency": -3,
+    "importance": 5
+  },
+  {
+    "title": "长期未用的\"苏宁易购\"零钱宝余额23元",
+    "description": "",
+    "urgency": -1,
+    "importance": 0
+  },
+  {
+    "title": "独居青年清理冰箱过期食品",
+    "description": "",
+    "urgency": -3,
+    "importance": 1
+  },
+  {
+    "title": "携程\"金融\"拿去花信用付账单,应还2,7",
+    "description": "80元,8月16日",
+    "urgency": 2,
+    "importance": 2
+  },
+  {
+    "title": "浙江省人民医院骨科运动康复训练（前交叉韧",
+    "description": "带重建术后第6周，角度训练）",
+    "urgency": 3,
+    "importance": 4
+  },
+  {
+    "title": "今晚原神刷苍白本出了个攻击沙",
+    "description": "",
+    "urgency": 5,
+    "importance": 2
+  },
+  {
+    "title": "小学儿子参加校级足球联赛",
+    "description": "",
+    "urgency": 2,
+    "importance": 2
+  },
+  {
+    "title": "向\"港华燃气\"交付SCADA系统冗余切换",
+    "description": "方案",
+    "urgency": 5,
+    "importance": 4
+  },
+  {
+    "title": "二十天后想给盆栽浇点水但还不干",
+    "description": "",
+    "urgency": -1,
+    "importance": -1
+  },
+  {
+    "title": "幼儿园孩子六一儿童节表演彩排",
+    "description": "",
+    "urgency": 5,
+    "importance": 3
+  },
+  {
+    "title": "中学儿子逃课上网",
+    "description": "",
+    "urgency": -3,
+    "importance": 3
+  },
+  {
+    "title": "今晚逛闲鱼看二手书但最后没买",
+    "description": "",
+    "urgency": 4,
+    "importance": 0
+  },
+  {
+    "title": "五十天后想去一个冷门博物馆但可去可不去",
+    "description": "",
+    "urgency": -2,
+    "importance": 1
+  },
+  {
+    "title": "学龄前孩子入托体检报告领取",
+    "description": "",
+    "urgency": 1,
+    "importance": 3
+  },
+  {
+    "title": "七天后某公众号有投票抽奖参与一下",
+    "description": "",
+    "urgency": 3,
+    "importance": -2
+  },
+  {
+    "title": "新婚夫妻一起种花",
+    "description": "",
+    "urgency": 4,
+    "importance": 2
+  },
+  {
+    "title": "保研预推免面试还有65天复习专业课核心",
+    "description": "",
+    "urgency": 1,
+    "importance": 5
+  },
+  {
+    "title": "母亲骨质疏松检查",
+    "description": "",
+    "urgency": -1,
+    "importance": 4
+  },
+  {
+    "title": "设计\"小米\"汽车购车意向分析漏斗",
+    "description": "",
+    "urgency": 2,
+    "importance": 3
+  },
+  {
+    "title": "花呗\"超限\"额度使用费扣费,欠款450元",
+    "description": "",
+    "urgency": -2,
+    "importance": 1
+  },
+  {
+    "title": "北京协和医院心内科门诊挂号已过期（心肌炎",
+    "description": "恢复期随访，应于2026-07-05就诊）",
+    "urgency": -4,
+    "importance": 4
+  },
+  {
+    "title": "社区健康档案年度更新及中医体质辨识（免费",
+    "description": "项目：舌诊脉诊）",
+    "urgency": 1,
+    "importance": 1
+  },
+  {
+    "title": "父亲高血压药物调整",
+    "description": "",
+    "urgency": -2,
+    "importance": 4
+  },
+  {
+    "title": "组织\"特斯拉\"供应商质量改善周会",
+    "description": "",
+    "urgency": 3,
+    "importance": 3
+  },
+  {
+    "title": "金域医学检验所冠心病风险相关基因检测（A",
+    "description": "poE基因型，SLCO1B1多态性）",
+    "urgency": 0,
+    "importance": 3
+  },
+  {
+    "title": "农业银行信用卡\"备用金\"利息扣款,逾期8",
+    "description": "0元",
+    "urgency": -2,
+    "importance": 1
+  },
+  {
+    "title": "考研冲刺模拟考还有95天每周末一次全真",
+    "description": "",
+    "urgency": 1,
+    "importance": 5
+  },
+  {
+    "title": "易方达\"蓝筹精选\"基金申购费率优惠(1折",
+    "description": ")12月31日截止",
+    "urgency": 0,
+    "importance": 2
+  },
+  {
+    "title": "帮市场部核对\"双十一\"促销海报上的错别字",
+    "description": "（非本职工作）",
+    "urgency": 2,
+    "importance": -2
+  },
+  {
+    "title": "大学生女儿毕业照约拍",
+    "description": "",
+    "urgency": 0,
+    "importance": 2
+  },
+  {
+    "title": "处理\"微医\"在线挂号系统并发拥堵",
+    "description": "",
+    "urgency": 4,
+    "importance": 4
+  },
+  {
+    "title": "小学儿子参加市青少年武术比赛",
+    "description": "",
+    "urgency": 2,
+    "importance": 3
+  },
+  {
+    "title": "幼儿园孩子学数水果",
+    "description": "",
+    "urgency": 4,
+    "importance": 2
+  },
+  {
+    "title": "家中纱窗破损更换",
+    "description": "",
+    "urgency": -4,
+    "importance": 2
+  },
+  {
+    "title": "去\"邮储银行\"办理对公账户年检",
+    "description": "",
+    "urgency": 0,
+    "importance": -1
+  },
+  {
+    "title": "半个月后有个线上狼人杀新手局",
+    "description": "",
+    "urgency": -1,
+    "importance": 0
+  },
+  {
+    "title": "今晚原神打无相之火掉了个火伤杯",
+    "description": "",
+    "urgency": 5,
+    "importance": 2
+  },
+  {
+    "title": "家中窗帘杆掉落维修",
+    "description": "",
+    "urgency": -4,
+    "importance": 2
+  },
+  {
+    "title": "帮HR\"整理档案\"（纸质）",
+    "description": "",
+    "urgency": 0,
+    "importance": -2
+  },
+  {
+    "title": "参加\"健步走\"活动凑步数（强制）",
+    "description": "",
+    "urgency": 2,
+    "importance": -4
+  },
+  {
+    "title": "今晚刷抖音看宠物视频治愈",
+    "description": "",
+    "urgency": 4,
+    "importance": 2
+  },
+  {
+    "title": "海尔消费金融\"够花\"贷款第9期逾期,应还",
+    "description": "2,100元",
+    "urgency": -3,
+    "importance": 3
+  },
+  {
+    "title": "好大夫在线图文问诊包月服务自动续费扣款前",
+    "description": "通知（可取消）",
+    "urgency": 0,
+    "importance": 0
+  },
+  {
+    "title": "建设银行\"建信理财\"年度报告,1月20日",
+    "description": "",
+    "urgency": 0,
+    "importance": 2
+  },
+  {
+    "title": "微信\"理财通\"中\"平安养老\"产品到期赎回",
+    "description": ",12月10日",
+    "urgency": 0,
+    "importance": 3
+  },
+  {
+    "title": "五十天后想去看一场话剧但可选时间很多",
+    "description": "",
+    "urgency": -2,
+    "importance": 1
+  },
+  {
+    "title": "秋招群面模拟训练还有70天每周两次线上",
+    "description": "",
+    "urgency": 1,
+    "importance": 4
+  },
+  {
+    "title": "爷爷前列腺手术复查",
+    "description": "",
+    "urgency": -2,
+    "importance": 5
+  },
+  {
+    "title": "天天基金\"超级转换\"功能升级,需签署新协",
+    "description": "议,11月10日",
+    "urgency": 0,
+    "importance": 2
+  },
+  {
+    "title": "独自种的多肉植物生虫需打药",
+    "description": "",
+    "urgency": -4,
+    "importance": 1
+  },
+  {
+    "title": "明天某外卖红包过期前点一杯奶茶",
+    "description": "",
+    "urgency": 4,
+    "importance": -1
+  },
+  {
+    "title": "去\"公证处\"办证据保全",
+    "description": "",
+    "urgency": 1,
+    "importance": -1
+  },
+  {
+    "title": "下周某音乐App有歌手新歌首发听一下",
+    "description": "",
+    "urgency": 2,
+    "importance": 1
+  },
+  {
+    "title": "家中淋浴喷头堵塞清理",
+    "description": "",
+    "urgency": -4,
+    "importance": 1
+  },
+  {
+    "title": "独居青年修理自行车刹车",
+    "description": "",
+    "urgency": -3,
+    "importance": 1
+  },
+  {
+    "title": "评审\"兆易创新\"MCU芯片替代测试方案",
+    "description": "",
+    "urgency": 2,
+    "importance": 4
+  },
+  {
+    "title": "向\"南方航空\"交付飞行员疲劳监测系统",
+    "description": "",
+    "urgency": 3,
+    "importance": 5
+  },
+  {
+    "title": "考研冲刺阶段还有55天开始政治主观题背诵",
+    "description": "每天两小时",
+    "urgency": 3,
+    "importance": 5
+  },
+  {
+    "title": "北京仲裁委员会(2026)京仲案字第11",
+    "description": "2号仲裁费缴纳截止日已过",
+    "urgency": -4,
+    "importance": 5
+  },
+  {
+    "title": "参加\"舞蹈课\"企业文化活动（强制）",
+    "description": "",
+    "urgency": 2,
+    "importance": -4
+  },
+  {
+    "title": "去年买的家庭财产保险续保提醒",
+    "description": "",
+    "urgency": -4,
+    "importance": 2
+  },
+  {
+    "title": "大物实验报告迟交三天被扣分但仍需提交存档",
+    "description": "",
+    "urgency": 2,
+    "importance": 3
+  },
+  {
+    "title": "新婚夫妻购买咖啡壶",
+    "description": "",
+    "urgency": 4,
+    "importance": 2
+  },
+  {
+    "title": "给\"来访客户\"倒水递烟（接待礼仪）",
+    "description": "",
+    "urgency": 1,
+    "importance": -2
+  },
+  {
+    "title": "家中微波炉不加热，维修",
+    "description": "",
+    "urgency": -4,
+    "importance": 3
+  },
+  {
+    "title": "抖音\"健身跟练\"刘畊宏直播跟练打卡赢奖品",
+    "description": "活动今晚截止",
+    "urgency": 3,
+    "importance": 0
+  },
+  {
+    "title": "苏州银行\"苏心贷\"利率调整,9月25日执",
+    "description": "行新利率",
+    "urgency": 0,
+    "importance": 3
+  },
+  {
+    "title": "校园卡丢失后挂失超时补办需多交手续费",
+    "description": "",
+    "urgency": 3,
+    "importance": 1
+  },
+  {
+    "title": "法院\"执行通知书\"(2026)粤0106",
+    "description": "执8800号,限7日内履行",
+    "urgency": -5,
+    "importance": 5
+  },
+  {
+    "title": "美团买药\"满200减30\"优惠券失效（可",
+    "description": "用于购买辅酶Q10保健品）",
+    "urgency": -4,
+    "importance": -1
+  },
+  {
+    "title": "办理新办公区的门禁权限开通流程",
+    "description": "",
+    "urgency": -2,
+    "importance": 0
+  },
+  {
+    "title": "参加\"军训\"汇报表演",
+    "description": "",
+    "urgency": 2,
+    "importance": -4
+  },
+  {
+    "title": "明天原神刷武器材料本缺体力",
+    "description": "",
+    "urgency": 4,
+    "importance": -2
+  },
+  {
+    "title": "六天后帮朋友砍拼多多差零点零一元",
+    "description": "",
+    "urgency": 3,
+    "importance": -3
+  },
+  {
+    "title": "复旦大学附属肿瘤医院乳腺癌术后内分泌治疗",
+    "description": "满5年停药评估（门诊挂号）",
+    "urgency": 4,
+    "importance": 5
+  },
+  {
+    "title": "解决\"新浪微博\"热搜榜单刷新延迟",
+    "description": "",
+    "urgency": 5,
+    "importance": 4
+  },
+  {
+    "title": "帮助保洁阿姨推垃圾车（被领导看见）",
+    "description": "",
+    "urgency": 1,
+    "importance": -2
+  },
+  {
+    "title": "中年夫妻更换玻璃胶",
+    "description": "",
+    "urgency": -4,
+    "importance": 1
+  },
+  {
+    "title": "幼儿园孩子肺炎疫苗第二针接种",
+    "description": "",
+    "urgency": 5,
+    "importance": 4
+  },
+  {
+    "title": "二十天后想学一个魔术但没啥用",
+    "description": "",
+    "urgency": 0,
+    "importance": 1
+  },
+  {
+    "title": "陪审计人员吃饭应酬（不得不去）",
+    "description": "",
+    "urgency": 3,
+    "importance": -3
+  },
+  {
+    "title": "新华保险\"多倍保\"重疾险生日前加保截止（",
+    "description": "年龄增长费率上调）",
+    "urgency": -2,
+    "importance": 4
+  },
+  {
+    "title": "周末想去图书馆随便翻翻书",
+    "description": "",
+    "urgency": 2,
+    "importance": 1
+  },
+  {
+    "title": "广州呼吸健康研究院肺移植术后闭塞性细支气",
+    "description": "管炎综合征（BOS）肺功能监测",
+    "urgency": -4,
+    "importance": 5
+  },
+  {
+    "title": "中年夫妻商量孩子大学费用",
+    "description": "",
+    "urgency": -4,
+    "importance": 5
+  },
+  {
+    "title": "三甲医院陪诊服务预约（为家中老人提供核磁",
+    "description": "共振检查陪同）",
+    "urgency": -1,
+    "importance": 2
+  },
+  {
+    "title": "家中电路跳闸检修",
+    "description": "",
+    "urgency": -4,
+    "importance": 3
+  },
+  {
+    "title": "陪领导\"钓鱼\"（周末应酬）",
+    "description": "",
+    "urgency": 0,
+    "importance": -3
+  },
+  {
+    "title": "呼和浩特市第一医院入职体检报告领取截止日",
+    "description": "已过（肝功能ALT超标复查通知）",
+    "urgency": -3,
+    "importance": 3
+  },
+  {
+    "title": "今晚八点前需在第二课堂系统报名志愿活动否",
+    "description": "则缺勤",
+    "urgency": 5,
+    "importance": -1
+  },
+  {
+    "title": "岳父糖尿病足",
+    "description": "",
+    "urgency": -2,
+    "importance": 5
+  },
+  {
+    "title": "大创项目中期检查还有两个月整理实验数据",
+    "description": "",
+    "urgency": 1,
+    "importance": 3
+  },
+  {
+    "title": "幼儿园孩子做贺卡送爸爸",
+    "description": "",
+    "urgency": 4,
+    "importance": 2
+  },
+  {
+    "title": "六天后想给朋友分享一首歌",
+    "description": "",
+    "urgency": 2,
+    "importance": 1
+  },
+  {
+    "title": "幼儿园孩子去动物园喂动物",
+    "description": "",
+    "urgency": 4,
+    "importance": 2
+  },
+  {
+    "title": "前天没去听学术讲座现在需补写观后感",
+    "description": "",
+    "urgency": 4,
+    "importance": -1
+  },
+  {
+    "title": "大学生儿子保研夏令营报名材料邮寄",
+    "description": "",
+    "urgency": -1,
+    "importance": 4
+  },
+  {
+    "title": "周末去逛宜家样板间幻想自己家",
+    "description": "",
+    "urgency": 2,
+    "importance": 1
+  },
+  {
+    "title": "爷爷白内障手术",
+    "description": "",
+    "urgency": -2,
+    "importance": 5
+  },
+  {
+    "title": "幼儿园孩子语言发育迟缓评估预约",
+    "description": "",
+    "urgency": 4,
+    "importance": 5
+  },
+  {
+    "title": "中学儿子与父母冷战，破冰",
+    "description": "",
+    "urgency": -3,
+    "importance": 2
+  },
+  {
+    "title": "今晚和平精英山谷地图刚枪",
+    "description": "",
+    "urgency": 5,
+    "importance": 1
+  },
+  {
+    "title": "美年大健康\"胶囊胃镜\"机器人检查特惠套餐",
+    "description": "预约结束",
+    "urgency": -2,
+    "importance": 3
+  },
+  {
+    "title": "独居者给虎皮兰施肥",
+    "description": "",
+    "urgency": -3,
+    "importance": 1
+  },
+  {
+    "title": "三天前刷短视频看减肥教程但没动",
+    "description": "",
+    "urgency": 2,
+    "importance": -3
+  },
+  {
+    "title": "盒马\"即食鸡胸肉\"多口味组合装限时特价结",
+    "description": "束（恢复原价）",
+    "urgency": 0,
+    "importance": -1
+  },
+  {
+    "title": "北京友谊医院小肠胶囊内镜检查（不明原因消",
+    "description": "化道出血）",
+    "urgency": -4,
+    "importance": 5
+  },
+  {
+    "title": "八天后想听一首老歌翻唱版",
+    "description": "",
+    "urgency": 1,
+    "importance": 1
+  },
+  {
+    "title": "新华保险\"健康无忧\"重大疾病险续保核保,",
+    "description": "11月5日",
+    "urgency": 0,
+    "importance": 4
+  },
+  {
+    "title": "五个月后想学一段舞蹈但肢体不协调",
+    "description": "",
+    "urgency": -3,
+    "importance": -1
+  },
+  {
+    "title": "半个月后宿舍安全卫生大检查需大扫除",
+    "description": "",
+    "urgency": 1,
+    "importance": 0
+  },
+  {
+    "title": "七天后某App签到换积分可以兑换纸巾",
+    "description": "",
+    "urgency": 3,
+    "importance": -2
+  },
+  {
+    "title": "悦读\"健身解剖\"图解书限时折扣最后1天（",
+    "description": "附赠训练计划）",
+    "urgency": 0,
+    "importance": 0
+  },
+  {
+    "title": "复旦大学附属妇产科医院更年期综合管理门诊",
+    "description": "激素替代治疗评估",
+    "urgency": -3,
+    "importance": 3
+  },
+  {
+    "title": "爷爷高血压随访",
+    "description": "",
+    "urgency": -2,
+    "importance": 4
+  },
+  {
+    "title": "九个月后想学习滑雪但怕冷",
+    "description": "",
+    "urgency": -4,
+    "importance": -1
+  },
+  {
+    "title": "家中吸顶灯更换",
+    "description": "",
+    "urgency": -4,
+    "importance": 2
+  },
+  {
+    "title": "丁香园临床用药指南关于GLP-1受体激动",
+    "description": "剂减重应用的科普直播回放即将下架",
+    "urgency": 0,
+    "importance": 0
+  },
+  {
+    "title": "去\"医院\"帮领导取体检报告",
+    "description": "",
+    "urgency": 1,
+    "importance": -1
+  },
+  {
+    "title": "帮同事拿外卖和快递（连续一周）",
+    "description": "",
+    "urgency": 1,
+    "importance": -2
+  },
+  {
+    "title": "个人所得税\"捐赠\"扣除需提交公益事业捐赠",
+    "description": "票据,8月29日",
+    "urgency": 1,
+    "importance": 3
+  },
+  {
+    "title": "后天早八点前需在教务系统完成本学期教学评",
+    "description": "价否则无法查成绩",
+    "urgency": 5,
+    "importance": 1
+  },
+  {
+    "title": "太平洋保险\"太平洋寿险\"重疾险续保,5月",
+    "description": "15日,保费5,500元",
+    "urgency": 0,
+    "importance": 4
+  },
+  {
+    "title": "中学女儿经期腹痛",
+    "description": "",
+    "urgency": -3,
+    "importance": 3
+  },
+  {
+    "title": "今天下午交《房地产估价》案例分析报告",
+    "description": "",
+    "urgency": 5,
+    "importance": 3
+  },
+  {
+    "title": "二十天后想学一个简单的硬币魔术",
+    "description": "",
+    "urgency": -1,
+    "importance": 1
+  },
+  {
+    "title": "今晚原神做传说任务看剧情挺有意思",
+    "description": "",
+    "urgency": 5,
+    "importance": 1
+  },
+  {
+    "title": "岳母腰椎术后康复",
+    "description": "",
+    "urgency": -2,
+    "importance": 4
+  },
+  {
+    "title": "七天后某公众号有投票抽奖几分钱",
+    "description": "",
+    "urgency": 3,
+    "importance": -3
+  },
+  {
+    "title": "学龄前孩子去农场摘草莓",
+    "description": "",
+    "urgency": 4,
+    "importance": 2
+  },
+  {
+    "title": "一个月后校龙舟赛需每天下午水上训练",
+    "description": "",
+    "urgency": 1,
+    "importance": 2
+  },
+  {
+    "title": "给领导女儿参加的比赛投票截图（行政强制要",
+    "description": "求）",
+    "urgency": 1,
+    "importance": -4
+  },
+  {
+    "title": "四十五天后想去一个植物园但可去可不去",
+    "description": "",
+    "urgency": -2,
+    "importance": 1
+  },
+  {
+    "title": "中年夫妻更换窗帘",
+    "description": "",
+    "urgency": -4,
+    "importance": 2
+  },
+  {
+    "title": "大学生儿子省考补录",
+    "description": "",
+    "urgency": -1,
+    "importance": 5
+  },
+  {
+    "title": "北京医院老年肌少症诊断试验（握力测量+6",
+    "description": "米步行速度+四肢骨骼肌指数）",
+    "urgency": -3,
+    "importance": 4
+  },
+  {
+    "title": "新婚夫妻购买豆浆机",
+    "description": "",
+    "urgency": 4,
+    "importance": 2
+  },
+  {
+    "title": "美团\"丽人\"头皮抗衰护理团购券使用截止（",
+    "description": "含毛囊检测）",
+    "urgency": 1,
+    "importance": -1
+  },
+  {
+    "title": "父亲慢阻肺吸氧设备检查",
+    "description": "",
+    "urgency": -2,
+    "importance": 5
+  },
+  {
+    "title": "保研夏令营申请材料准备还有70天需联系推",
+    "description": "荐信老师",
+    "urgency": 1,
+    "importance": 5
+  },
+  {
+    "title": "今晚逛逛橙色软件看手机壳但不买",
+    "description": "",
+    "urgency": 4,
+    "importance": 0
+  },
+  {
+    "title": "泰康人寿\"健康尊享\"高端医疗险体检服务包",
+    "description": "使用截止（含无痛胃肠镜）",
+    "urgency": -2,
+    "importance": 4
+  },
+  {
+    "title": "四天前为了领一个皮肤挂机了三小时",
+    "description": "",
+    "urgency": 2,
+    "importance": -3
+  },
+  {
+    "title": "帮财务贴发票（金额不对要重贴）",
+    "description": "",
+    "urgency": 0,
+    "importance": -2
+  },
+  {
+    "title": "乐刻健身\"团课预约\"爽约3次将冻结账号的",
+    "description": "规则调整缓冲期最后1天",
+    "urgency": 1,
+    "importance": 1
+  },
+  {
+    "title": "九天后某游戏更新新皮肤但我不打算买",
+    "description": "",
+    "urgency": 1,
+    "importance": -1
+  },
+  {
+    "title": "九天后想去楼下小卖部买根雪糕",
+    "description": "",
+    "urgency": 1,
+    "importance": 0
+  },
+  {
+    "title": "幼儿园孩子做感恩卡",
+    "description": "",
+    "urgency": 5,
+    "importance": 2
+  },
+  {
+    "title": "支付宝\"蚂蚁保\"好医保长期医疗续保,12",
+    "description": "月28日,扣费1,200元",
+    "urgency": 0,
+    "importance": 4
+  },
+  {
+    "title": "幼儿园孩子学比大小",
+    "description": "",
+    "urgency": 4,
+    "importance": 2
+  },
+  {
+    "title": "分析\"储能行业\"竞争格局（内部报告）",
+    "description": "",
+    "urgency": 0,
+    "importance": 2
+  },
+  {
+    "title": "独居者给君子兰擦叶",
+    "description": "",
+    "urgency": -3,
+    "importance": 1
+  },
+  {
+    "title": "广州医科大学第一附属医院慢阻肺肺康复训练",
+    "description": "8周计划第2周（呼吸肌训练）",
+    "urgency": -3,
+    "importance": 4
+  },
+  {
+    "title": "中年夫妻商议养老规划",
+    "description": "",
+    "urgency": -4,
+    "importance": 4
+  },
+  {
+    "title": "蚂蚁财富\"帮你投\"投顾服务年度报告生成,",
+    "description": "4月30日",
+    "urgency": 0,
+    "importance": 1
+  },
+  {
+    "title": "明天王者荣耀巅峰赛掉了一百分",
+    "description": "",
+    "urgency": 4,
+    "importance": -4
+  },
+  {
+    "title": "离形势与政策期末论文提交还有25天可选题",
+    "description": "为乡村振兴",
+    "urgency": 2,
+    "importance": 1
+  },
+  {
+    "title": "一个月后有个独立游戏试玩节线上参加",
+    "description": "",
+    "urgency": -1,
+    "importance": 2
+  },
+  {
+    "title": "新婚夫妻购买咖啡机",
+    "description": "",
+    "urgency": 3,
+    "importance": 2
+  },
+  {
+    "title": "后天上午《环境科学》课程报告需提交水质检",
+    "description": "测数据",
+    "urgency": 4,
+    "importance": 3
+  },
+  {
+    "title": "大学生女儿托福考试报名",
+    "description": "",
+    "urgency": -1,
+    "importance": 4
+  },
+  {
+    "title": "腾讯云\"对象存储\"套餐续费,年付1,20",
+    "description": "0元,4月10日到期",
+    "urgency": 0,
+    "importance": 2
+  },
+  {
+    "title": "前天玩了三个小时俄罗斯方块但没通关",
+    "description": "",
+    "urgency": 2,
+    "importance": -2
+  },
+  {
+    "title": "广发银行\"广发信用卡\"年费减免条件(消费",
+    "description": "满12笔)需核查,3月20日",
+    "urgency": 0,
+    "importance": 2
+  },
+  {
+    "title": "悦读\"健康养生\"电子杂志年订阅优惠最后1",
+    "description": "天（赠体质测评）",
+    "urgency": 0,
+    "importance": 0
+  },
+  {
+    "title": "工商银行\"融e购\"商城积分到期,11月5",
+    "description": "日清零,剩余4,500分",
+    "urgency": 0,
+    "importance": 0
+  },
+  {
+    "title": "解决\"自如\"租房APP支付失败",
+    "description": "",
+    "urgency": 4,
+    "importance": 3
+  },
+  {
+    "title": "十三天后校园歌手大赛海选提交伴奏和报名表",
+    "description": "",
+    "urgency": 2,
+    "importance": 1
+  },
+  {
+    "title": "九天后去超市买一瓶饮料然后闲逛",
+    "description": "",
+    "urgency": 1,
+    "importance": 0
+  },
+  {
+    "title": "去\"税务局\"大厅排队领发票（排了3小时）",
+    "description": "",
+    "urgency": 2,
+    "importance": -1
+  },
+  {
+    "title": "京东健康\"海外健康\"跨境保健品黑五预热优",
+    "description": "惠券领取截止",
+    "urgency": 1,
+    "importance": -1
+  },
+  {
+    "title": "今晚逛京东看手机但买不起",
+    "description": "",
+    "urgency": 4,
+    "importance": 0
+  },
+  {
+    "title": "紧急美化\"季度总结\"PPT（3小时改版式",
+    "description": "）",
+    "urgency": 4,
+    "importance": -1
+  },
+  {
+    "title": "美团优选\"即食玉米\"0脂健康零食限时拼团",
+    "description": "结束",
+    "urgency": 0,
+    "importance": -1
+  },
+  {
+    "title": "九天后想去公园长椅晒太阳",
+    "description": "",
+    "urgency": 1,
+    "importance": 2
+  },
+  {
+    "title": "后天上午《网店运营》实操课需上架商品",
+    "description": "",
+    "urgency": 4,
+    "importance": 1
+  },
+  {
+    "title": "上海东方肝胆外科医院胆囊癌扩大根治术后辅",
+    "description": "助化疗（吉西他滨+顺铂）第2周期",
+    "urgency": -4,
+    "importance": 5
+  },
+  {
+    "title": "制定\"蔚来\"换电站选址的GIS分析流程",
+    "description": "",
+    "urgency": 5,
+    "importance": 3
+  },
+  {
+    "title": "八天后打算把桌面整理一下但拖延",
+    "description": "",
+    "urgency": 1,
+    "importance": -2
+  },
+  {
+    "title": "七天后某游戏有节日兑换商店",
+    "description": "",
+    "urgency": 3,
+    "importance": -1
+  },
+  {
+    "title": "悦跑圈\"2026跑量王者\"年度挑战赛半程",
+    "description": "审核（需提交运动记录截图）",
+    "urgency": -1,
+    "importance": 1
+  },
+  {
+    "title": "编写\"海尔\"卡萨帝冰箱售后知识图谱",
+    "description": "",
+    "urgency": 2,
+    "importance": 3
+  },
+  {
+    "title": "新婚夫妻购买电饭煲",
+    "description": "",
+    "urgency": 4,
+    "importance": 2
+  },
+  {
+    "title": "评审\"图森未来\"自动驾驶卡车ODD定义",
+    "description": "",
+    "urgency": 2,
+    "importance": 4
+  },
+  {
+    "title": "祖母骨质疏松用药",
+    "description": "",
+    "urgency": -2,
+    "importance": 4
+  },
+  {
+    "title": "美元定期存款(存单号USD-2024-1",
+    "description": "0)到期日10月25日,本金2万美元,利率4.5%",
+    "urgency": -1,
+    "importance": 3
+  },
+  {
+    "title": "美团\"医美\"果酸焕肤术后修复产品套装优惠",
+    "description": "最后1天",
+    "urgency": 1,
+    "importance": -1
+  },
+  {
+    "title": "春雨医生\"儿科急诊\"图文咨询优惠券有效期",
+    "description": "最后1天",
+    "urgency": 1,
+    "importance": 1
+  },
+  {
+    "title": "紧急拦截\"滴滴出行\"支付接口的重复扣款故",
+    "description": "障",
+    "urgency": 5,
+    "importance": 5
+  },
+  {
+    "title": "三十五天后想玩一个解谜游戏但攻略太难",
+    "description": "",
+    "urgency": -2,
+    "importance": 1
+  },
+  {
+    "title": "瑞金医院无锡分院原发性醛固酮增多症盐水负",
+    "description": "荷试验（确诊检查）",
+    "urgency": -3,
+    "importance": 4
+  },
+  {
+    "title": "学龄前孩子去游泳馆学游泳",
+    "description": "",
+    "urgency": 4,
+    "importance": 2
+  },
+  {
+    "title": "九天后想去山坡上吹风",
+    "description": "",
+    "urgency": 1,
+    "importance": 1
+  },
+  {
+    "title": "小学女儿参加青少年围棋赛",
+    "description": "",
+    "urgency": 2,
+    "importance": 3
+  },
+  {
+    "title": "北京儿童医院甲基丙二酸血症（MMA）合并",
+    "description": "高同型半胱氨酸血症的羟钴胺治疗",
+    "urgency": -3,
+    "importance": 5
+  },
+  {
+    "title": "大学生儿子实习报告提交",
+    "description": "",
+    "urgency": 0,
+    "importance": 3
+  },
+  {
+    "title": "一个月后想玩一个像素风小游戏",
+    "description": "",
+    "urgency": -1,
+    "importance": 2
+  },
+  {
+    "title": "祖母慢阻肺定期吸氧",
+    "description": "",
+    "urgency": -2,
+    "importance": 5
+  },
+  {
+    "title": "今晚B站看一个小时的猫猫视频集锦",
+    "description": "",
+    "urgency": 5,
+    "importance": 1
+  },
+  {
+    "title": "中学儿子物理竞赛复赛准考证打印",
+    "description": "",
+    "urgency": 2,
+    "importance": 5
+  },
+  {
+    "title": "新浪\"微博钱包\"借款额度年检,10月18",
+    "description": "日",
+    "urgency": 0,
+    "importance": 3
+  },
+  {
+    "title": "独居者更换水龙头密封圈",
+    "description": "",
+    "urgency": -3,
+    "importance": 1
+  },
+  {
+    "title": "七天后某公众号有签到领红包一分钱",
+    "description": "",
+    "urgency": 3,
+    "importance": -3
+  },
+  {
+    "title": "中学儿子成绩下滑，请家教一对一",
+    "description": "",
+    "urgency": -2,
+    "importance": 4
+  },
+  {
+    "title": "编写\"上海电气\"风电齿轮箱故障预测论文（",
+    "description": "内刊）",
+    "urgency": 0,
+    "importance": 2
+  },
+  {
+    "title": "中学儿子偏科严重，请家教",
+    "description": "",
+    "urgency": -3,
+    "importance": 4
+  },
+  {
+    "title": "九天后想听一段白噪音助眠",
+    "description": "",
+    "urgency": 1,
+    "importance": 1
+  },
+  {
+    "title": "向\"中国中车\"提交牵引系统故障分析报告",
+    "description": "",
+    "urgency": 4,
+    "importance": 5
+  },
+  {
+    "title": "起草\"OPPO\"折叠屏UTG玻璃测试协议",
+    "description": "",
+    "urgency": 0,
+    "importance": 3
+  },
+  {
+    "title": "昨天刷B站看鬼畜视频笑到肚子疼但没啥用",
+    "description": "",
+    "urgency": 3,
+    "importance": 1
+  },
+  {
+    "title": "幼儿园孩子学刷牙",
+    "description": "",
+    "urgency": 4,
+    "importance": 2
+  },
+  {
+    "title": "乐刻健身\"月度挑战\"完成8次团课获手环活",
+    "description": "动最后1天",
+    "urgency": 2,
+    "importance": 1
+  },
+  {
+    "title": "处理\"东风日产\"车联网TSP平台数据断流",
+    "description": "",
+    "urgency": 3,
+    "importance": 4
+  },
+  {
+    "title": "九天后想去江边数船",
+    "description": "",
+    "urgency": 1,
+    "importance": 0
+  },
+  {
+    "title": "今晚逛淘宝看耳机但没买",
+    "description": "",
+    "urgency": 4,
+    "importance": 0
+  },
+  {
+    "title": "中国银联\"云闪付\"转账免手续费活动7月2",
+    "description": "3日截止,可省5元",
+    "urgency": 4,
+    "importance": 0
+  },
+  {
+    "title": "周末去旧货市场逛一圈",
+    "description": "",
+    "urgency": 2,
+    "importance": 0
+  },
+  {
+    "title": "大学生儿子考研政治背诵",
+    "description": "",
+    "urgency": -1,
+    "importance": 4
+  },
+  {
+    "title": "平安银行\"平安盈\"货币基金快速赎回额度调",
+    "description": "整,需在7月26日前确认",
+    "urgency": 4,
+    "importance": 2
+  },
+  {
+    "title": "一年后想开一个小红书账号分享生活但怕没人",
+    "description": "看",
+    "urgency": -4,
+    "importance": -2
+  },
+  {
+    "title": "今晚原神每日任务还没做但已经没体力",
+    "description": "",
+    "urgency": 5,
+    "importance": -2
+  },
+  {
+    "title": "北京天坛医院烟雾病脑血管搭桥术后CT灌注",
+    "description": "（CBF/CBV评估）",
+    "urgency": -4,
+    "importance": 5
+  },
+  {
+    "title": "北京天坛医院脑深部电刺激器（DBS）术后",
+    "description": "电池寿命远程监测",
+    "urgency": -4,
+    "importance": 5
+  },
+  {
+    "title": "华住会\"企业商旅\"月结账单,7月28日对",
+    "description": "账,金额5,600元",
+    "urgency": 3,
+    "importance": 2
+  },
+  {
+    "title": "新婚夫妻为父母买保健品",
+    "description": "",
+    "urgency": 4,
+    "importance": 3
+  },
+  {
+    "title": "上海瑞金医院转化型内分泌治疗前列腺癌PS",
+    "description": "A与睾酮联合监测",
+    "urgency": -4,
+    "importance": 5
+  },
+  {
+    "title": "前天玩合成大西瓜玩到半夜眼睛酸",
+    "description": "",
+    "urgency": 2,
+    "importance": -3
+  },
+  {
+    "title": "大学生儿子国考补录",
+    "description": "",
+    "urgency": -1,
+    "importance": 5
+  },
+  {
+    "title": "一年后想去跳伞但胆子小",
+    "description": "",
+    "urgency": -4,
+    "importance": -1
+  },
+  {
+    "title": "中学女儿考试紧张，做放松训练",
+    "description": "",
+    "urgency": -3,
+    "importance": 3
+  },
+  {
+    "title": "拼多多\"月卡\"优惠券今日过期,可领5元无",
+    "description": "门槛,但需当日使用",
+    "urgency": 2,
+    "importance": -2
+  },
+  {
+    "title": "中年夫妻协商给孩子买学习平板",
+    "description": "",
+    "urgency": -4,
+    "importance": 3
+  },
+  {
+    "title": "兴业银行信用卡(尾号5512)取现手续费",
+    "description": "逾期未还,欠款5,200元",
+    "urgency": -4,
+    "importance": 3
+  },
+  {
+    "title": "帮离职员工\"交接\"公寓退租",
+    "description": "",
+    "urgency": 1,
+    "importance": -2
+  },
+  {
+    "title": "制定\"复星医药\"MAH委托生产的质量协议",
+    "description": "",
+    "urgency": 2,
+    "importance": 4
+  },
+  {
+    "title": "明天中午去便利店买冰淇淋顺便逛一圈",
+    "description": "",
+    "urgency": 4,
+    "importance": 0
+  },
+  {
+    "title": "深圳证券交易所股票\"平安银行\"分红到账日",
+    "description": "7月22日已过,现需确认红利税补缴",
+    "urgency": -1,
+    "importance": 2
+  },
+  {
+    "title": "参加公司组织的\"沙漠徒步\"团建（强制）",
+    "description": "",
+    "urgency": 2,
+    "importance": -4
+  },
+  {
+    "title": "下个月想去江边散步但一个人不想去",
+    "description": "",
+    "urgency": -1,
+    "importance": -1
+  },
+  {
+    "title": "九天后想去公园喂鸽子",
+    "description": "",
+    "urgency": 1,
+    "importance": 1
+  },
+  {
+    "title": "个人所得税\"房屋租金\"扣除需更新租赁合同",
+    "description": ",2月20日",
+    "urgency": 0,
+    "importance": 3
+  },
+  {
+    "title": "二十五天后想玩一个恐怖小游戏但不敢",
+    "description": "",
+    "urgency": -1,
+    "importance": 0
+  },
+  {
+    "title": "水滴保·百万医疗险(保单SD-2025-",
+    "description": "332)等待期结束,需确认健康告知",
+    "urgency": 0,
+    "importance": 3
+  },
+  {
+    "title": "北京安贞医院主动脉瓣重度狭窄TAVR术前",
+    "description": "冠脉造影评估（入路选择）",
+    "urgency": -4,
+    "importance": 5
+  },
+  {
+    "title": "今日17:00前填写XX商场会员满意度问",
+    "description": "卷可参与抽奖500元购物券",
+    "urgency": 1,
+    "importance": -2
+  },
+  {
+    "title": "修复\"腾讯云\"某客户数据库连接池泄漏",
+    "description": "",
+    "urgency": 5,
+    "importance": 5
+  },
+  {
+    "title": "下个月想去商场吹空调顺便走走",
+    "description": "",
+    "urgency": -1,
+    "importance": -1
+  },
+  {
+    "title": "嘉实基金\"嘉实成长\"定投扣款日(每月15",
+    "description": "日),长期",
+    "urgency": 0,
+    "importance": 2
+  },
+  {
+    "title": "独居者给兰花浇水",
+    "description": "",
+    "urgency": -3,
+    "importance": 1
+  },
+  {
+    "title": "下周有个免费线上声乐课试试",
+    "description": "",
+    "urgency": 2,
+    "importance": 0
+  },
+  {
+    "title": "距离托福二战还有三个半月强化口语和写作机",
+    "description": "经",
+    "urgency": 0,
+    "importance": 4
+  },
+  {
+    "title": "小学儿子参加编程夏令营",
+    "description": "",
+    "urgency": 2,
+    "importance": 4
+  },
+  {
+    "title": "今天下午四点前交《产品设计》草图本",
+    "description": "",
+    "urgency": 5,
+    "importance": 3
+  },
+  {
+    "title": "三天后社团财务审计需提交所有发票和支出明",
+    "description": "细",
+    "urgency": 3,
+    "importance": 2
+  },
+  {
+    "title": "陆金所\"稳盈-安e\"项目到期,本金5万,",
+    "description": "4月25日",
+    "urgency": 0,
+    "importance": 3
+  },
+  {
+    "title": "微软Azure云服务订阅(订单号MS-7",
+    "description": "890)年度续费扣款7月25日,金额9,999元",
+    "urgency": 4,
+    "importance": 3
+  },
+  {
+    "title": "美团买药\"618健康节\"满99减20券即",
+    "description": "将过期（可用于常备药）",
+    "urgency": 1,
+    "importance": -1
+  },
+  {
+    "title": "上海肺科医院早期肺癌立体定向放疗（SBR",
+    "description": "T）后放射性肺炎影像评估",
+    "urgency": -3,
+    "importance": 4
+  },
+  {
+    "title": "启动\"恒瑞医药\"GMP合规审计的资料准备",
+    "description": "工作",
+    "urgency": 0,
+    "importance": 3
+  },
+  {
+    "title": "错过考研网上确认截止时间需联系报考点看能",
+    "description": "否补救",
+    "urgency": 5,
+    "importance": 5
+  },
+  {
+    "title": "中山眼科中心家族性渗出性玻璃体视网膜病变",
+    "description": "（FEVR）激光光凝术后复查",
+    "urgency": -3,
+    "importance": 5
+  },
+  {
+    "title": "一个月后某游戏出新角色但我不玩那个游戏",
+    "description": "",
+    "urgency": -1,
+    "importance": 0
+  },
+  {
+    "title": "设计\"蒙牛\"乳业数字化追溯平台的UI原型",
+    "description": "",
+    "urgency": 1,
+    "importance": 3
+  },
+  {
+    "title": "二十五天后想玩一个文字冒险游戏",
+    "description": "",
+    "urgency": -1,
+    "importance": 1
+  },
+  {
+    "title": "驾驶证C1(档案号152301****)",
+    "description": "有效期至2026年8月1日,需提交体检报告换证",
+    "urgency": 5,
+    "importance": 3
+  },
+  {
+    "title": "北京市海淀区法院传票(2026)海民初字",
+    "description": "第886号,应诉通知逾期",
+    "urgency": -5,
+    "importance": 5
+  },
+  {
+    "title": "小学女儿参加钢琴六级考试",
+    "description": "",
+    "urgency": 2,
+    "importance": 3
+  },
+  {
+    "title": "设计\"周大福\"珠宝库存智能补货模型",
+    "description": "",
+    "urgency": 2,
+    "importance": 3
+  },
+  {
+    "title": "个人所得税\"公益慈善捐赠\"扣除需在11月",
+    "description": "1日前取得捐赠票据",
+    "urgency": 1,
+    "importance": 3
+  },
+  {
+    "title": "华夏银行\"华夏理财\"现金管理类产品快速赎",
+    "description": "回限额,11月5日",
+    "urgency": 0,
+    "importance": 1
+  },
+  {
+    "title": "二十天后《软件工程》小组项目SRS文档提",
+    "description": "交",
+    "urgency": 2,
+    "importance": 4
+  },
+  {
+    "title": "丁香医生\"家庭急救\"动画课程限时拼团1元",
+    "description": "购最后2小时",
+    "urgency": 2,
+    "importance": 1
+  },
+  {
+    "title": "全国中小企业股份转让系统(新三板)挂牌公",
+    "description": "司年报披露截止11月20日,董秘需签字",
+    "urgency": 0,
+    "importance": 4
+  },
+  {
+    "title": "上海浦东发展银行信用卡积分兑换\"星巴克\"",
+    "description": "券,9月25日截止,剩余6,000分",
+    "urgency": 0,
+    "importance": 1
+  },
+  {
+    "title": "参加\"团建\"密室逃脱（被安排）",
+    "description": "",
+    "urgency": 1,
+    "importance": -3
+  },
+  {
+    "title": "岳母骨折后复查",
+    "description": "",
+    "urgency": -2,
+    "importance": 4
+  },
+  {
+    "title": "大学生女儿考公务员笔试准考证打印",
+    "description": "",
+    "urgency": 1,
+    "importance": 5
+  },
+  {
+    "title": "北京医院老年性黄斑变性（AMD）的康柏西",
+    "description": "普抗VEGF治疗中OCT监测",
+    "urgency": -3,
+    "importance": 5
+  },
+  {
+    "title": "中年夫妻检查房屋漏水",
+    "description": "",
+    "urgency": -4,
+    "importance": 3
+  },
+  {
+    "title": "大学生儿子暑期实习入职体检",
+    "description": "",
+    "urgency": -1,
+    "importance": 3
+  },
+  {
+    "title": "周末去图书馆看杂志过刊",
+    "description": "",
+    "urgency": 2,
+    "importance": 1
+  },
+  {
+    "title": "给领导\"按摩\"颈部（主动讨好）",
+    "description": "",
+    "urgency": 3,
+    "importance": -3
+  },
+  {
+    "title": "博士论文创新点论证还有90天整理实验数据",
+    "description": "",
+    "urgency": 1,
+    "importance": 5
+  },
+  {
+    "title": "美团\"丽人医疗美容\"光子嫩肤团购券使用有",
+    "description": "效期最后2天",
+    "urgency": 1,
+    "importance": -1
+  },
+  {
+    "title": "美团买药\"过敏季\"专区满199减100大",
+    "description": "额券最后3小时",
+    "urgency": 2,
+    "importance": -1
+  },
+  {
+    "title": "中学女儿厌学咨询",
+    "description": "",
+    "urgency": -3,
+    "importance": 4
+  },
+  {
+    "title": "中学儿子考试压力大哭",
+    "description": "",
+    "urgency": -3,
+    "importance": 3
+  },
+  {
+    "title": "华西医院耳鼻喉科过敏性鼻炎脱敏治疗第二次",
+    "description": "注射（粉尘螨滴剂5号）",
+    "urgency": 4,
+    "importance": 3
+  },
+  {
+    "title": "制定\"益海嘉里\"粮油期货套保操作手册",
+    "description": "",
+    "urgency": 1,
+    "importance": 3
+  },
+  {
+    "title": "众安保险\"尊享e生\"续保扣费,9月3日,",
+    "description": "金额1,460元",
+    "urgency": 1,
+    "importance": 4
+  },
+  {
+    "title": "母亲关节炎复查",
+    "description": "",
+    "urgency": -2,
+    "importance": 4
+  },
+  {
+    "title": "中年夫妻清洁玻璃窗",
+    "description": "",
+    "urgency": -4,
+    "importance": 1
+  },
+  {
+    "title": "距离秋招提前批还有五个月开始修改简历和刷",
+    "description": "行测",
+    "urgency": 0,
+    "importance": 4
+  },
+  {
+    "title": "考研二战复习还有90天从基础开始每天八小",
+    "description": "时",
+    "urgency": 1,
+    "importance": 5
+  },
+  {
+    "title": "小学女儿参加游泳课",
+    "description": "",
+    "urgency": 2,
+    "importance": 3
+  },
+  {
+    "title": "父亲慢阻肺复查",
+    "description": "",
+    "urgency": -2,
+    "importance": 5
+  },
+  {
+    "title": "独居者给仙人掌浇水",
+    "description": "",
+    "urgency": -3,
+    "importance": 1
+  },
+  {
+    "title": "厦门国际银行\"厦e贷\"利率调整,11月1",
+    "description": "0日",
+    "urgency": 0,
+    "importance": 3
+  },
+  {
+    "title": "京东\"白条\"额度调整,需授权征信查询,1",
+    "description": "2月28日",
+    "urgency": 0,
+    "importance": 3
+  },
+  {
+    "title": "中年夫妻商议孩子暑期补习班",
+    "description": "",
+    "urgency": -4,
+    "importance": 4
+  },
+  {
+    "title": "今日是\"交通银行\"信用卡积分兑换南航里程",
+    "description": "最后一天,剩余4.5万分",
+    "urgency": 5,
+    "importance": 1
+  },
+  {
+    "title": "七天后某游戏有分享活动得小奖励",
+    "description": "",
+    "urgency": 3,
+    "importance": -2
+  },
+  {
+    "title": "中金公司\"中金财富\"账户年度对账,2月1",
+    "description": "日截止",
+    "urgency": 0,
+    "importance": 2
+  },
+  {
+    "title": "五天前未完成心理测评现在被辅导员约谈",
+    "description": "",
+    "urgency": 3,
+    "importance": 1
+  },
+  {
+    "title": "顺丰\"丰享\"积分到期,12月30日清零,",
+    "description": "剩余6,800分",
+    "urgency": 0,
+    "importance": 0
+  },
+  {
+    "title": "每日瑜伽APP\"冥想助眠\"付费课程首月1",
+    "description": "元体验活动最后1天",
+    "urgency": 1,
+    "importance": 1
+  },
+  {
+    "title": "后天看一期吐槽大会纯乐呵",
+    "description": "",
+    "urgency": 4,
+    "importance": 1
+  },
+  {
+    "title": "京东红包今晚过期买包抽纸用掉",
+    "description": "",
+    "urgency": 4,
+    "importance": -3
+  },
+  {
+    "title": "八天后想听一首钢琴曲放松",
+    "description": "",
+    "urgency": 1,
+    "importance": 1
+  },
+  {
+    "title": "中信银行\"信银理财\"日盈象产品收益分配,",
+    "description": "9月11日",
+    "urgency": 0,
+    "importance": 2
+  },
+  {
+    "title": "新婚夫妻商量如何分配年终奖",
+    "description": "",
+    "urgency": 5,
+    "importance": 3
+  },
+  {
+    "title": "招商信诺\"信诺全球\"高端医疗险续保核保,",
+    "description": "9月2日,保费3.2万",
+    "urgency": 0,
+    "importance": 4
+  },
+  {
+    "title": "大学生女儿毕业照拍摄服装租赁",
+    "description": "",
+    "urgency": 0,
+    "importance": 2
+  },
+  {
+    "title": "母亲风湿复查",
+    "description": "",
+    "urgency": -1,
+    "importance": 4
+  },
+  {
+    "title": "淘宝签到领积分明天过期能换三毛钱",
+    "description": "",
+    "urgency": 4,
+    "importance": -3
+  },
+  {
+    "title": "昨天看一场直播带货买了一个不用的收纳架",
+    "description": "",
+    "urgency": 3,
+    "importance": -3
+  },
+  {
+    "title": "杭州银行\"杭银理财\"幸福99产品开放申购",
+    "description": ",9月3日",
+    "urgency": 0,
+    "importance": 3
+  },
+  {
+    "title": "前天没参加消防演练签到现被通报",
+    "description": "",
+    "urgency": 3,
+    "importance": -1
+  },
+  {
+    "title": "中学儿子沉迷游戏，没收手机",
+    "description": "",
+    "urgency": -3,
+    "importance": 2
+  },
+  {
+    "title": "中学儿子逃学去网吧",
+    "description": "",
+    "urgency": -3,
+    "importance": 3
+  },
+  {
+    "title": "苏宁金融\"任性贷\"额度调整,需人脸识别,",
+    "description": "10月25日",
+    "urgency": 0,
+    "importance": 3
+  },
+  {
+    "title": "去\"行政服务中心\"办营业执照变更",
+    "description": "",
+    "urgency": 1,
+    "importance": -1
+  },
+  {
+    "title": "为\"蔚来汽车\"定制数据看板Demo（展示",
+    "description": "用）",
+    "urgency": 2,
+    "importance": 4
+  },
+  {
+    "title": "带岳母做肠胃镜检查",
+    "description": "",
+    "urgency": -2,
+    "importance": 5
+  },
+  {
+    "title": "小学儿子参加足球训练营",
+    "description": "",
+    "urgency": 2,
+    "importance": 3
+  },
+  {
+    "title": "中国电信企业宽带合同(编号CT-2024",
+    "description": "-567)到期日2027年5月15日,续约折扣需提前90天申请",
+    "urgency": 0,
+    "importance": 2
+  },
+  {
+    "title": "距离CPA会计科目考试还有五个月零基础开",
+    "description": "始跟网课",
+    "urgency": 0,
+    "importance": 4
+  },
+  {
+    "title": "上海九院头颈部鳞癌术后调强放疗（IMRT",
+    "description": "）后口腔黏膜炎的营养支持评估",
+    "urgency": -3,
+    "importance": 4
+  },
+  {
+    "title": "母亲类风湿生物制剂治疗",
+    "description": "",
+    "urgency": -2,
+    "importance": 5
+  },
+  {
+    "title": "二十天后想去江边散步看日落",
+    "description": "",
+    "urgency": 0,
+    "importance": 2
+  },
+  {
+    "title": "中石油加油卡(卡号1000****567",
+    "description": "8)积分到期9,600分,9月10日清空",
+    "urgency": 1,
+    "importance": 1
+  },
+  {
+    "title": "中国银行\"原油宝\"账户保证金调整,需在8",
+    "description": "月10日前补足",
+    "urgency": 2,
+    "importance": 4
+  },
+  {
+    "title": "修复\"钉钉\"审批流超时未提醒问题",
+    "description": "",
+    "urgency": 5,
+    "importance": 3
+  },
+  {
+    "title": "今晚和平精英团队竞技拿二十杀",
+    "description": "",
+    "urgency": 5,
+    "importance": 2
+  },
+  {
+    "title": "一个月后想试试冥想但估计坚持不了",
+    "description": "",
+    "urgency": -1,
+    "importance": -2
+  },
+  {
+    "title": "参加\"集团运动会\"开幕式方阵排练",
+    "description": "",
+    "urgency": 1,
+    "importance": -3
+  },
+  {
+    "title": "编写\"药明康德\"临床数据脱敏操作手册",
+    "description": "",
+    "urgency": 2,
+    "importance": 4
+  },
+  {
+    "title": "中年夫妻检查家庭灭火器有效期",
+    "description": "",
+    "urgency": -4,
+    "importance": 2
+  },
+  {
+    "title": "小学女儿参加学校舞蹈表演",
+    "description": "",
+    "urgency": 2,
+    "importance": 2
+  },
+  {
+    "title": "下个月想去公园野餐但天气不好就算了",
+    "description": "",
+    "urgency": -1,
+    "importance": -2
+  },
+  {
+    "title": "众安保险\"尊享e生\"医疗险等待期内出险告",
+    "description": "知补充材料截止",
+    "urgency": -3,
+    "importance": 5
+  },
+  {
+    "title": "新婚夫妻购买面包机",
+    "description": "",
+    "urgency": 4,
+    "importance": 2
+  },
+  {
+    "title": "后天看一期脱口秀大会片段",
+    "description": "",
+    "urgency": 4,
+    "importance": 2
+  },
+  {
+    "title": "瑞金医院胰腺癌术后CA19-9联合ctD",
+    "description": "NA动态监测（复发预警）",
+    "urgency": -4,
+    "importance": 5
+  },
+  {
+    "title": "雅思写作单项训练还有45天每天一篇大作文",
+    "description": "",
+    "urgency": 2,
+    "importance": 4
+  },
+  {
+    "title": "平安健康APP端\"7日燃脂挑战赛\"打卡抽",
+    "description": "奖今晚24:00截止（奖品为运动手环）",
+    "urgency": -5,
+    "importance": 1
+  },
+  {
+    "title": "设计\"永辉超市\"生鲜损耗分析报表",
+    "description": "",
+    "urgency": 2,
+    "importance": 3
+  },
+  {
+    "title": "小学儿子参加学校航模社团",
+    "description": "",
+    "urgency": 2,
+    "importance": 2
+  },
+  {
+    "title": "华泰柏瑞\"沪深300ETF\"联接基金分红",
+    "description": ",10月8日",
+    "urgency": 0,
+    "importance": 3
+  },
+  {
+    "title": "三天后校园无偿献血活动报名需填健康问卷",
+    "description": "",
+    "urgency": 3,
+    "importance": 0
+  },
+  {
+    "title": "九天后想去天台数星星",
+    "description": "",
+    "urgency": 1,
+    "importance": 1
+  },
+  {
+    "title": "百度有钱花\"满易贷\"额度复审,12月15",
+    "description": "日",
+    "urgency": 0,
+    "importance": 3
+  },
+  {
+    "title": "十天后想整理发票盒子",
+    "description": "",
+    "urgency": 0,
+    "importance": -2
+  },
+  {
+    "title": "国投瑞银\"瑞银添利\"理财到期,本金8万,",
+    "description": "9月19日",
+    "urgency": 0,
+    "importance": 3
+  },
+  {
+    "title": "乐刻健身\"618\"年卡买一送一活动最后2",
+    "description": "小时",
+    "urgency": 2,
+    "importance": 0
+  },
+  {
+    "title": "八天后想听一期闲聊播客笑一笑",
+    "description": "",
+    "urgency": 1,
+    "importance": 1
+  },
+  {
+    "title": "昨天刷抖音看到凌晨三点今天头痛",
+    "description": "",
+    "urgency": 4,
+    "importance": -4
+  },
+  {
+    "title": "今晚和平精英雨林地图苟到决赛圈",
+    "description": "",
+    "urgency": 5,
+    "importance": 1
+  },
+  {
+    "title": "今晚刷微博看搞笑段子乐呵",
+    "description": "",
+    "urgency": 4,
+    "importance": 1
+  },
+  {
+    "title": "丁香医生线上问诊关于健身过度导致横纹肌溶",
+    "description": "解的咨询（尿色深棕）",
+    "urgency": 5,
+    "importance": 4
+  },
+  {
+    "title": "阿里健康\"家庭小药箱\"常备药过期回收活动",
+    "description": "截止（可换优惠券）",
+    "urgency": -2,
+    "importance": -1
+  },
+  {
+    "title": "提交项目Alpha版测试报告给CTO（名",
+    "description": "称含客户缩写）",
+    "urgency": 5,
+    "importance": 4
+  },
+  {
+    "title": "一个月后《水产养殖》课程设计需养鱼实验记",
+    "description": "录",
+    "urgency": 1,
+    "importance": 2
+  },
+  {
+    "title": "浦发银行\"科创贷\"利息补贴申请,补贴金额",
+    "description": "3,200元,9月30日截止",
+    "urgency": 0,
+    "importance": 3
+  },
+  {
+    "title": "壹心理APP\"职场正念减压\"21天训练营",
+    "description": "第2期开营前入组访谈",
+    "urgency": -1,
+    "importance": 2
+  },
+  {
+    "title": "今晚刷小红书看穿搭教程但最后没买",
+    "description": "",
+    "urgency": 4,
+    "importance": 0
+  },
+  {
+    "title": "中学女儿厌食，看营养科",
+    "description": "",
+    "urgency": -3,
+    "importance": 4
+  },
+  {
+    "title": "下周某视频平台有老港片看片段",
+    "description": "",
+    "urgency": 2,
+    "importance": 1
+  },
+  {
+    "title": "工商银行理财\"鑫添益\"到期未赎回,自动转",
+    "description": "入下一期,损失收益约600元",
+    "urgency": -2,
+    "importance": 2
+  },
+  {
+    "title": "大学生女儿教师资格认定",
+    "description": "",
+    "urgency": -1,
+    "importance": 4
+  },
+  {
+    "title": "大学生儿子办理毕业离校手续",
+    "description": "",
+    "urgency": 0,
+    "importance": 3
+  },
+  {
+    "title": "三天前未参加学代会代表选举现在无法补选",
+    "description": "",
+    "urgency": 3,
+    "importance": 1
+  },
+  {
+    "title": "keep商城\"蛋白粉618大促\"满赠活动",
+    "description": "最后一天（赠品摇摇杯）",
+    "urgency": -1,
+    "importance": -1
+  },
+  {
+    "title": "招商银行APP\"月月盈\"理财产品(代码1",
+    "description": "07888)到期日8月2日,本金10万,收益2,800元",
+    "urgency": 3,
+    "importance": 3
+  },
+  {
+    "title": "吉林大学第一医院肾综合征出血热恢复期肾功",
+    "description": "能动态监测（尿量记录）",
+    "urgency": -4,
+    "importance": 5
+  },
+  {
+    "title": "农业银行\"金穗惠农卡\"三年有效期满,换卡",
+    "description": "截止12月15日",
+    "urgency": 2,
+    "importance": 3
+  },
+  {
+    "title": "武汉大学人民医院心律失常射频消融术前经食",
+    "description": "道超声（TEE检查）",
+    "urgency": -4,
+    "importance": 5
+  },
+  {
+    "title": "五天后《材料力学》随堂测验考弯曲应力公式",
+    "description": "",
+    "urgency": 4,
+    "importance": 3
+  },
+  {
+    "title": "丁香医生\"焦虑自救手册\"电子书限时免费领",
+    "description": "取（最后48小时）",
+    "urgency": 0,
+    "importance": 1
+  },
+  {
+    "title": "学龄前孩子首次上幼儿园分离焦虑安抚",
+    "description": "",
+    "urgency": 4,
+    "importance": 3
+  },
+  {
+    "title": "美团优选\"0糖0脂\"健康零食专区满减活动",
+    "description": "结束（折扣取消）",
+    "urgency": 0,
+    "importance": -1
+  },
+  {
+    "title": "上海九院上颌窦癌术后赝复体修复取模（口腔",
+    "description": "修复科）",
+    "urgency": -4,
+    "importance": 5
+  },
+  {
+    "title": "作为\"观众\"参加法律知识竞赛",
+    "description": "",
+    "urgency": 2,
+    "importance": -3
+  },
+  {
+    "title": "支付宝\"商家收款码\"提现免费额度(5万)",
+    "description": "8月20日重置,剩余2.1万",
+    "urgency": 1,
+    "importance": 1
+  },
+  {
+    "title": "悦跑圈\"跑量王者\"月度挑战赛成绩审核截止",
+    "description": "（影响年终排名）",
+    "urgency": 1,
+    "importance": 1
+  },
+  {
+    "title": "小学儿子参加市科技馆研学",
+    "description": "",
+    "urgency": 2,
+    "importance": 2
+  },
+  {
+    "title": "昨天没参加优秀志愿者表彰大会现补领证书",
+    "description": "",
+    "urgency": 3,
+    "importance": 1
+  },
+  {
+    "title": "全国大学生数学竞赛还有55天刷难题集",
+    "description": "",
+    "urgency": 2,
+    "importance": 3
+  },
+  {
+    "title": "预定公司年会场地并收集各部门节目报名表",
+    "description": "",
+    "urgency": -1,
+    "importance": -1
+  },
+  {
+    "title": "个人信用报告异议申请时效,可随时处理",
+    "description": "",
+    "urgency": -1,
+    "importance": 2
+  },
+  {
+    "title": "替HR给面试者打电话确认意向（普通话不标",
+    "description": "准）",
+    "urgency": 1,
+    "importance": -2
+  },
+  {
+    "title": "中年夫妻处理旧家具",
+    "description": "",
+    "urgency": -4,
+    "importance": 1
+  },
+  {
+    "title": "新婚夫妻购买儿童玩具准备备孕",
+    "description": "",
+    "urgency": 5,
+    "importance": 3
+  },
+  {
+    "title": "今晚阴阳师活动最后一天刷御魂",
+    "description": "",
+    "urgency": 5,
+    "importance": -2
+  },
+  {
+    "title": "抖音\"运动燃脂\"直播跟练抽奖活动今晚24",
+    "description": "点截止（奖品运动手环）",
+    "urgency": 3,
+    "importance": 0
+  },
+  {
+    "title": "大学生女儿驾照考试科目二预约",
+    "description": "",
+    "urgency": 5,
+    "importance": 3
+  },
+  {
+    "title": "四天前未提交体质健康测试免测申请需补材料",
+    "description": "",
+    "urgency": 2,
+    "importance": 1
+  },
+  {
+    "title": "六天后想给手机换个铃声",
+    "description": "",
+    "urgency": 2,
+    "importance": -1
+  },
+  {
+    "title": "2026年车辆购置税(进口车)申报逾期,",
+    "description": "补税15,800元,滞纳金1,500元",
+    "urgency": -5,
+    "importance": 5
+  },
+  {
+    "title": "明天某购物App有摇现金活动摇出两毛",
+    "description": "",
+    "urgency": 4,
+    "importance": -2
+  },
+  {
+    "title": "超级猩猩\"活力单车\"主题课包团购优惠最后",
+    "description": "3小时",
+    "urgency": 2,
+    "importance": 0
+  },
+  {
+    "title": "上海\"居转户\"落户申请材料补充,需提供个",
+    "description": "税完税证明,1月5日截止",
+    "urgency": 0,
+    "importance": 4
+  },
+  {
+    "title": "七天后某App有每日答题得积分换小礼品",
+    "description": "",
+    "urgency": 3,
+    "importance": -2
+  },
+  {
+    "title": "结婚一周年纪念日补拍婚纱照",
+    "description": "",
+    "urgency": -3,
+    "importance": 2
+  },
+  {
+    "title": "调研\"智能穿戴\"设备市场竞品参数",
+    "description": "",
+    "urgency": -1,
+    "importance": 2
+  },
+  {
+    "title": "六天后想用手机拍一张无聊的照片",
+    "description": "",
+    "urgency": 2,
+    "importance": 0
+  },
+  {
+    "title": "后天看一部网飞烂片快进看完",
+    "description": "",
+    "urgency": 4,
+    "importance": -1
+  },
+  {
+    "title": "八天后想听一首民谣弹唱",
+    "description": "",
+    "urgency": 1,
+    "importance": 1
+  },
+  {
+    "title": "独居者给文竹喷水",
+    "description": "",
+    "urgency": -3,
+    "importance": 1
+  },
+  {
+    "title": "十天后想清理浏览器收藏夹",
+    "description": "",
+    "urgency": 0,
+    "importance": -2
+  },
+  {
+    "title": "修改\"海康威视\"智能安防解决方案的报价单",
+    "description": "",
+    "urgency": 5,
+    "importance": 4
+  },
+  {
+    "title": "中山眼科中心糖尿病性黄斑水肿抗VEGF玻",
+    "description": "璃体腔注射第5次（康柏西普）",
+    "urgency": -3,
+    "importance": 5
+  },
+  {
+    "title": "周末去书店蹭书看但没看完",
+    "description": "",
+    "urgency": 2,
+    "importance": 1
+  },
+  {
+    "title": "北京市小客车指标配置申请(家庭)积分更新",
+    "description": ",需在2027年6月8日前确认家庭成员信息",
+    "urgency": -1,
+    "importance": 2
+  },
+  {
+    "title": "七天后《信号与系统》期中考试覆盖傅里叶变",
+    "description": "换",
+    "urgency": 4,
+    "importance": 4
+  },
+  {
+    "title": "北京天坛医院颅咽管瘤术后尿崩症去氨加压素",
+    "description": "剂量调整（尿量/电解质监测）",
+    "urgency": -4,
+    "importance": 5
+  },
+  {
+    "title": "小学儿子参加科技竞赛",
+    "description": "",
+    "urgency": 2,
+    "importance": 4
+  },
+  {
+    "title": "三个月后想整理邮箱里的垃圾邮件但太麻烦",
+    "description": "",
+    "urgency": -2,
+    "importance": -2
+  },
+  {
+    "title": "独居者给吊兰分株",
+    "description": "",
+    "urgency": -4,
+    "importance": 1
+  },
+  {
+    "title": "中山大学附属第三医院慢乙肝肝纤维化逆转情",
+    "description": "况瞬时弹性成像复查",
+    "urgency": -3,
+    "importance": 4
+  },
+  {
+    "title": "城乡居民基本医疗保险2027年度集中缴费",
+    "description": "期12月20日截止,个人缴费450元",
+    "urgency": 1,
+    "importance": 4
+  },
+  {
+    "title": "小学儿子参加校编程比赛",
+    "description": "",
+    "urgency": 2,
+    "importance": 4
+  },
+  {
+    "title": "参加\"女神节\"插花活动凑人头（男员工也被",
+    "description": "强制）",
+    "urgency": 3,
+    "importance": -4
+  },
+  {
+    "title": "大学生女儿考研准考证打印",
+    "description": "",
+    "urgency": -1,
+    "importance": 5
+  },
+  {
+    "title": "岳母胆囊术后复查",
+    "description": "",
+    "urgency": -2,
+    "importance": 4
+  },
+  {
+    "title": "盒马\"低卡轻食\"新品试吃会健康营养师现场",
+    "description": "咨询报名截止",
+    "urgency": -2,
+    "importance": 1
+  },
+  {
+    "title": "北京协和医院促肾上腺皮质激素（ACTH）",
+    "description": "依赖性库欣综合征岩下窦采血",
+    "urgency": -4,
+    "importance": 5
+  },
+  {
+    "title": "中国太平\"太平人寿\"重疾险续保,5月5日",
+    "description": ",保费6,800元",
+    "urgency": 0,
+    "importance": 4
+  },
+  {
+    "title": "大学生女儿考研复试资料准备",
+    "description": "",
+    "urgency": -1,
+    "importance": 5
+  },
+  {
+    "title": "小学女儿参加校合唱队",
+    "description": "",
+    "urgency": 2,
+    "importance": 2
+  },
+  {
+    "title": "浦发银行\"浦发信用卡\"境外消费返现1%活",
+    "description": "动7月27日截止",
+    "urgency": 3,
+    "importance": 2
+  },
+  {
+    "title": "处理\"快手\"商业化广告审核积压工单",
+    "description": "",
+    "urgency": 5,
+    "importance": 3
+  },
+  {
+    "title": "上海儿童医学中心黏多糖贮积症（MPS）的",
+    "description": "酶替代治疗中尿GAG监测",
+    "urgency": -3,
+    "importance": 5
+  },
+  {
+    "title": "初中三年级儿子中考体育选考项目确认",
+    "description": "",
+    "urgency": 2,
+    "importance": 5
+  },
+  {
+    "title": "父亲耳石症复位治疗",
+    "description": "",
+    "urgency": -2,
+    "importance": 4
+  },
+  {
+    "title": "六天后想整理一下便签纸",
+    "description": "",
+    "urgency": 2,
+    "importance": -1
+  },
+  {
+    "title": "中学女儿被同学排挤",
+    "description": "",
+    "urgency": -3,
+    "importance": 3
+  },
+  {
+    "title": "招商银行信用卡\"境外消费返现\"活动需在7",
+    "description": "月23日前报名,预计返现280元",
+    "urgency": 4,
+    "importance": 1
+  },
+  {
+    "title": "上海肺科医院耐多药结核病贝达喹啉治疗第6",
+    "description": "个月痰菌转阴评估",
+    "urgency": -4,
+    "importance": 5
+  },
+  {
+    "title": "学龄前孩子参加亲子绘本阅读",
+    "description": "",
+    "urgency": 4,
+    "importance": 2
+  },
+  {
+    "title": "帮离职同事转交个人物品给HR（联系不上本",
+    "description": "人）",
+    "urgency": 1,
+    "importance": -1
+  },
+  {
+    "title": "微信\"亲属卡\"每月消费额度(2,000元",
+    "description": ")将于8月1日重置,目前剩450元",
+    "urgency": 3,
+    "importance": 1
+  },
+  {
+    "title": "独居者更换净水器滤芯",
+    "description": "",
+    "urgency": -3,
+    "importance": 3
+  },
+  {
+    "title": "大学生儿子毕业典礼拨穗仪式",
+    "description": "",
+    "urgency": -1,
+    "importance": 3
+  },
+  {
+    "title": "大学生儿子考研政治押题",
+    "description": "",
+    "urgency": -1,
+    "importance": 4
+  },
+  {
+    "title": "大学生儿子研究生复试面试模拟",
+    "description": "",
+    "urgency": -1,
+    "importance": 5
+  },
+  {
+    "title": "十天后想清空回收站彻底删除文件",
+    "description": "",
+    "urgency": 0,
+    "importance": -1
+  },
+  {
+    "title": "前天看了一部韩剧中间弃剧了",
+    "description": "",
+    "urgency": 2,
+    "importance": -2
+  },
+  {
+    "title": "后天下午有个免费线上水课讲座签到得学分",
+    "description": "",
+    "urgency": 4,
+    "importance": -1
+  },
+  {
+    "title": "广医一院慢性血栓栓塞性肺高血压（CTEP",
+    "description": "H）球囊肺血管成形术（BPA）第3次",
+    "urgency": -4,
+    "importance": 5
+  },
+  {
+    "title": "优化\"网易云音乐\"每日推荐算法",
+    "description": "",
+    "urgency": 4,
+    "importance": 5
+  },
+  {
+    "title": "学龄前孩子玩滑板车",
+    "description": "",
+    "urgency": 4,
+    "importance": 2
+  },
+  {
+    "title": "祖母心衰复查",
+    "description": "",
+    "urgency": -1,
+    "importance": 5
+  },
+  {
+    "title": "京东健康\"海外购\"辅酶Q10特价闪购最后",
+    "description": "1天",
+    "urgency": 0,
+    "importance": -1
+  },
+  {
+    "title": "修复\"12306\"余票查询并发性能瓶颈",
+    "description": "",
+    "urgency": 5,
+    "importance": 5
+  },
+  {
+    "title": "Keep商城\"运动水壶\"限时换购积分即将",
+    "description": "过期提醒",
+    "urgency": 0,
+    "importance": 0
+  },
+  {
+    "title": "南京市鼓楼医院腰椎间盘突出微创术后神经根",
+    "description": "阻滞注射评估",
+    "urgency": -3,
+    "importance": 4
+  },
+  {
+    "title": "组织\"阿里云\"故障复盘与改进会议",
+    "description": "",
+    "urgency": 3,
+    "importance": 4
+  },
+  {
+    "title": "结婚纪念日补送礼物给妻子",
+    "description": "",
+    "urgency": -4,
+    "importance": 3
+  },
+  {
+    "title": "广发银行\"发现精彩\"APP积分兑\"京东卡",
+    "description": "\"7月25日截止,剩余积分3.2万",
+    "urgency": 3,
+    "importance": 1
+  },
+  {
+    "title": "学龄前孩子断夜奶计划",
+    "description": "",
+    "urgency": 4,
+    "importance": 3
+  },
+  {
+    "title": "今晚十一点前提交《液压传动》课程设计说明",
+    "description": "书",
+    "urgency": 5,
+    "importance": 3
+  },
+  {
+    "title": "九天后想试试做手账但可能坚持不下去",
+    "description": "",
+    "urgency": 1,
+    "importance": 0
+  },
+  {
+    "title": "复旦肿瘤医院腹膜后脂肪肉瘤术前放疗后MD",
+    "description": "T多学科讨论（手术时机决策）",
+    "urgency": -4,
+    "importance": 5
+  },
+  {
+    "title": "研究\"Web3.0\"在版权保护中的应用（",
+    "description": "前瞻）",
+    "urgency": 0,
+    "importance": 1
+  },
+  {
+    "title": "考研政治选择题刷题还有70天每天100道",
+    "description": "",
+    "urgency": 1,
+    "importance": 5
+  },
+  {
+    "title": "新婚夫妻购买家庭保险（意外险）",
+    "description": "",
+    "urgency": 3,
+    "importance": 3
+  },
+  {
+    "title": "十天后想删除一些不用的App",
+    "description": "",
+    "urgency": 0,
+    "importance": -2
+  },
+  {
+    "title": "后天看一部喜剧电影笑得肚子疼",
+    "description": "",
+    "urgency": 4,
+    "importance": 2
+  },
+  {
+    "title": "解决\"中石油\"大屏展示系统突然黑屏的故障",
+    "description": "",
+    "urgency": 5,
+    "importance": 5
+  },
+  {
+    "title": "下周末朋友组了剧本杀缺人凑数",
+    "description": "",
+    "urgency": 2,
+    "importance": 1
+  },
+  {
+    "title": "交通银行\"太平洋\"信用卡积分兑换航空里程",
+    "description": ",4月15日截止,剩余3.5万分",
+    "urgency": 0,
+    "importance": 1
+  },
+  {
+    "title": "昨天没交《形式与政策》线上讨论帖现在补发",
+    "description": "",
+    "urgency": 4,
+    "importance": 1
+  },
+  {
+    "title": "兴业银行\"兴业理财\"产品到期,本金15万",
+    "description": ",11月15日",
+    "urgency": 0,
+    "importance": 3
+  },
+  {
+    "title": "十天后想删除旧备忘录",
+    "description": "",
+    "urgency": 0,
+    "importance": -1
+  },
+  {
+    "title": "中学儿子早恋分手",
+    "description": "",
+    "urgency": -3,
+    "importance": 3
+  },
+  {
+    "title": "十天后想删除旧短信验证码",
+    "description": "",
+    "urgency": 0,
+    "importance": -1
+  },
+  {
+    "title": "小学生儿子校外足球训练续费",
+    "description": "",
+    "urgency": 2,
+    "importance": 3
+  },
+  {
+    "title": "西京医院心肌淀粉样变性的心肌磁共振（LG",
+    "description": "E延迟强化评估）",
+    "urgency": -4,
+    "importance": 5
+  },
+  {
+    "title": "撰写新员工入职培训手册（通用版）",
+    "description": "",
+    "urgency": -1,
+    "importance": 1
+  },
+  {
+    "title": "撰写\"数据安全法\"对企业影响的内部解读",
+    "description": "",
+    "urgency": 0,
+    "importance": 2
+  },
+  {
+    "title": "独居者给仙人掌换土",
+    "description": "",
+    "urgency": -3,
+    "importance": 1
+  },
+  {
+    "title": "六天后想整理一下笔袋里的笔",
+    "description": "",
+    "urgency": 2,
+    "importance": -1
+  },
+  {
+    "title": "昨天看直播带货买了厨房小工具一次没用",
+    "description": "",
+    "urgency": 3,
+    "importance": -4
+  },
+  {
+    "title": "编写\"优必选\"机器人示教器操作指南",
+    "description": "",
+    "urgency": 2,
+    "importance": 4
+  },
+  {
+    "title": "向\"中国移动\"交付5G消息平台压测报告",
+    "description": "",
+    "urgency": 5,
+    "importance": 5
+  },
+  {
+    "title": "祖母骨折术后复查",
+    "description": "",
+    "urgency": -2,
+    "importance": 5
+  },
+  {
+    "title": "周末去文化广场看喷泉表演",
+    "description": "",
+    "urgency": 2,
+    "importance": 1
+  },
+  {
+    "title": "大二暑假赴美带薪实习项目报名还有130天",
+    "description": "准备签证材料",
+    "urgency": 0,
+    "importance": 3
+  },
+  {
+    "title": "大学生儿子考研真题",
+    "description": "",
+    "urgency": -1,
+    "importance": 4
+  },
+  {
+    "title": "五十天后想去海边看一次日出但太远",
+    "description": "",
+    "urgency": -2,
+    "importance": 1
+  },
+  {
+    "title": "大学生女儿申研推荐信提交",
+    "description": "",
+    "urgency": -1,
+    "importance": 4
+  },
+  {
+    "title": "瑞金医院甲状腺相关眼病眼眶减压术术前CT",
+    "description": "三维重建",
+    "urgency": -3,
+    "importance": 5
+  },
+  {
+    "title": "学龄前孩子玩滑梯",
+    "description": "",
+    "urgency": 4,
+    "importance": 2
+  },
+  {
+    "title": "今晚阴阳师斗技掉段了但无所谓",
+    "description": "",
+    "urgency": 5,
+    "importance": -2
+  },
+  {
+    "title": "新婚夫妻购买电热水壶",
+    "description": "",
+    "urgency": 4,
+    "importance": 2
+  },
+  {
+    "title": "中年夫妻清理化粪池",
+    "description": "",
+    "urgency": -4,
+    "importance": 3
+  },
+  {
+    "title": "五个月后想去湿地公园但交通麻烦",
+    "description": "",
+    "urgency": -3,
+    "importance": -1
+  },
+  {
+    "title": "四天前为了看一场直播熬到凌晨两点",
+    "description": "",
+    "urgency": 2,
+    "importance": -3
+  },
+  {
+    "title": "替领导\"写\"读书笔记",
+    "description": "",
+    "urgency": 1,
+    "importance": -2
+  },
+  {
+    "title": "中学生女儿申请国外夏校的文书准备",
+    "description": "",
+    "urgency": -2,
+    "importance": 4
+  },
+  {
+    "title": "四个月后想玩一个恐怖游戏但不敢玩",
+    "description": "",
+    "urgency": -3,
+    "importance": -1
+  },
+  {
+    "title": "今天幼儿园亲子阅读日借书",
+    "description": "",
+    "urgency": 5,
+    "importance": 2
+  },
+  {
+    "title": "设计\"中升集团\"二手车估值模型",
+    "description": "",
+    "urgency": 1,
+    "importance": 3
+  },
+  {
+    "title": "复星联合健康保险\"超越保\"长期医疗险宽限",
+    "description": "期最后一天（未交费将失效）",
+    "urgency": -3,
+    "importance": 5
+  },
+  {
+    "title": "二十二天后《遥感技术》实验报告含影像分类",
+    "description": "",
+    "urgency": 2,
+    "importance": 3
+  },
+  {
+    "title": "编写\"宁德时代\"产线MES系统的接口文档",
+    "description": "",
+    "urgency": 1,
+    "importance": 3
+  },
+  {
+    "title": "三天后校园十佳班集体评选需准备答辩视频",
+    "description": "",
+    "urgency": 3,
+    "importance": 2
+  },
+  {
+    "title": "今晚原神打深渊第九层简单过一下",
+    "description": "",
+    "urgency": 5,
+    "importance": -1
+  },
+  {
+    "title": "Keep会员自动续费扣费前提醒（可取消，",
+    "description": "已连续包月12个月）",
+    "urgency": 0,
+    "importance": 0
+  },
+  {
+    "title": "今晚十点前提交《教育心理学》案例分析作业",
+    "description": "",
+    "urgency": 5,
+    "importance": 2
+  },
+  {
+    "title": "十天后想整理旧作业本",
+    "description": "",
+    "urgency": 0,
+    "importance": -2
+  },
+  {
+    "title": "幼儿园孩子第一次独立吃饭",
+    "description": "",
+    "urgency": 5,
+    "importance": 2
+  },
+  {
+    "title": "国寿财险意外伤害医疗险报销申请截止（摔伤",
+    "description": "CT检查费发票需在30日内提交）",
+    "urgency": -4,
+    "importance": 4
+  },
+  {
+    "title": "京东到家\"进口牛奶\"蛋白含量4.0g/1",
+    "description": "00ml新品试饮活动结束",
+    "urgency": 0,
+    "importance": -1
+  },
+  {
+    "title": "中学女儿厌食症倾向",
+    "description": "",
+    "urgency": -3,
+    "importance": 5
+  },
+  {
+    "title": "向\"深圳地铁\"提交闸机人脸识别优化方案",
+    "description": "",
+    "urgency": 4,
+    "importance": 4
+  },
+  {
+    "title": "美团\"美容\"小气泡清洁项目体验价核销截止",
+    "description": "（最后1天）",
+    "urgency": 1,
+    "importance": -1
+  },
+  {
+    "title": "学龄前孩子微量元素检测结果解读",
+    "description": "",
+    "urgency": 5,
+    "importance": 3
+  },
+  {
+    "title": "后天看一个说唱视频但听不清歌词",
+    "description": "",
+    "urgency": 4,
+    "importance": 0
+  },
+  {
+    "title": "六天后考研政治冲刺班报名截止需缴费选座",
+    "description": "",
+    "urgency": 3,
+    "importance": 5
+  },
+  {
+    "title": "大学生儿子暑期实践报告",
+    "description": "",
+    "urgency": 0,
+    "importance": 3
+  },
+  {
+    "title": "大四毕业设计选题还有四个月确定方向找导师",
+    "description": "",
+    "urgency": 0,
+    "importance": 5
+  },
+  {
+    "title": "参加\"瑜伽课\"团建（强制男性参加）",
+    "description": "",
+    "urgency": 2,
+    "importance": -4
+  },
+  {
+    "title": "参加\"保洁日\"大扫除（强制）",
+    "description": "",
+    "urgency": 1,
+    "importance": -2
+  },
+  {
+    "title": "明天王者荣耀匹配局练新英雄坑了队友",
+    "description": "",
+    "urgency": 4,
+    "importance": -2
+  },
+  {
+    "title": "昨天刷小红书看装修案例看了两小时但没房",
+    "description": "",
+    "urgency": 3,
+    "importance": -3
+  },
+  {
+    "title": "浦发银行\"浦发信用卡\"积分兑换\"京东钢镚",
+    "description": "\",11月25日截止,剩余1.5万分",
+    "urgency": 0,
+    "importance": 1
+  },
+  {
+    "title": "替财务部催收\"恒大\"项目的逾期尾款（电话",
+    "description": "骚扰）",
+    "urgency": 3,
+    "importance": -2
+  },
+  {
+    "title": "协助\"搬家\"公司搬工位",
+    "description": "",
+    "urgency": 0,
+    "importance": -1
+  },
+  {
+    "title": "五十天后想参加一个线上马拉松但佛系",
+    "description": "",
+    "urgency": -2,
+    "importance": 1
+  },
+  {
+    "title": "中信保诚\"祯爱\"定期寿险续期保费,9月2",
+    "description": "8日,2,800元",
+    "urgency": 0,
+    "importance": 3
+  },
+  {
+    "title": "瑞慈体检中心\"心脑血管专项套餐\"暑期特惠",
+    "description": "价截止（含颈动脉超声）",
+    "urgency": -1,
+    "importance": 3
+  },
+  {
+    "title": "今晚逛淘宝看家居小物收藏一堆",
+    "description": "",
+    "urgency": 4,
+    "importance": 0
+  },
+  {
+    "title": "中学女儿选科后成绩波动，找老师咨询",
+    "description": "",
+    "urgency": -2,
+    "importance": 4
+  },
+  {
+    "title": "上海证券交易所ETF期权合约(代码510",
+    "description": "050)行权日10月15日,持仓合约价值12万",
+    "urgency": -1,
+    "importance": 3
+  },
+  {
+    "title": "小学女儿参加市游泳赛",
+    "description": "",
+    "urgency": 2,
+    "importance": 3
+  },
+  {
+    "title": "大学生女儿教师编面试",
+    "description": "",
+    "urgency": -1,
+    "importance": 5
+  },
+  {
+    "title": "中南大学湘雅二医院二型糖尿病胰岛素泵强化",
+    "description": "治疗（CSII方案调整）",
+    "urgency": -4,
+    "importance": 5
+  },
+  {
+    "title": "婆婆冠心病支架复查",
+    "description": "",
+    "urgency": -2,
+    "importance": 5
+  },
+  {
+    "title": "母亲骨质疏松用药",
+    "description": "",
+    "urgency": -1,
+    "importance": 4
+  },
+  {
+    "title": "饿了么\"医药健康\"频道夜间送药免配送费活",
+    "description": "动结束",
+    "urgency": 2,
+    "importance": 0
+  },
+  {
+    "title": "大一寒假打算学Python为科研打基础长",
+    "description": "线",
+    "urgency": 0,
+    "importance": 3
+  },
+  {
+    "title": "下周想去逛宜家只看不买",
+    "description": "",
+    "urgency": 2,
+    "importance": 0
+  },
+  {
+    "title": "八天后想听一段轻音乐",
+    "description": "",
+    "urgency": 1,
+    "importance": 1
+  },
+  {
+    "title": "四天前为了追一个综艺开了会员结果不好看",
+    "description": "",
+    "urgency": 2,
+    "importance": -4
+  },
+  {
+    "title": "中登公司深圳分公司\"深交所\"账户资料更新",
+    "description": ",5月30日截止",
+    "urgency": -1,
+    "importance": 2
+  },
+  {
+    "title": "参加\"公司篮球赛\"当啦啦队",
+    "description": "",
+    "urgency": 1,
+    "importance": -2
+  },
+  {
+    "title": "周末想去书店看漫画但不买",
+    "description": "",
+    "urgency": 2,
+    "importance": 1
+  },
+  {
+    "title": "参加\"三八红旗手\"评选大会当观众",
+    "description": "",
+    "urgency": 2,
+    "importance": -4
+  },
+  {
+    "title": "昨天刷快手看了两个小时土味视频",
+    "description": "",
+    "urgency": 3,
+    "importance": -4
+  },
+  {
+    "title": "十天后想翻看旧相册回忆但浪费时间",
+    "description": "",
+    "urgency": 0,
+    "importance": -2
+  },
+  {
+    "title": "中学儿子考试作弊被处分",
+    "description": "",
+    "urgency": -3,
+    "importance": 4
+  },
+  {
+    "title": "下周想看一部豆瓣低分电影到底有多烂",
+    "description": "",
+    "urgency": 2,
+    "importance": -1
+  },
+  {
+    "title": "家中热水器漏水紧急关闭阀门",
+    "description": "",
+    "urgency": -4,
+    "importance": 4
+  },
+  {
+    "title": "华泰证券账户\"国债逆回购\"GC007自动",
+    "description": "续做,需手动修改,否则收益降低",
+    "urgency": 2,
+    "importance": 1
+  },
+  {
+    "title": "家中暖气片放气",
+    "description": "",
+    "urgency": -4,
+    "importance": 1
+  },
+  {
+    "title": "解决\"得物\"潮流商品鉴定图片上传失败",
+    "description": "",
+    "urgency": 5,
+    "importance": 3
+  },
+  {
+    "title": "明天原神委托做完就下线不刷本",
+    "description": "",
+    "urgency": 4,
+    "importance": -1
+  },
+  {
+    "title": "帮领导\"寄\"私人快递（鞋服）",
+    "description": "",
+    "urgency": 0,
+    "importance": -1
+  },
+  {
+    "title": "大学生儿子国考面试名单公布",
+    "description": "",
+    "urgency": -1,
+    "importance": 5
+  },
+  {
+    "title": "参加\"反洗钱\"培训打卡",
+    "description": "",
+    "urgency": 1,
+    "importance": -3
+  },
+  {
+    "title": "四天后《数据库系统》课程设计验收需运行S",
+    "description": "QL查询",
+    "urgency": 4,
+    "importance": 4
+  },
+  {
+    "title": "向\"公安部一所\"提交视频监控国标测试报告",
+    "description": "",
+    "urgency": 4,
+    "importance": 5
+  },
+  {
+    "title": "外婆冠心病定期复查",
+    "description": "",
+    "urgency": -2,
+    "importance": 5
+  },
+  {
+    "title": "考研英语作文模板还有80天整理大小作文框",
+    "description": "架",
+    "urgency": 1,
+    "importance": 5
+  },
+  {
+    "title": "明天中午前需提交宿舍调换申请表格和理由说",
+    "description": "明",
+    "urgency": 4,
+    "importance": 1
+  },
+  {
+    "title": "高数期末考已结束但发现答题卡涂错学号申请",
+    "description": "复核",
+    "urgency": 4,
+    "importance": 5
+  },
+  {
+    "title": "明天中午吃啥纠结半小时最后点了常吃的",
+    "description": "",
+    "urgency": 4,
+    "importance": -1
+  },
+  {
+    "title": "审核\"大疆\"农业无人机植保方案",
+    "description": "",
+    "urgency": 4,
+    "importance": 4
+  },
+  {
+    "title": "优化\"淘特\"首屏加载性能（LCP优化）",
+    "description": "",
+    "urgency": 4,
+    "importance": 4
+  },
+  {
+    "title": "中山大学孙逸仙纪念医院垂体瘤术后生长激素",
+    "description": "激发试验（评估复发）",
+    "urgency": -4,
+    "importance": 5
+  },
+  {
+    "title": "紧急更新\"同程旅行\"机票退改签费率表",
+    "description": "",
+    "urgency": 5,
+    "importance": 4
+  },
+  {
+    "title": "后天下午《插花艺术》公选课期末作品展示",
+    "description": "",
+    "urgency": 4,
+    "importance": 1
+  },
+  {
+    "title": "半个月后有个线上辩论赛观众席可看",
+    "description": "",
+    "urgency": -1,
+    "importance": 0
+  },
+  {
+    "title": "陪领导打\"高尔夫\"（周末应酬）",
+    "description": "",
+    "urgency": 1,
+    "importance": -3
+  },
+  {
+    "title": "家中抽湿机维修",
+    "description": "",
+    "urgency": -4,
+    "importance": 2
+  },
+  {
+    "title": "省人民医院中医科\"冬病夏治\"三伏贴加强贴",
+    "description": "（呼吸系统疾病）",
+    "urgency": 1,
+    "importance": 2
+  },
+  {
+    "title": "大学生儿子考研预报名",
+    "description": "",
+    "urgency": -1,
+    "importance": 5
+  },
+  {
+    "title": "新婚夫妻去宜家选购储物柜",
+    "description": "",
+    "urgency": 4,
+    "importance": 2
+  },
+  {
+    "title": "今晚凌晨前提交物理实验数据处理报告含误差",
+    "description": "分析",
+    "urgency": 5,
+    "importance": 3
+  },
+  {
+    "title": "周末去江边骑共享单车吹风",
+    "description": "",
+    "urgency": 2,
+    "importance": 1
+  },
+  {
+    "title": "十八天后《生物统计》R语言编程作业",
+    "description": "",
+    "urgency": 2,
+    "importance": 4
+  },
+  {
+    "title": "中国人寿\"国寿福\"续期保费8,500元,",
+    "description": "8月22日扣款,需确保余额",
+    "urgency": 1,
+    "importance": 4
+  },
+  {
+    "title": "中山大学附属第一医院肺部低剂量螺旋CT筛",
+    "description": "查（家族肺癌史，年度必查）",
+    "urgency": 5,
+    "importance": 5
+  },
+  {
+    "title": "美团\"生意贷\"利息补贴,8月1日截止,补",
+    "description": "贴金额300元",
+    "urgency": 3,
+    "importance": 1
+  },
+  {
+    "title": "学龄前孩子玩粘土",
+    "description": "",
+    "urgency": 4,
+    "importance": 2
+  },
+  {
+    "title": "中国银行大额存单(存单号CD-2024-",
+    "description": "081)今日到期,本金50万,利息2.25万,需处理",
+    "urgency": 5,
+    "importance": 4
+  }
+]
