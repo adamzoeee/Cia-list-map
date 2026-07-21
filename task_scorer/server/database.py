@@ -205,25 +205,33 @@ def create_task(team_id: str, title: str, description: str,
     """创建任务。返回 task dict。"""
     db = get_db()
     task_id = str(uuid.uuid4())
-    db.execute(
-        """INSERT INTO tasks (id, team_id, title, description, urgency, importance,
-           quadrant, created_by)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
-        (task_id, team_id, title, description, urgency, importance, quadrant, created_by)
-    )
-    db.commit()
+    try:
+        db.execute(
+            """INSERT INTO tasks (id, team_id, title, description, urgency, importance,
+               quadrant, created_by)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+            (task_id, team_id, title, description, urgency, importance, quadrant, created_by)
+        )
+        db.commit()
+    except Exception:
+        db.rollback()
+        raise
     return dict(db.execute("SELECT * FROM tasks WHERE id = ?", (task_id,)).fetchone())
 
 
 def update_task(task_id: str, user_id: str, updates: dict) -> dict | None:
-    """更新任务（乐观锁）。updates 必须包含 version 字段。
-    返回更新后的 task dict，版本冲突返回 None。"""
+    """更新任务（原子乐观锁）。返回更新后的 task dict，冲突或不存在返回 None。"""
     db = get_db()
-    current = db.execute("SELECT * FROM tasks WHERE id = ?", (task_id,)).fetchone()
-    if not current:
+    # 权限检查：必须是创建者或 team owner
+    task = db.execute("SELECT * FROM tasks WHERE id = ?", (task_id,)).fetchone()
+    if not task:
         return None
-    if current["version"] != updates.get("version"):
-        return None  # 乐观锁冲突
+    member = db.execute(
+        "SELECT role FROM members WHERE team_id = ? AND user_id = ?",
+        (task["team_id"], user_id)
+    ).fetchone()
+    if task["created_by"] != user_id and (not member or member["role"] != "owner"):
+        return None
 
     allowed_fields = {"title", "description", "urgency", "importance",
                       "quadrant", "completed", "assigned_to"}
@@ -234,14 +242,24 @@ def update_task(task_id: str, user_id: str, updates: dict) -> dict | None:
         params.append(updates[key])
 
     if not set_clauses:
-        return dict(current)
+        return dict(task)
 
     set_clauses.append("version = version + 1")
     set_clauses.append("updated_at = datetime('now')")
     params.append(task_id)
-    sql = f"UPDATE tasks SET {', '.join(set_clauses)} WHERE id = ?"
-    db.execute(sql, params)
-    db.commit()
+    params.append(updates.get("version", 0))
+
+    try:
+        sql = f"UPDATE tasks SET {', '.join(set_clauses)} WHERE id = ? AND version = ?"
+        cursor = db.execute(sql, params)
+        if cursor.rowcount == 0:
+            db.rollback()
+            return None  # 乐观锁冲突
+        db.commit()
+    except Exception:
+        db.rollback()
+        raise
+
     return dict(db.execute("SELECT * FROM tasks WHERE id = ?", (task_id,)).fetchone())
 
 
@@ -258,6 +276,10 @@ def delete_task(task_id: str, user_id: str) -> bool:
     ).fetchone()
     if task["created_by"] != user_id and (not member or member["role"] != "owner"):
         return False
-    db.execute("DELETE FROM tasks WHERE id = ?", (task_id,))
-    db.commit()
+    try:
+        db.execute("DELETE FROM tasks WHERE id = ?", (task_id,))
+        db.commit()
+    except Exception:
+        db.rollback()
+        raise
     return True
