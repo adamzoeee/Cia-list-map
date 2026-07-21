@@ -189,3 +189,75 @@ def get_members(team_id: str) -> list[dict]:
     return [dict(r) for r in db.execute(
         "SELECT * FROM members WHERE team_id = ? ORDER BY joined_at", (team_id,)
     ).fetchall()]
+
+
+def list_tasks(team_id: str) -> list[dict]:
+    """获取团队所有任务。"""
+    db = get_db()
+    return [dict(r) for r in db.execute(
+        "SELECT * FROM tasks WHERE team_id = ? ORDER BY created_at DESC", (team_id,)
+    ).fetchall()]
+
+
+def create_task(team_id: str, title: str, description: str,
+                urgency: float, importance: float, quadrant: int,
+                created_by: str) -> dict:
+    """创建任务。返回 task dict。"""
+    db = get_db()
+    task_id = str(uuid.uuid4())
+    db.execute(
+        """INSERT INTO tasks (id, team_id, title, description, urgency, importance,
+           quadrant, created_by)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+        (task_id, team_id, title, description, urgency, importance, quadrant, created_by)
+    )
+    db.commit()
+    return dict(db.execute("SELECT * FROM tasks WHERE id = ?", (task_id,)).fetchone())
+
+
+def update_task(task_id: str, user_id: str, updates: dict) -> dict | None:
+    """更新任务（乐观锁）。updates 必须包含 version 字段。
+    返回更新后的 task dict，版本冲突返回 None。"""
+    db = get_db()
+    current = db.execute("SELECT * FROM tasks WHERE id = ?", (task_id,)).fetchone()
+    if not current:
+        return None
+    if current["version"] != updates.get("version"):
+        return None  # 乐观锁冲突
+
+    allowed_fields = {"title", "description", "urgency", "importance",
+                      "quadrant", "completed", "assigned_to"}
+    set_clauses = []
+    params = []
+    for key in allowed_fields & set(updates.keys()):
+        set_clauses.append(f"{key} = ?")
+        params.append(updates[key])
+
+    if not set_clauses:
+        return dict(current)
+
+    set_clauses.append("version = version + 1")
+    set_clauses.append("updated_at = datetime('now')")
+    params.append(task_id)
+    sql = f"UPDATE tasks SET {', '.join(set_clauses)} WHERE id = ?"
+    db.execute(sql, params)
+    db.commit()
+    return dict(db.execute("SELECT * FROM tasks WHERE id = ?", (task_id,)).fetchone())
+
+
+def delete_task(task_id: str, user_id: str) -> bool:
+    """删除任务（仅创建者或 team owner）。"""
+    db = get_db()
+    task = db.execute("SELECT * FROM tasks WHERE id = ?", (task_id,)).fetchone()
+    if not task:
+        return False
+    # 检查权限：创建者 或 team owner
+    member = db.execute(
+        "SELECT role FROM members WHERE team_id = ? AND user_id = ?",
+        (task["team_id"], user_id)
+    ).fetchone()
+    if task["created_by"] != user_id and (not member or member["role"] != "owner"):
+        return False
+    db.execute("DELETE FROM tasks WHERE id = ?", (task_id,))
+    db.commit()
+    return True
