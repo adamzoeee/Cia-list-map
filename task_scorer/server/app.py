@@ -31,8 +31,8 @@ from model.model import TaskScorer
 from .database import get_db, close_db
 from . import database as db
 from .models import (
-    CreateTeamRequest, JoinTeamRequest, LeaveTeamRequest, DeleteTeamRequest,
-    CreateTaskRequest, UpdateTaskRequest, DeleteTaskRequest,
+    CreateTeamRequest, JoinTeamRequest, LeaveTeamRequest,
+    CreateTaskRequest, UpdateTaskRequest,
 )
 from .collaboration import manager, to_camel_dict, to_camel_list
 
@@ -306,8 +306,8 @@ async def api_leave_team(team_id: str, req: LeaveTeamRequest):
     return {"ok": True}
 
 @app.delete("/api/teams/{team_id}")
-async def api_delete_team(team_id: str, req: DeleteTeamRequest):
-    if not db.delete_team(team_id, req.user_id):
+async def api_delete_team(team_id: str, user_id: str):
+    if not db.delete_team(team_id, user_id):
         raise HTTPException(status_code=403, detail="仅创建者可解散团队")
     return {"ok": True}
 
@@ -352,8 +352,8 @@ async def api_update_task(team_id: str, task_id: str, req: UpdateTaskRequest):
     return {"task": to_camel_dict(task)}
 
 @app.delete("/api/teams/{team_id}/tasks/{task_id}")
-async def api_delete_task(team_id: str, task_id: str, req: DeleteTaskRequest):
-    if not db.delete_task(task_id, req.user_id):
+async def api_delete_task(team_id: str, task_id: str, user_id: str):
+    if not db.delete_task(task_id, user_id):
         raise HTTPException(status_code=403, detail="仅创建者或团队创建者可删除")
     await manager.broadcast(team_id, "task_deleted", {"taskId": task_id})
     return {"ok": True}
@@ -364,6 +364,7 @@ async def api_delete_task(team_id: str, task_id: str, req: DeleteTaskRequest):
 async def ws_collaboration(websocket: WebSocket, invite_code: str):
     team = db.get_team_by_invite_code(invite_code.upper())
     if not team:
+        await websocket.accept()
         await websocket.close(code=4004, reason="团队不存在")
         return
     await manager.connect(team["id"], websocket)
