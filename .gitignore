@@ -16,3 +16,6 @@ checkpoints/
 node_modules/
 dist/
 .env
+
+# Worktrees
+.worktrees/
