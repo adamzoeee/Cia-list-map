@@ -1,23 +1,33 @@
 """SQLite 数据库层 —— 连接管理、建表、CRUD 操作。"""
 import sqlite3
 import os
+import threading
 from typing import Optional
 
-DB_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "collaboration.db")
+DB_PATH = os.environ.get(
+    "COLLAB_DB_PATH",
+    os.path.join(os.path.dirname(__file__), "..", "data", "collaboration.db"),
+)
 
 _conn: Optional[sqlite3.Connection] = None
+_lock = threading.Lock()
 
 
 def get_db() -> sqlite3.Connection:
     """获取数据库连接（单例），启用 WAL 模式和外键约束。"""
     global _conn
     if _conn is None:
-        os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
-        _conn = sqlite3.connect(DB_PATH, check_same_thread=False)
-        _conn.row_factory = sqlite3.Row
-        _conn.execute("PRAGMA journal_mode=WAL")
-        _conn.execute("PRAGMA foreign_keys=ON")
-        _init_tables(_conn)
+        with _lock:
+            if _conn is None:  # 双重检查
+                try:
+                    os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
+                    _conn = sqlite3.connect(DB_PATH, check_same_thread=False)
+                    _conn.row_factory = sqlite3.Row
+                    _conn.execute("PRAGMA journal_mode=WAL")
+                    _conn.execute("PRAGMA foreign_keys=ON")
+                    _init_tables(_conn)
+                except (OSError, sqlite3.Error) as e:
+                    raise RuntimeError(f"数据库初始化失败 ({DB_PATH}): {e}") from e
     return _conn
 
 
@@ -67,5 +77,9 @@ def close_db() -> None:
     """关闭数据库连接。"""
     global _conn
     if _conn:
-        _conn.close()
-        _conn = None
+        try:
+            _conn.close()
+        except Exception:
+            pass
+        finally:
+            _conn = None

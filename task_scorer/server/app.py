@@ -43,8 +43,10 @@ async def lifespan(app: FastAPI):
     """应用生命周期：初始化数据库并加载模型。"""
     get_db()
     load_model()
-    yield
-    close_db()
+    try:
+        yield
+    finally:
+        close_db()
 
 
 app = FastAPI(
