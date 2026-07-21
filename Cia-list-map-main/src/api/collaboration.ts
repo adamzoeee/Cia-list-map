@@ -9,8 +9,14 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
   });
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
-    const detail = typeof body.detail === 'string' ? body.detail : JSON.stringify(body.detail || body);
-    throw new Error(detail || `HTTP ${res.status}`);
+    const detail = body.detail;
+    if (typeof detail === 'object' && detail !== null && 'task' in detail) {
+      // 409 乐观锁冲突：保留 task 数据供上层恢复
+      const err = new Error(detail.message || '冲突');
+      (err as any).data = detail;
+      throw err;
+    }
+    throw new Error(typeof detail === 'string' ? detail : `HTTP ${res.status}`);
   }
   return res.json();
 }

@@ -131,8 +131,8 @@ export function useCollaboration(
       setTasks(prev => prev.map(t => t.id === taskId ? res.task : t));
       return res.task;
     } catch (e: any) {
-      if (e.message?.task) {
-        setTasks(prev => prev.map(t => t.id === taskId ? e.message.task : t));
+      if (e.data?.task) {
+        setTasks(prev => prev.map(t => t.id === taskId ? e.data.task : t));
       }
       throw e;
     }

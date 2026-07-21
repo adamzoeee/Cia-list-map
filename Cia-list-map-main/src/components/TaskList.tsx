@@ -1,4 +1,4 @@
-import type { Task } from '../types';
+import type { Task, Member } from '../types';
 import TaskCard from './TaskCard';
 
 interface Props {
@@ -8,9 +8,13 @@ interface Props {
   onTaskDelete: (id: string) => void;
   onToggleComplete: (id: string) => void;
   onUpdateTask: (id: string, updates: Partial<Pick<Task, 'urgency' | 'importance'>>) => void;
+  // 协作模式（可选）
+  members?: Member[];
+  currentUserId?: string;
+  onClaim?: (taskId: string) => void;
 }
 
-export default function TaskList({ tasks, selectedTaskId, onTaskClick, onTaskDelete, onToggleComplete, onUpdateTask }: Props) {
+export default function TaskList({ tasks, selectedTaskId, onTaskClick, onTaskDelete, onToggleComplete, onUpdateTask, members, currentUserId, onClaim }: Props) {
   // Flat sort: pending by U+I desc, completed at bottom
   const sorted = [...tasks].sort((a, b) => {
     if (a.completed !== b.completed) return a.completed ? 1 : -1;
@@ -62,6 +66,9 @@ export default function TaskList({ tasks, selectedTaskId, onTaskClick, onTaskDel
               onToggleComplete={() => onToggleComplete(task.id)}
               onUpdateUrgency={(v) => onUpdateTask(task.id, { urgency: v })}
               onUpdateImportance={(v) => onUpdateTask(task.id, { importance: v })}
+              members={members}
+              currentUserId={currentUserId}
+              onClaim={onClaim}
             />
           </div>
         ))}

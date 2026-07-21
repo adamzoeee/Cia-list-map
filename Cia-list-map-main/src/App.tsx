@@ -145,34 +145,53 @@ export default function App() {
     }
   }, []);
 
-  const handleConfirmImageTasks = useCallback((drafts: ImageTaskDraft[]) => {
-    const newTasks: Task[] = drafts.map(draft => {
-      const quadrant = getQuadrant(draft.urgency, draft.importance);
-      return {
-        id: nextId(),
-        title: draft.title,
-        description: draft.description,
-        urgency: draft.urgency,
-        importance: draft.importance,
-        quadrant,
-        completed: false,
-        createdAt: new Date().toISOString(),
-        createdBy: '',
-        updatedAt: new Date().toISOString(),
-        version: 1,
-      };
-    });
-    setTasks(prev => {
-      const next = [...newTasks, ...prev];
-      saveStoredTasks(next);
-      return next;
-    });
-    if (newTasks.length > 0) {
-      setSelectedTaskId(newTasks[0].id);
+  const handleConfirmImageTasks = useCallback(async (drafts: ImageTaskDraft[]) => {
+    if (isCollabMode && team) {
+      // 协作模式：逐个创建
+      for (const draft of drafts) {
+        const quadrant = getQuadrant(draft.urgency, draft.importance);
+        try {
+          await collab.createTask({
+            title: draft.title,
+            description: draft.description,
+            urgency: draft.urgency,
+            importance: draft.importance,
+            quadrant,
+          });
+        } catch (e: any) {
+          setError(e.message);
+        }
+      }
+    } else {
+      // 本地模式：原有逻辑
+      const newTasks: Task[] = drafts.map(draft => {
+        const quadrant = getQuadrant(draft.urgency, draft.importance);
+        return {
+          id: nextId(),
+          title: draft.title,
+          description: draft.description,
+          urgency: draft.urgency,
+          importance: draft.importance,
+          quadrant,
+          completed: false,
+          createdAt: new Date().toISOString(),
+          createdBy: '',
+          updatedAt: new Date().toISOString(),
+          version: 1,
+        };
+      });
+      setTasks(prev => {
+        const next = [...newTasks, ...prev];
+        saveStoredTasks(next);
+        return next;
+      });
+      if (newTasks.length > 0) {
+        setSelectedTaskId(newTasks[0].id);
+      }
     }
     setImageDrafts(null);
     setLastOcrText('');
-  }, []);
+  }, [isCollabMode, team, collab]);
 
   const handleCancelImageTasks = useCallback(() => {
     setImageDrafts(null);
@@ -373,6 +392,9 @@ export default function App() {
                 onTaskDelete={handleTaskDelete}
                 onToggleComplete={handleToggleComplete}
                 onUpdateTask={handleUpdateTask}
+                members={isCollabMode ? collab.members : undefined}
+                currentUserId={userProfile?.userId}
+                onClaim={isCollabMode ? collab.claimTask : undefined}
               />
             </div>
           </div>
