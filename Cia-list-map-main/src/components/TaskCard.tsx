@@ -1,4 +1,4 @@
-import type { Task } from '../types';
+import type { Task, Member } from '../types';
 import { QUADRANTS } from './QuadrantChart';
 import { Badge, cn } from './ui';
 
@@ -10,16 +10,16 @@ interface Props {
   onToggleComplete: () => void;
   onUpdateUrgency: (v: number) => void;
   onUpdateImportance: (v: number) => void;
+  // 协作模式（可选）
+  members?: Member[];
+  currentUserId?: string;
+  onClaim?: (taskId: string) => void;
 }
 
 export default function TaskCard({
-  task,
-  isSelected,
-  onClick,
-  onDelete,
-  onToggleComplete,
-  onUpdateUrgency,
-  onUpdateImportance,
+  task, isSelected, onClick, onDelete, onToggleComplete,
+  onUpdateUrgency, onUpdateImportance,
+  members, currentUserId, onClaim,
 }: Props) {
   const q = QUADRANTS.find(q => q.id === task.quadrant)!;
 
@@ -137,6 +137,27 @@ export default function TaskCard({
               />
             </div>
           </div>
+
+          {/* 协作者信息（仅协作模式） */}
+          {members && (
+            <div className="mt-3 pt-3" style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+              <div className="flex items-center gap-2 text-xs text-gray-400">
+                <span>创建者: {members.find(m => m.userId === task.createdBy)?.nickname || '未知'}</span>
+                {task.assignedTo && (
+                  <span>· 认领者: {members.find(m => m.userId === task.assignedTo)?.nickname || '未知'}</span>
+                )}
+              </div>
+              {/* 认领按钮（未认领 + 非创建者） */}
+              {!task.assignedTo && task.createdBy !== currentUserId && onClaim && (
+                <button
+                  onClick={(e) => { e.stopPropagation(); onClaim(task.id); }}
+                  className="mt-2 px-3 py-1.5 text-xs bg-cyan-700/50 hover:bg-cyan-600 text-cyan-200 rounded-lg border border-cyan-500/30 transition-colors"
+                >
+                  🙋 认领任务
+                </button>
+              )}
+            </div>
+          )}
         </div>
       )}
     </div>
