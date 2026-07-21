@@ -103,16 +103,20 @@ def create_team(name: str, creator_user_id: str, creator_nickname: str) -> dict:
     db = get_db()
     team_id = str(uuid.uuid4())
     invite_code = generate_invite_code()
-    db.execute(
-        "INSERT INTO teams (id, name, invite_code, created_by) VALUES (?, ?, ?, ?)",
-        (team_id, name, invite_code, creator_user_id)
-    )
-    member_id = str(uuid.uuid4())
-    db.execute(
-        "INSERT INTO members (id, team_id, user_id, nickname, role) VALUES (?, ?, ?, ?, 'owner')",
-        (member_id, team_id, creator_user_id, creator_nickname)
-    )
-    db.commit()
+    try:
+        db.execute(
+            "INSERT INTO teams (id, name, invite_code, created_by) VALUES (?, ?, ?, ?)",
+            (team_id, name, invite_code, creator_user_id)
+        )
+        member_id = str(uuid.uuid4())
+        db.execute(
+            "INSERT INTO members (id, team_id, user_id, nickname, role) VALUES (?, ?, ?, ?, 'owner')",
+            (member_id, team_id, creator_user_id, creator_nickname)
+        )
+        db.commit()
+    except Exception:
+        db.rollback()
+        raise
     return dict(db.execute("SELECT * FROM teams WHERE id = ?", (team_id,)).fetchone())
 
 
@@ -145,8 +149,11 @@ def delete_team(team_id: str, user_id: str) -> bool:
 
 
 def join_team(team_id: str, user_id: str, nickname: str) -> dict | None:
-    """加入团队。如果已加入返回 None。返回 member dict。"""
+    """加入团队。如果团队不存在或已加入返回 None。返回 member dict。"""
     db = get_db()
+    # 检查团队是否存在
+    if not get_team(team_id):
+        return None
     existing = db.execute(
         "SELECT * FROM members WHERE team_id = ? AND user_id = ?",
         (team_id, user_id)
