@@ -157,6 +157,7 @@ interface Task {
 |------|------|------|--------|
 | `POST` | `/api/teams` | 创建团队 | `{ name, creatorUserId, creatorNickname }` → `Team + inviteCode` |
 | `POST` | `/api/teams/join` | 加入团队 | `{ inviteCode, userId, nickname }` → `Team + tasks[]` |
+| `POST` | `/api/teams/{teamId}/leave` | 退出团队 | `{ userId }` |
 | `GET` | `/api/teams/{teamId}` | 获取团队信息 | — |
 | `DELETE` | `/api/teams/{teamId}` | 解散团队（仅 owner） | `{ userId }` |
 | `GET` | `/api/teams/{teamId}/members` | 成员列表 | — |
@@ -168,7 +169,7 @@ interface Task {
 | `GET` | `/api/teams/{teamId}/tasks` | 拉取全量任务快照 |
 | `POST` | `/api/teams/{teamId}/tasks` | 创建任务 → 广播 `task_created` |
 | `PUT` | `/api/teams/{teamId}/tasks/{taskId}` | 更新任务（含认领/完成）→ 广播 `task_updated` |
-| `DELETE` | `/api/teams/{teamId}/tasks/{taskId}` | 删除任务 → 广播 `task_deleted` |
+| `DELETE` | `/api/teams/{teamId}/tasks/{taskId}` | 删除任务（仅创建者或 owner）→ 广播 `task_deleted` |
 
 - 所有写操作需带 `userId` + `version`（乐观锁校验）
 
@@ -231,6 +232,8 @@ interface Task {
 | 邀请码不存在 | 404 | 前端提示「团队不存在」 |
 | 乐观锁冲突 | 409 | 前端提示「数据已被他人修改，已刷新」→ 自动拉取最新版本 |
 | 非 owner 解散团队 | 403 | 前端提示「仅创建者可解散团队」 |
+| 非创建者/owner 删除任务 | 403 | 前端提示「仅创建者可删除」 |
+| 成员退出团队 | 200 | 清除该成员的本地缓存，回到本地模式 |
 | 重复加入同一团队 | 409 | 前端提示「你已在该团队中」 |
 | WebSocket 断线 | — | 自动重连，重连后拉全量快照 |
 | 并发创建任务 | — | 各自成功，无冲突（创建操作幂等独立） |
