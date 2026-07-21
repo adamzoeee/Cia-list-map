@@ -21,7 +21,7 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
 from torch.optim import AdamW
-from transformers import BertConfig, BertTokenizer, BertModel, get_linear_schedule_with_warmup
+from transformers import BertConfig, BertTokenizer, BertModel, get_cosine_schedule_with_warmup
 from tqdm import tqdm
 
 # 将项目根目录加入路径
@@ -35,12 +35,13 @@ from model.dataset import TaskDataset, collate_fn, split_dataset
 MODEL_NAME = "hfl/chinese-macbert-base"
 MAX_LENGTH = 128
 BATCH_SIZE = 32          # 8GB 显存轻松支持
-LEARNING_RATE = 2e-5     # BERT 层学习率
-HEAD_LR = 1e-3           # 回归头学习率
-WEIGHT_DECAY = 0.01
-WARMUP_RATIO = 0.1
-MAX_EPOCHS = 20
-PATIENCE = 3             # 早停耐心值
+LEARNING_RATE = 3e-5     # BERT 层学习率（从 2e-5 提升，加速收敛）
+HEAD_LR = 5e-4           # 回归头学习率（从 1e-3 降低，减少震荡）
+WEIGHT_DECAY = 0.05      # 权重衰减（从 0.01 提升，增强正则化）
+WARMUP_RATIO = 0.15      # 预热比例（从 0.1 提升，更平滑的启动）
+MAX_EPOCHS = 30          # 最大训练轮数（从 20 提升）
+PATIENCE = 6             # 早停耐心值（从 3 提升，给模型更多探索空间）
+DROPOUT_PROB = 0.15      # Dropout 概率（从 MacBERT 默认 0.1 提升，缓解过拟合）
 SEED = 42
 
 
@@ -229,10 +230,13 @@ def train(args):
     # 加载预训练配置并初始化模型
     print(f"[Model] 初始化 MacBERT 双头回归模型...")
     config = BertConfig.from_pretrained(MODEL_NAME)
+    # 增强 Dropout 正则化，缓解过拟合（MacBERT 默认 0.1）
+    config.hidden_dropout_prob = DROPOUT_PROB
+    config.attention_probs_dropout_prob = DROPOUT_PROB
     # 先加载预训练 BERT 编码器，再组装 TaskScorer
     # 避免 TaskScorer.from_pretrained 加载不同架构 checkpoint 时的兼容性问题
     bert = BertModel.from_pretrained(MODEL_NAME)
-    model = TaskScorer(config)
+    model = TaskScorer(config, hidden_dropout_prob=DROPOUT_PROB)
     model.bert = bert
     model.to(device)
 
@@ -250,10 +254,10 @@ def train(args):
         {'params': head_params, 'lr': HEAD_LR},
     ], weight_decay=WEIGHT_DECAY)
 
-    # 学习率调度
+    # 学习率调度（余弦退火，比线性衰减更平滑，后期收敛更稳定）
     total_steps = len(train_loader) * MAX_EPOCHS
     warmup_steps = int(total_steps * WARMUP_RATIO)
-    scheduler = get_linear_schedule_with_warmup(
+    scheduler = get_cosine_schedule_with_warmup(
         optimizer, num_warmup_steps=warmup_steps, num_training_steps=total_steps
     )
 
@@ -271,6 +275,8 @@ def train(args):
     print(f"Batch size: {BATCH_SIZE}")
     print(f"Max epochs: {MAX_EPOCHS}")
     print(f"BERT LR: {LEARNING_RATE}, Head LR: {HEAD_LR}")
+    print(f"Dropout: {DROPOUT_PROB}, Weight Decay: {WEIGHT_DECAY}")
+    print(f"Patience: {PATIENCE}, Scheduler: cosine")
     print(f"{'='*60}\n")
 
     for epoch in range(1, MAX_EPOCHS + 1):

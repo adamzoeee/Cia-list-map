@@ -38,6 +38,12 @@ export const PLATFORM_PRESETS = [
     baseUrl: 'https://openrouter.ai/api/v1',
     models: ['deepseek/deepseek-chat', 'openai/gpt-4o-mini'],
   },
+  {
+    id: 'local-trained',
+    name: '自训练模型',
+    baseUrl: 'http://localhost:8001',
+    models: ['task-scorer'],
+  },
 ] as const;
 
 export const MODEL_SUGGESTIONS = Array.from(
@@ -76,6 +82,11 @@ export function getBaseUrl(): string {
 export function getCurrentPlatformPreset() {
   const baseUrl = getBaseUrl();
   return PLATFORM_PRESETS.find(platform => baseUrl.startsWith(platform.baseUrl)) || null;
+}
+
+function isLocalModel(): boolean {
+  const preset = getCurrentPlatformPreset();
+  return preset?.id === 'local-trained';
 }
 
 function normalizeBaseUrl(url: string): string {
@@ -162,7 +173,37 @@ const OCR_TEXT_SYSTEM_PROMPT = `你是一个任务管理专家。用户会提供
 3. 如果文本中没有可识别的未完成任务，返回空数组 []
 4. 确保数组中的每个元素都包含 title、description、urgency、importance 四个字段`;
 
+async function analyzeTaskLocal(input: TaskInput): Promise<AIAnalysisResult> {
+  const baseUrl = getBaseUrl();
+  const response = await fetch(`${baseUrl}/predict`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      title: input.title,
+      description: input.description,
+    }),
+  });
+
+  if (!response.ok) {
+    const text = await response.text().catch(() => '');
+    throw new Error(`本地模型服务异常 (${response.status})：${text || '请检查服务是否已启动 (python -m server.app)'}`);
+  }
+
+  const data = await response.json();
+  return {
+    title: data.title || input.title,
+    description: data.description || input.description,
+    urgency: Math.max(-5, Math.min(5, Math.round(data.urgency ?? 0))),
+    importance: Math.max(-5, Math.min(5, Math.round(data.importance ?? 0))),
+    suggestion: data.suggestion || '',
+  };
+}
+
 export async function analyzeTask(input: TaskInput): Promise<AIAnalysisResult> {
+  if (isLocalModel()) {
+    return analyzeTaskLocal(input);
+  }
+
   const key = getApiKey();
   if (!key) {
     throw new Error('请先设置 API Key');
@@ -207,7 +248,42 @@ export async function analyzeTask(input: TaskInput): Promise<AIAnalysisResult> {
   };
 }
 
+async function analyzeOcrTextLocal(ocrText: string): Promise<ImageTaskDraft[]> {
+  const baseUrl = getBaseUrl();
+  const text = ocrText.trim();
+  if (!text) {
+    throw new Error('OCR 未识别出文字，请换一张更清晰的图片');
+  }
+
+  const response = await fetch(`${baseUrl}/predict_batch`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      tasks: [{ title: text, description: '' }],
+    }),
+  });
+
+  if (!response.ok) {
+    const errText = await response.text().catch(() => '');
+    throw new Error(`本地模型服务异常 (${response.status})：${errText || '请检查服务是否已启动'}`);
+  }
+
+  const data = await response.json();
+  const tasks = data.tasks || [];
+
+  return tasks.map((t: ImageTaskDraft) => ({
+    title: t.title || '未命名任务',
+    description: t.description || '',
+    urgency: Math.max(-5, Math.min(5, Math.round(t.urgency ?? 0))),
+    importance: Math.max(-5, Math.min(5, Math.round(t.importance ?? 0))),
+  }));
+}
+
 export async function analyzeOcrText(ocrText: string): Promise<ImageTaskDraft[]> {
+  if (isLocalModel()) {
+    return analyzeOcrTextLocal(ocrText);
+  }
+
   const key = getApiKey();
   if (!key) {
     throw new Error('请先设置 API Key');

@@ -1,18 +1,14 @@
-# Python
-__pycache__/
-*.pyc
-*.pyo
-*.egg-info/
-.pytest_cache/
-
-# 模型检查点
-checkpoints/
-*.pt
-*.pth
-*.bin
-*.safetensors
-
-# 前端
-node_modules/
-dist/
+node_modules
+dist
+dist-ssr
+*.local
 .env
+.env.*
+!.env.example
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.log
+.uploads
+.reasonix/
