@@ -15,6 +15,7 @@ import sys
 import json
 from pathlib import Path
 from typing import List, Dict, Optional
+from contextlib import asynccontextmanager
 
 import torch
 import numpy as np
@@ -27,6 +28,7 @@ from transformers import BertTokenizer
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from model.model import TaskScorer
+from .database import get_db, close_db
 
 
 # ============== 配置 ==============
@@ -36,10 +38,20 @@ MAX_LENGTH = 128
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # ============== FastAPI 应用 ==============
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """应用生命周期：初始化数据库并加载模型。"""
+    get_db()
+    load_model()
+    yield
+    close_db()
+
+
 app = FastAPI(
     title="Task Scorer API",
     description="基于 MacBERT 的任务紧迫度/重要性评分服务",
     version="1.0.0",
+    lifespan=lifespan,
 )
 
 # CORS：允许前端跨域调用
@@ -118,12 +130,6 @@ def load_model():
     model.to(DEVICE)
     model.eval()
     print(f"[LoadModel] 模型加载完成，使用设备: {DEVICE}")
-
-
-@app.on_event("startup")
-async def startup_event():
-    """服务启动时加载模型"""
-    load_model()
 
 
 # ============== API 路由 ==============
