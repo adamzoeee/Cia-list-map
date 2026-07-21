@@ -19,7 +19,7 @@ from contextlib import asynccontextmanager
 
 import torch
 import numpy as np
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from transformers import BertTokenizer
@@ -29,6 +29,12 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from model.model import TaskScorer
 from .database import get_db, close_db
+from . import database as db
+from .models import (
+    CreateTeamRequest, JoinTeamRequest, LeaveTeamRequest, DeleteTeamRequest,
+    CreateTaskRequest, UpdateTaskRequest, DeleteTaskRequest,
+)
+from .collaboration import manager, to_camel_dict, to_camel_list
 
 
 # ============== 配置 ==============
@@ -247,6 +253,131 @@ async def predict_batch(batch: BatchInput):
     return BatchOutput(tasks=results)
 
 
+# ============== 协作 API ==============
+
+# ── 团队 ──
+
+@app.post("/api/teams")
+async def api_create_team(req: CreateTeamRequest):
+    team = db.create_team(req.name, req.creator_user_id, req.creator_nickname)
+    return {"team": to_camel_dict(team)}
+
+@app.post("/api/teams/join")
+async def api_join_team(req: JoinTeamRequest):
+    team = db.get_team_by_invite_code(req.invite_code.upper())
+    if not team:
+        raise HTTPException(status_code=404, detail="团队不存在，请检查邀请码")
+    member = db.join_team(team["id"], req.user_id, req.nickname)
+    if member is None:
+        raise HTTPException(status_code=409, detail="你已在该团队中")
+    tasks = db.list_tasks(team["id"])
+    members = db.get_members(team["id"])
+    await manager.broadcast(team["id"], "member_joined", {
+        "member": member, "members": members
+    })
+    return {
+        "team": to_camel_dict(team),
+        "tasks": to_camel_list(tasks),
+        "members": to_camel_list(members),
+    }
+
+@app.get("/api/teams/{team_id}")
+async def api_get_team(team_id: str):
+    team = db.get_team(team_id)
+    if not team:
+        raise HTTPException(status_code=404, detail="团队不存在")
+    return {"team": to_camel_dict(team)}
+
+@app.get("/api/teams/{team_id}/members")
+async def api_get_members(team_id: str):
+    team = db.get_team(team_id)
+    if not team:
+        raise HTTPException(status_code=404, detail="团队不存在")
+    return {"members": to_camel_list(db.get_members(team_id))}
+
+@app.post("/api/teams/{team_id}/leave")
+async def api_leave_team(team_id: str, req: LeaveTeamRequest):
+    if not db.leave_team(team_id, req.user_id):
+        raise HTTPException(status_code=403, detail="创建者不能退出，请先解散团队")
+    members = db.get_members(team_id)
+    await manager.broadcast(team_id, "member_left", {
+        "userId": req.user_id, "members": members
+    })
+    return {"ok": True}
+
+@app.delete("/api/teams/{team_id}")
+async def api_delete_team(team_id: str, req: DeleteTeamRequest):
+    if not db.delete_team(team_id, req.user_id):
+        raise HTTPException(status_code=403, detail="仅创建者可解散团队")
+    return {"ok": True}
+
+# ── 任务 ──
+
+@app.get("/api/teams/{team_id}/tasks")
+async def api_list_tasks(team_id: str):
+    team = db.get_team(team_id)
+    if not team:
+        raise HTTPException(status_code=404, detail="团队不存在")
+    return {"tasks": to_camel_list(db.list_tasks(team_id))}
+
+@app.post("/api/teams/{team_id}/tasks")
+async def api_create_task(team_id: str, req: CreateTaskRequest):
+    team = db.get_team(team_id)
+    if not team:
+        raise HTTPException(status_code=404, detail="团队不存在")
+    task = db.create_task(team_id, req.title, req.description,
+                          req.urgency, req.importance, req.quadrant, req.created_by)
+    await manager.broadcast(team_id, "task_created", {"task": task})
+    return {"task": to_camel_dict(task)}
+
+@app.put("/api/teams/{team_id}/tasks/{task_id}")
+async def api_update_task(team_id: str, task_id: str, req: UpdateTaskRequest):
+    updates = {k: v for k, v in req.model_dump().items()
+               if v is not None and k not in ("user_id",)}
+    updates["version"] = req.version
+    if "completed" in updates:
+        updates["completed"] = 1 if updates["completed"] else 0
+
+    task = db.update_task(task_id, req.user_id, updates)
+    if task is None:
+        exists = db.get_db().execute("SELECT 1 FROM tasks WHERE id = ?", (task_id,)).fetchone()
+        if exists:
+            latest = dict(db.get_db().execute("SELECT * FROM tasks WHERE id = ?", (task_id,)).fetchone())
+            raise HTTPException(status_code=409, detail={
+                "message": "数据已被他人修改，请刷新",
+                "task": to_camel_dict(latest)
+            })
+        raise HTTPException(status_code=404, detail="任务不存在")
+    await manager.broadcast(team_id, "task_updated", {"task": task})
+    return {"task": to_camel_dict(task)}
+
+@app.delete("/api/teams/{team_id}/tasks/{task_id}")
+async def api_delete_task(team_id: str, task_id: str, req: DeleteTaskRequest):
+    if not db.delete_task(task_id, req.user_id):
+        raise HTTPException(status_code=403, detail="仅创建者或团队创建者可删除")
+    await manager.broadcast(team_id, "task_deleted", {"taskId": task_id})
+    return {"ok": True}
+
+# ── WebSocket ──
+
+@app.websocket("/ws/{invite_code}")
+async def ws_collaboration(websocket: WebSocket, invite_code: str):
+    team = db.get_team_by_invite_code(invite_code.upper())
+    if not team:
+        await websocket.close(code=4004, reason="团队不存在")
+        return
+    await manager.connect(team["id"], websocket)
+    try:
+        while True:
+            data = await websocket.receive_text()
+            if data == "ping":
+                await websocket.send_text("pong")
+    except WebSocketDisconnect:
+        pass
+    finally:
+        manager.disconnect(team["id"], websocket)
+
+
 @app.get("/")
 async def root():
     """API 信息"""
@@ -257,6 +388,17 @@ async def root():
             "predict": "POST /predict - 单任务分析",
             "predict_batch": "POST /predict_batch - 批量任务分析",
             "health": "GET /health - 健康检查",
+            "create_team": "POST /api/teams - 创建团队",
+            "join_team": "POST /api/teams/join - 加入团队",
+            "get_team": "GET /api/teams/{team_id} - 获取团队",
+            "get_members": "GET /api/teams/{team_id}/members - 获取成员",
+            "leave_team": "POST /api/teams/{team_id}/leave - 退出团队",
+            "delete_team": "DELETE /api/teams/{team_id} - 解散团队",
+            "list_tasks": "GET /api/teams/{team_id}/tasks - 任务列表",
+            "create_task": "POST /api/teams/{team_id}/tasks - 创建任务",
+            "update_task": "PUT /api/teams/{team_id}/tasks/{task_id} - 更新任务",
+            "delete_task": "DELETE /api/teams/{team_id}/tasks/{task_id} - 删除任务",
+            "ws": "WS /ws/{invite_code} - 协作 WebSocket",
         },
     }
 
