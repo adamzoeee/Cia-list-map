@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import type { Task, TaskInput, ImageTaskDraft } from './types';
+import type { Task, TaskInput, ImageTaskDraft, Team, UserProfile } from './types';
 import { analyzeTask, analyzeOcrText, getApiKey } from './api/deepseek';
 import { recognizeTextFromImage } from './api/ocr';
 import ApiKeyInput from './components/ApiKeyInput';
@@ -8,6 +8,9 @@ import QuadrantChart from './components/QuadrantChart';
 import TaskList from './components/TaskList';
 import ActionPanel from './components/ActionPanel';
 import ImageTaskPreview from './components/ImageTaskPreview';
+import TeamSetup from './components/TeamSetup';
+import TeamPanel from './components/TeamPanel';
+import { useCollaboration } from './hooks/useCollaboration';
 import { Badge, Button, Panel, SectionTitle } from './components/ui';
 
 const TASKS_STORAGE_KEY = 'quadrant_tasks';
@@ -21,19 +24,33 @@ function loadStoredTasks(): Task[] {
   try {
     const raw = localStorage.getItem(TASKS_STORAGE_KEY);
     if (!raw) return [];
-    const parsed = JSON.parse(raw) as Array<Omit<Task, 'createdAt'> & { createdAt: string; completed?: boolean }>;
+    const parsed = JSON.parse(raw) as any[];
     return parsed.map(task => ({
       ...task,
       completed: task.completed ?? false,
-      createdAt: new Date(task.createdAt),
+      createdAt: task.createdAt || new Date().toISOString(),
+      createdBy: task.createdBy || '',
+      updatedAt: task.updatedAt || task.createdAt || new Date().toISOString(),
+      version: task.version ?? 1,
     }));
-  } catch {
-    return [];
-  }
+  } catch { return []; }
 }
 
 function saveStoredTasks(tasks: Task[]) {
   localStorage.setItem(TASKS_STORAGE_KEY, JSON.stringify(tasks));
+}
+
+const USER_PROFILE_KEY = 'cia_user_profile';
+
+function loadUserProfile(): UserProfile | null {
+  try {
+    const raw = localStorage.getItem(USER_PROFILE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch { return null; }
+}
+
+function saveUserProfile(profile: UserProfile) {
+  localStorage.setItem(USER_PROFILE_KEY, JSON.stringify(profile));
 }
 
 function getQuadrant(urgency: number, importance: number): 1 | 2 | 3 | 4 {
@@ -52,6 +69,17 @@ export default function App() {
   const [hasKey, setHasKey] = useState(!!getApiKey());
   const [imageDrafts, setImageDrafts] = useState<ImageTaskDraft[] | null>(null);
   const [lastOcrText, setLastOcrText] = useState('');
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(loadUserProfile);
+  const [team, setTeam] = useState<Team | null>(null);
+
+  const collab = useCollaboration(
+    team?.id ?? null,
+    team?.inviteCode ?? null,
+    userProfile?.userId ?? '',
+  );
+
+  const isCollabMode = team !== null;
+  const activeTasks = isCollabMode ? collab.tasks : tasks;
 
   const handleAddTask = useCallback(async (input: TaskInput) => {
     setError(null);
@@ -60,29 +88,40 @@ export default function App() {
     try {
       const result = await analyzeTask(input);
       const quadrant = getQuadrant(result.urgency, result.importance);
-      const task: Task = {
-        id: nextId(),
-        title: result.title,
-        description: result.description || result.suggestion,
-        urgency: result.urgency,
-        importance: result.importance,
-        quadrant,
-        completed: false,
-        createdAt: new Date(),
-      };
-      setTasks(prev => {
-        const next = [task, ...prev];
-        saveStoredTasks(next);
-        return next;
-      });
-      setSelectedTaskId(task.id);
+      if (isCollabMode && team) {
+        // 协作模式：通过 Hook 创建任务
+        await collab.createTask({
+          title: result.title,
+          description: result.description || result.suggestion,
+          urgency: result.urgency,
+          importance: result.importance,
+          quadrant,
+        });
+      } else {
+        // 本地模式
+        const task: Task = {
+          id: nextId(),
+          title: result.title,
+          description: result.description || result.suggestion,
+          urgency: result.urgency,
+          importance: result.importance,
+          quadrant,
+          completed: false,
+          createdAt: new Date().toISOString(),
+          createdBy: '',
+          updatedAt: new Date().toISOString(),
+          version: 1,
+        };
+        setTasks(prev => { const next = [task, ...prev]; saveStoredTasks(next); return next; });
+        setSelectedTaskId(task.id);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : '未知错误');
     } finally {
       setLoading(false);
       setLoadingMessage('');
     }
-  }, []);
+  }, [isCollabMode, team, collab]);
 
   const handleImageSubmit = useCallback(async (base64: string) => {
     setError(null);
@@ -117,7 +156,10 @@ export default function App() {
         importance: draft.importance,
         quadrant,
         completed: false,
-        createdAt: new Date(),
+        createdAt: new Date().toISOString(),
+        createdBy: '',
+        updatedAt: new Date().toISOString(),
+        version: 1,
       };
     });
     setTasks(prev => {
@@ -142,35 +184,60 @@ export default function App() {
   }, []);
 
   const handleTaskDelete = useCallback((id: string) => {
-    setTasks(prev => {
-      const next = prev.filter(t => t.id !== id);
-      saveStoredTasks(next);
-      return next;
-    });
+    if (isCollabMode) {
+      collab.deleteTask(id).catch(e => setError(e.message));
+    } else {
+      setTasks(prev => {
+        const next = prev.filter(t => t.id !== id);
+        saveStoredTasks(next);
+        return next;
+      });
+    }
     setSelectedTaskId(prev => prev === id ? null : prev);
-  }, []);
+  }, [isCollabMode, collab]);
 
   const handleToggleComplete = useCallback((id: string) => {
-    setTasks(prev => {
-      const next = prev.map(t => t.id === id ? { ...t, completed: !t.completed } : t);
-      saveStoredTasks(next);
-      return next;
-    });
-  }, []);
+    if (isCollabMode) {
+      collab.completeTask(id).catch(e => setError(e.message));
+    } else {
+      setTasks(prev => {
+        const next = prev.map(t => t.id === id ? { ...t, completed: !t.completed } : t);
+        saveStoredTasks(next);
+        return next;
+      });
+    }
+  }, [isCollabMode, collab]);
 
   const handleUpdateTask = useCallback((id: string, updates: Partial<Pick<Task, 'urgency' | 'importance'>>) => {
-    setTasks(prev => {
-      const next = prev.map(t => {
-        if (t.id !== id) return t;
-        const urgency = updates.urgency ?? t.urgency;
-        const importance = updates.importance ?? t.importance;
-        return { ...t, urgency, importance, quadrant: getQuadrant(urgency, importance) };
+    if (isCollabMode) {
+      collab.updateTask(id, updates).catch(e => setError(e.message));
+    } else {
+      setTasks(prev => {
+        const next = prev.map(t => {
+          if (t.id !== id) return t;
+          const urgency = updates.urgency ?? t.urgency;
+          const importance = updates.importance ?? t.importance;
+          return { ...t, urgency, importance, quadrant: getQuadrant(urgency, importance) };
+        });
+        saveStoredTasks(next);
+        return next;
       });
-      saveStoredTasks(next);
-      return next;
-    });
-  }, []);
+    }
+  }, [isCollabMode, collab]);
 
+
+  // 未设置用户身份 → 显示 TeamSetup 向导
+  if (!userProfile) {
+    return (
+      <TeamSetup
+        onComplete={(profile, newTeam, _initTasks, _initMembers) => {
+          setUserProfile(profile);
+          setTeam(newTeam);
+          saveUserProfile(profile);
+        }}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#111827] text-slate-100">
@@ -187,10 +254,24 @@ export default function App() {
             </div>
           </div>
           <div className="text-xs text-slate-500 hidden sm:block">
-            {tasks.length} 个任务
+            {activeTasks.length} 个任务
           </div>
         </div>
       </header>
+
+      {/* TeamPanel（仅协作模式） */}
+      {isCollabMode && team && (
+        <div className="max-w-7xl mx-auto px-4 pt-3">
+          <TeamPanel
+            team={team}
+            members={collab.members}
+            userId={userProfile!.userId}
+            connected={collab.connected}
+            onLeave={() => { setTeam(null); }}
+            onDelete={() => { setTeam(null); }}
+          />
+        </div>
+      )}
 
       <main className="max-w-7xl mx-auto px-4 py-6">
         {/* API Key */}
@@ -242,14 +323,14 @@ export default function App() {
 
             {/* Action Advice Panel */}
             <div>
-              <ActionPanel tasks={tasks} />
+              <ActionPanel tasks={activeTasks} />
             </div>
           </div>
 
           {/* Right / Main: Chart + Task List */}
           <div className="lg:col-span-8 xl:col-span-9 order-1 lg:order-2">
             <Panel className="p-4 lg:p-6">
-              {tasks.length === 0 ? (
+              {activeTasks.length === 0 ? (
                 <div className="flex items-center justify-center h-64 text-slate-600">
                   <div className="text-center">
                     <div className="neu-inset mx-auto mb-4 h-12 w-12 rounded-2xl" />
@@ -259,7 +340,7 @@ export default function App() {
                 </div>
               ) : (
                 <QuadrantChart
-                  tasks={tasks.filter(t => !t.completed)}
+                  tasks={activeTasks.filter(t => !t.completed)}
                   onTaskClick={handleTaskClick}
                   selectedTaskId={selectedTaskId}
                 />
@@ -286,7 +367,7 @@ export default function App() {
             <div className="mt-6">
               <SectionTitle eyebrow="Tasks" title="任务列表" />
               <TaskList
-                tasks={tasks}
+                tasks={activeTasks}
                 selectedTaskId={selectedTaskId}
                 onTaskClick={handleTaskClick}
                 onTaskDelete={handleTaskDelete}
