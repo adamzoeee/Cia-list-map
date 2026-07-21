@@ -12,12 +12,21 @@ def to_camel(snake: str) -> str:
 
 
 def to_camel_dict(d: dict) -> dict:
-    """将 dict 的所有 key 从 snake_case 转为 camelCase。"""
-    return {to_camel(k): v for k, v in d.items()}
+    """递归将 dict 的所有 key 从 snake_case 转为 camelCase。"""
+    result = {}
+    for k, v in d.items():
+        key = to_camel(k)
+        if isinstance(v, dict):
+            result[key] = to_camel_dict(v)
+        elif isinstance(v, list):
+            result[key] = to_camel_list(v)
+        else:
+            result[key] = v
+    return result
 
 
-def to_camel_list(items: list[dict]) -> list[dict]:
-    return [to_camel_dict(item) for item in items]
+def to_camel_list(items: list) -> list:
+    return [to_camel_dict(item) if isinstance(item, dict) else item for item in items]
 
 
 class CollaborationManager:
@@ -60,7 +69,7 @@ class CollaborationManager:
         }, ensure_ascii=False)
 
         dead: set[WebSocket] = set()
-        for ws in self._rooms[team_id]:
+        for ws in list(self._rooms[team_id]):
             try:
                 await ws.send_text(message)
             except Exception:

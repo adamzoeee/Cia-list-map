@@ -11,16 +11,16 @@ class CreateTeamRequest(BaseModel):
 
 class JoinTeamRequest(BaseModel):
     invite_code: str = Field(..., min_length=6, max_length=6)
-    user_id: str
+    user_id: str = Field(..., min_length=1)
     nickname: str = Field(..., min_length=1, max_length=30)
 
 
 class LeaveTeamRequest(BaseModel):
-    user_id: str
+    user_id: str = Field(..., min_length=1)
 
 
 class DeleteTeamRequest(BaseModel):
-    user_id: str
+    user_id: str = Field(..., min_length=1)
 
 
 class CreateTaskRequest(BaseModel):
@@ -33,16 +33,16 @@ class CreateTaskRequest(BaseModel):
 
 
 class UpdateTaskRequest(BaseModel):
-    user_id: str
+    user_id: str = Field(..., min_length=1)
     version: int
     title: Optional[str] = None
     description: Optional[str] = None
-    urgency: Optional[float] = None
-    importance: Optional[float] = None
-    quadrant: Optional[int] = None
+    urgency: Optional[float] = Field(default=None, ge=-5, le=5)
+    importance: Optional[float] = Field(default=None, ge=-5, le=5)
+    quadrant: Optional[int] = Field(default=None, ge=1, le=4)
     completed: Optional[bool] = None
     assigned_to: Optional[str] = None
 
 
 class DeleteTaskRequest(BaseModel):
-    user_id: str
+    user_id: str = Field(..., min_length=1)
