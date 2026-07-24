@@ -67,6 +67,25 @@ class Group:
                 return t["completed"]
         return None
 
+    def assign_task(self, task_id: str, nickname: str, action: str) -> Optional[dict]:
+        """
+        claim: 将 nickname 加入 assignees（去重）
+        unclaim: 将 nickname 从 assignees 移除
+        返回更新后的任务，如果任务不存在返回 None
+        """
+        for t in self.tasks:
+            if t["id"] == task_id:
+                assignees = t.get("assignees") or []
+                if action == "claim":
+                    if nickname not in assignees:
+                        assignees.append(nickname)
+                elif action == "unclaim":
+                    if nickname in assignees:
+                        assignees.remove(nickname)
+                t["assignees"] = assignees
+                return t
+        return None
+
     async def broadcast(self, message: dict, exclude: Optional[str] = None):
         """向组内所有在线成员广播消息"""
         dead = []
