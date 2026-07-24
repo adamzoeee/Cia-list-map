@@ -243,14 +243,21 @@ class Group:
 
 ### 6.3 OCR 批量模式
 
+MacBERT 模型只能评分，不能做文本拆分。OCR 原始文本的拆分在前端完成：
+
 ```
-用户上传图片 → 前端 Tesseract OCR（本地）
-            → ws.send('analyze_batch', {texts: [...]})
+用户上传图片 → 前端 Tesseract OCR（本地）得到原始文本
+            → 前端按行拆分（每非空行 = 一个任务标题）
+            → ws.send('analyze_batch', {texts: [{title:"行1", description:""}, ...]})
             → 后端批量评分
             → ws.on('analyze_batch_result', tasks)
-            → ImageTaskPreview 展示
+            → ImageTaskPreview 展示（用户可编辑标题/描述后确认）
             → 用户确认 → ws.send('task_add', ...) × N
 ```
+
+- **拆分策略**：按 `\n` 分割，过滤空行和纯标点行，每行作为 `title`，`description` 留空
+- **用户可在预览中编辑**（现有 ImageTaskPreview 已支持）
+- 若需智能拆分（如识别"1. xxx 2. xxx"格式），在前端做简单正则预处理
 
 ---
 
