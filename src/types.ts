@@ -43,3 +43,33 @@ export interface ImageTaskDraft {
 export interface ImageAnalysisResult {
   tasks: ImageTaskDraft[];
 }
+
+// ========== WebSocket 消息 & 协作类型 ==========
+
+export type WsMessageType =
+  | 'analyze_text' | 'analyze_result'
+  | 'analyze_batch' | 'analyze_batch_result'
+  | 'auth' | 'auth_ok' | 'auth_fail'
+  | 'task_add' | 'task_added'
+  | 'task_update' | 'task_updated'
+  | 'task_delete' | 'task_deleted'
+  | 'task_toggle' | 'task_toggled'
+  | 'member_join' | 'member_leave' | 'members_list'
+  | 'error';
+
+export interface WsMessage {
+  type: WsMessageType;
+  [key: string]: unknown;
+}
+
+export interface Collaborator {
+  nickname: string;
+  online: boolean;
+}
+
+export interface CollabState {
+  isJoined: boolean;
+  groupId: string;
+  nickname: string;
+  members: Collaborator[];
+}
