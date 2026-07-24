@@ -86,6 +86,17 @@ tokenizer: Optional[BertTokenizer] = None
 group_manager: Optional[GroupManager] = None
 
 
+def get_quadrant(urgency: int, importance: int) -> int:
+    """根据紧迫度和重要性计算象限（1-4）"""
+    if urgency >= 0 and importance >= 0:
+        return 1
+    if urgency < 0 and importance >= 0:
+        return 2
+    if urgency < 0 and importance < 0:
+        return 3
+    return 4
+
+
 def get_suggestion(quadrant: int) -> str:
     """根据象限返回预设建议（替代模型生成）"""
     suggestions = {
@@ -117,11 +128,7 @@ def do_predict(title: str, description: str = "") -> dict:
     importance = float(outputs["importance"][0])
     urgency_int = int(np.clip(round(urgency), -5, 5))
     importance_int = int(np.clip(round(importance), -5, 5))
-    quadrant = (
-        1 if urgency_int >= 0 and importance_int >= 0 else
-        2 if urgency_int < 0 and importance_int >= 0 else
-        3 if urgency_int < 0 and importance_int < 0 else 4
-    )
+    quadrant = get_quadrant(urgency_int, importance_int)
     return {
         "title": title, "description": description,
         "urgency": urgency_int, "importance": importance_int,
@@ -251,6 +258,9 @@ async def websocket_endpoint(ws: WebSocket):
 
             # ---- 单机模式：analyze_text / analyze_batch（无需认证）----
             if msg_type == "analyze_text":
+                if not data.get("title", "").strip():
+                    await ws.send_json({"type": "error", "message": "任务标题不能为空"})
+                    continue
                 try:
                     result = do_predict(
                         data.get("title", ""),
@@ -262,8 +272,17 @@ async def websocket_endpoint(ws: WebSocket):
                 continue
 
             if msg_type == "analyze_batch":
+                tasks_in = data.get("texts", [])
+                if not isinstance(tasks_in, list):
+                    await ws.send_json({"type": "error", "message": "texts 字段必须是列表"})
+                    continue
+                if not tasks_in:
+                    await ws.send_json({"type": "error", "message": "任务列表不能为空"})
+                    continue
+                if len(tasks_in) > 50:
+                    await ws.send_json({"type": "error", "message": "单次最多50条"})
+                    continue
                 try:
-                    tasks_in = data.get("texts", [])
                     results = do_predict_batch(tasks_in)
                     await ws.send_json({"type": "analyze_batch_result", "tasks": results})
                 except RuntimeError as e:
@@ -272,6 +291,17 @@ async def websocket_endpoint(ws: WebSocket):
 
             # ---- 认证 ----
             if msg_type == "auth":
+                # 已认证客户端重新认证：先清理旧组
+                if authenticated and current_group and current_nickname:
+                    current_group.remove_member(current_nickname)
+                    try:
+                        await current_group.broadcast({
+                            "type": "member_leave",
+                            "nickname": current_nickname,
+                        })
+                    except Exception:
+                        pass
+
                 group_id = str(data.get("group_id", "")).strip()
                 password = str(data.get("password", "")).strip()
                 nickname = str(data.get("nickname", "")).strip()
@@ -334,11 +364,7 @@ async def websocket_endpoint(ws: WebSocket):
                     "description": scored["description"],
                     "urgency": u,
                     "importance": i,
-                    "quadrant": (
-                        1 if u >= 0 and i >= 0 else
-                        2 if u < 0 and i >= 0 else
-                        3 if u < 0 and i < 0 else 4
-                    ),
+                    "quadrant": get_quadrant(u, i),
                     "completed": False,
                     "createdBy": nickname,
                     "createdAt": time_module.strftime("%Y-%m-%dT%H:%M:%S"),
@@ -352,23 +378,30 @@ async def websocket_endpoint(ws: WebSocket):
                 task_id = data.get("task_id", "")
                 curr = next((t for t in group.tasks if t["id"] == task_id), None)
                 if not curr:
+                    await ws.send_json({"type": "error", "message": "任务不存在"})
                     continue
                 updates = {}
                 if "urgency" in data:
-                    updates["urgency"] = int(np.clip(round(data["urgency"]), -5, 5))
+                    try:
+                        updates["urgency"] = int(np.clip(round(data["urgency"]), -5, 5))
+                    except (TypeError, ValueError):
+                        await ws.send_json({"type": "error", "message": "紧迫度必须是数值"})
+                        continue
                 if "importance" in data:
-                    updates["importance"] = int(np.clip(round(data["importance"]), -5, 5))
+                    try:
+                        updates["importance"] = int(np.clip(round(data["importance"]), -5, 5))
+                    except (TypeError, ValueError):
+                        await ws.send_json({"type": "error", "message": "重要性必须是数值"})
+                        continue
                 u = updates.get("urgency", curr["urgency"])
                 i = updates.get("importance", curr["importance"])
-                updates["quadrant"] = (
-                    1 if u >= 0 and i >= 0 else
-                    2 if u < 0 and i >= 0 else
-                    3 if u < 0 and i < 0 else 4
-                )
+                updates["quadrant"] = get_quadrant(u, i)
                 updated = group.update_task(task_id, updates)
                 if updated:
                     group_manager.save_group(group)
                     await group.broadcast({"type": "task_updated", "task": updated})
+                else:
+                    await ws.send_json({"type": "error", "message": "任务不存在"})
                 continue
 
             if msg_type == "task_delete":
@@ -376,6 +409,8 @@ async def websocket_endpoint(ws: WebSocket):
                 if group.delete_task(task_id):
                     group_manager.save_group(group)
                     await group.broadcast({"type": "task_deleted", "task_id": task_id})
+                else:
+                    await ws.send_json({"type": "error", "message": "任务不存在"})
                 continue
 
             if msg_type == "task_toggle":
@@ -388,6 +423,8 @@ async def websocket_endpoint(ws: WebSocket):
                         "task_id": task_id,
                         "completed": completed,
                     })
+                else:
+                    await ws.send_json({"type": "error", "message": "任务不存在"})
                 continue
 
             await ws.send_json({"type": "error", "message": f"未知消息类型: {msg_type}"})
