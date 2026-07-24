@@ -1,10 +1,11 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import type { CollabState, WsMessage, Collaborator } from '../types';
 import { wsClient } from '../api/websocket';
 import { Panel, SectionTitle, Button, TextInput, Badge, cn } from './ui';
 
 interface Props {
   collabState: CollabState;
+  wsConnected: boolean;
   onCollabStateChange: (s: CollabState) => void;
   onTasksReceived: (tasks: Array<Record<string, unknown>>) => void;
   onMemberJoin: (nickname: string) => void;
@@ -13,6 +14,7 @@ interface Props {
 
 export default function CollaborationPanel({
   collabState,
+  wsConnected,
   onCollabStateChange,
   onTasksReceived,
   onMemberJoin,
@@ -22,6 +24,11 @@ export default function CollaborationPanel({
   const [password, setPassword] = useState('');
   const [nickname, setNickname] = useState('');
   const [joining, setJoining] = useState(false);
+  const [authError, setAuthError] = useState('');
+  const nicknameRef = useRef('');
+
+  // 同步 ref
+  useEffect(() => { nicknameRef.current = nickname; }, [nickname]);
 
   // 注册协作消息处理器
   useEffect(() => {
@@ -32,14 +39,16 @@ export default function CollaborationPanel({
       onCollabStateChange({
         isJoined: true,
         groupId: msg.group_id as string,
-        nickname: nickname,
+        nickname: nicknameRef.current,
         members: (msg.members as Collaborator[]) || [],
       });
       setJoining(false);
+      setAuthError('');
     }));
 
-    unsubs.push(wsClient.on('auth_fail', (_msg: WsMessage) => {
+    unsubs.push(wsClient.on('auth_fail', (msg: WsMessage) => {
       setJoining(false);
+      setAuthError((msg.reason as string) || '认证失败');
     }));
 
     unsubs.push(wsClient.on('member_join', (msg: WsMessage) => {
@@ -51,7 +60,7 @@ export default function CollaborationPanel({
     }));
 
     return () => unsubs.forEach(fn => fn());
-  }, [nickname, onCollabStateChange, onTasksReceived, onMemberJoin, onMemberLeave]);
+  }, [onCollabStateChange, onTasksReceived, onMemberJoin, onMemberLeave]);
 
   const handleJoin = useCallback(() => {
     const gid = groupId.trim();
@@ -98,12 +107,15 @@ export default function CollaborationPanel({
           />
           <Button
             onClick={handleJoin}
-            disabled={joining || !groupId.trim() || !password.trim() || !nickname.trim()}
+            disabled={joining || !wsConnected || !groupId.trim() || !password.trim() || !nickname.trim()}
             variant="primary"
             className="w-full py-2.5"
           >
-            {joining ? '加入中...' : '加入/创建协作组'}
+            {joining ? '加入中...' : wsConnected ? '加入/创建协作组' : '等待后端连接...'}
           </Button>
+          {authError && (
+            <p className="text-xs text-red-400 text-center">{authError}</p>
+          )}
         </div>
       ) : (
         <div className="space-y-3">

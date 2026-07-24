@@ -365,6 +365,7 @@ export default function App() {
             <div>
               <CollaborationPanel
                 collabState={collabState}
+                wsConnected={wsConnected}
                 onCollabStateChange={handleCollabStateChange}
                 onTasksReceived={handleCollabTasksReceived}
                 onMemberJoin={handleMemberJoin}
