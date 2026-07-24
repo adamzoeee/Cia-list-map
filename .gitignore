@@ -14,4 +14,4 @@ dist-ssr
 .worktrees/
 .reasonix/
 __pycache__/
-task_scorer/checkpoints/
+task_scorer/checkpoints/task_scorer/server/data/
