@@ -1,10 +1,9 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
-import type { TaskInput } from '../types';
 import { Button, Panel, TextArea, TextInput, cn } from './ui';
 
 interface Props {
-  onSubmit: (input: TaskInput) => void;
-  onImageSubmit: (base64: string) => void;
+  onTextSubmit: (title: string, description: string) => void;
+  onImageReady: (base64: string) => void;
   loading: boolean;
   loadingMessage?: string;
 }
@@ -42,7 +41,7 @@ function compressImage(file: File, maxWidth = 1920, quality = 0.8): Promise<stri
   });
 }
 
-export default function TaskInputForm({ onSubmit, onImageSubmit, loading, loadingMessage }: Props) {
+export default function TaskInputForm({ onTextSubmit, onImageReady, loading, loadingMessage }: Props) {
   const [mode, setMode] = useState<'text' | 'image'>('text');
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -98,14 +97,14 @@ export default function TaskInputForm({ onSubmit, onImageSubmit, loading, loadin
     e.preventDefault();
     const t = title.trim();
     if (!t) return;
-    onSubmit({ title: t, description: description.trim() });
+    onTextSubmit(t, description.trim());
     setTitle('');
     setDescription('');
   };
 
   const handleSubmitImage = () => {
     if (!compressedBase64) return;
-    onImageSubmit(compressedBase64);
+    onImageReady(compressedBase64);
   };
 
   const handleClearImage = () => {
@@ -173,10 +172,10 @@ export default function TaskInputForm({ onSubmit, onImageSubmit, loading, loadin
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                 </svg>
-                {loadingMessage || 'AI 分析中...'}
+                {loadingMessage || '模型分析中...'}
               </>
             ) : (
-              <>AI 分析并添加</>
+              <>模型分析并添加</>
             )}
           </Button>
         </form>
@@ -205,7 +204,7 @@ export default function TaskInputForm({ onSubmit, onImageSubmit, loading, loadin
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                     </svg>
                   </div>
-                  <p className="text-sm text-cyan-300 mb-1">{loadingMessage || 'AI 分析中...'}</p>
+                  <p className="text-sm text-cyan-300 mb-1">{loadingMessage || '模型分析中...'}</p>
                 </>
               ) : (
                 <>
