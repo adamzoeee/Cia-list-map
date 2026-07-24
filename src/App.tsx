@@ -1,14 +1,14 @@
-import { useState, useCallback } from 'react';
-import type { Task, TaskInput, ImageTaskDraft } from './types';
-import { analyzeTask, analyzeOcrText, getApiKey } from './api/deepseek';
+import { useState, useCallback, useEffect } from 'react';
+import type { Task, ImageTaskDraft, CollabState, WsMessage } from './types';
+import { wsClient } from './api/websocket';
 import { recognizeTextFromImage } from './api/ocr';
-import ApiKeyInput from './components/ApiKeyInput';
 import TaskInputForm from './components/TaskInputForm';
 import QuadrantChart from './components/QuadrantChart';
 import TaskList from './components/TaskList';
 import ActionPanel from './components/ActionPanel';
+import CollaborationPanel from './components/CollaborationPanel';
 import ImageTaskPreview from './components/ImageTaskPreview';
-import { Badge, Button, Panel, SectionTitle } from './components/ui';
+import { Button, Panel, SectionTitle } from './components/ui';
 
 const TASKS_STORAGE_KEY = 'quadrant_tasks';
 
@@ -49,58 +49,141 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const [hasKey, setHasKey] = useState(!!getApiKey());
   const [imageDrafts, setImageDrafts] = useState<ImageTaskDraft[] | null>(null);
   const [lastOcrText, setLastOcrText] = useState('');
+  const [wsConnected, setWsConnected] = useState(false);
+  const [collabState, setCollabState] = useState<CollabState>({
+    isJoined: false, groupId: '', nickname: '', members: [],
+  });
 
-  const handleAddTask = useCallback(async (input: TaskInput) => {
-    setError(null);
-    setLoading(true);
-    setLoadingMessage('正在调用 AI 分析任务...');
-    try {
-      const result = await analyzeTask(input);
-      const quadrant = getQuadrant(result.urgency, result.importance);
+  // ---- WebSocket 连接 & 全局消息处理 ----
+  useEffect(() => {
+    wsClient.connect();
+    const unsubState = wsClient.onStateChange(s => setWsConnected(s === 'connected'));
+
+    // 单机：文字分析结果
+    const unsub1 = wsClient.on('analyze_result', (msg: WsMessage) => {
+      const r = msg.task as Record<string, unknown> | undefined;
+      if (!r) { setLoading(false); return; }
+      const quadrant = getQuadrant(Number(r.urgency ?? 0), Number(r.importance ?? 0));
       const task: Task = {
         id: nextId(),
-        title: result.title,
-        description: result.description || result.suggestion,
-        urgency: result.urgency,
-        importance: result.importance,
+        title: String(r.title || ''),
+        description: String(r.description || r.suggestion || ''),
+        urgency: Number(r.urgency ?? 0),
+        importance: Number(r.importance ?? 0),
         quadrant,
         completed: false,
         createdAt: new Date(),
       };
-      setTasks(prev => {
-        const next = [task, ...prev];
-        saveStoredTasks(next);
-        return next;
-      });
+      setTasks(prev => { const next = [task, ...prev]; saveStoredTasks(next); return next; });
       setSelectedTaskId(task.id);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : '未知错误');
-    } finally {
       setLoading(false);
       setLoadingMessage('');
-    }
+    });
+
+    // 单机：批量分析结果
+    const unsub2 = wsClient.on('analyze_batch_result', (msg: WsMessage) => {
+      const results = (msg.tasks as Array<Record<string, unknown>>) || [];
+      const drafts: ImageTaskDraft[] = results.map(t => ({
+        title: String(t.title || ''),
+        description: String(t.description || ''),
+        urgency: Number(t.urgency ?? 0),
+        importance: Number(t.importance ?? 0),
+      }));
+      setImageDrafts(drafts);
+      setLoading(false);
+      setLoadingMessage('');
+    });
+
+    // 全局错误
+    const unsub3 = wsClient.on('error', (msg: WsMessage) => {
+      setError(msg.message as string || '未知错误');
+      setLoading(false);
+      setLoadingMessage('');
+    });
+
+    // ---- 协作模式消息（仅在已加入组时生效） ----
+    const unsub4 = wsClient.on('task_added', (msg: WsMessage) => {
+      const t = msg.task as Record<string, unknown>;
+      if (!t) return;
+      const task: Task = {
+        id: t.id as string,
+        title: String(t.title || ''),
+        description: String(t.description || ''),
+        urgency: Number(t.urgency ?? 0),
+        importance: Number(t.importance ?? 0),
+        quadrant: Number(t.quadrant ?? 1) as 1 | 2 | 3 | 4,
+        completed: Boolean(t.completed),
+        createdAt: new Date(t.createdAt as string),
+      };
+      setTasks(prev => [task, ...prev]);
+    });
+
+    const unsub5 = wsClient.on('task_updated', (msg: WsMessage) => {
+      const t = msg.task as Record<string, unknown>;
+      if (!t) return;
+      setTasks(prev => prev.map(task =>
+        task.id === t.id
+          ? { ...task, urgency: Number(t.urgency), importance: Number(t.importance), quadrant: Number(t.quadrant) as 1|2|3|4 }
+          : task
+      ));
+    });
+
+    const unsub6 = wsClient.on('task_deleted', (msg: WsMessage) => {
+      const tid = msg.task_id as string;
+      setTasks(prev => prev.filter(t => t.id !== tid));
+      setSelectedTaskId(prev => prev === tid ? null : prev);
+    });
+
+    const unsub7 = wsClient.on('task_toggled', (msg: WsMessage) => {
+      const tid = msg.task_id as string;
+      const completed = msg.completed as boolean;
+      setTasks(prev => prev.map(t => t.id === tid ? { ...t, completed } : t));
+    });
+
+    return () => {
+      unsubState(); unsub1(); unsub2(); unsub3();
+      unsub4(); unsub5(); unsub6(); unsub7();
+    };
   }, []);
 
-  const handleImageSubmit = useCallback(async (base64: string) => {
+  const handleTextSubmit = useCallback((title: string, description: string) => {
+    setError(null);
+    setLoading(true);
+    setLoadingMessage('正在调用模型分析...');
+    if (collabState.isJoined) {
+      wsClient.send({ type: 'task_add', title, description } as WsMessage);
+      setTimeout(() => { setLoading(false); setLoadingMessage(''); }, 15000);
+    } else {
+      wsClient.send({ type: 'analyze_text', title, description } as WsMessage);
+    }
+  }, [collabState.isJoined]);
+
+  const handleImageReady = useCallback(async (base64: string) => {
     setError(null);
     setLoading(true);
     setLoadingMessage('正在识别图片文字...');
     try {
       const ocrText = await recognizeTextFromImage(base64);
       setLastOcrText(ocrText);
-      setLoadingMessage('正在调用 AI 拆分并分类任务...');
-      const drafts = await analyzeOcrText(ocrText);
-      if (drafts.length === 0) {
-        setError('未从图片中识别出任何未完成任务，请检查图片内容或重试');
+      const lines = ocrText
+        .split('\n')
+        .map(l => l.trim())
+        .filter(l => l.length > 0 && !/^[\s\p{P}]+$/u.test(l));
+      if (lines.length === 0) {
+        setError('OCR 未识别出有效任务文字，请换一张更清晰的图片');
+        setLoading(false);
+        setLoadingMessage('');
         return;
       }
-      setImageDrafts(drafts);
+      setLoadingMessage('正在调用模型评分...');
+      wsClient.send({
+        type: 'analyze_batch',
+        texts: lines.map(title => ({ title, description: '' })),
+      } as WsMessage);
     } catch (err) {
-      setError(err instanceof Error ? err.message : '未知错误');
-    } finally {
+      setError(err instanceof Error ? err.message : 'OCR 识别失败');
       setLoading(false);
       setLoadingMessage('');
     }
@@ -142,23 +225,35 @@ export default function App() {
   }, []);
 
   const handleTaskDelete = useCallback((id: string) => {
+    if (collabState.isJoined) {
+      wsClient.send({ type: 'task_delete', task_id: id } as WsMessage);
+      return;
+    }
     setTasks(prev => {
       const next = prev.filter(t => t.id !== id);
       saveStoredTasks(next);
       return next;
     });
     setSelectedTaskId(prev => prev === id ? null : prev);
-  }, []);
+  }, [collabState.isJoined]);
 
   const handleToggleComplete = useCallback((id: string) => {
+    if (collabState.isJoined) {
+      wsClient.send({ type: 'task_toggle', task_id: id } as WsMessage);
+      return;
+    }
     setTasks(prev => {
       const next = prev.map(t => t.id === id ? { ...t, completed: !t.completed } : t);
       saveStoredTasks(next);
       return next;
     });
-  }, []);
+  }, [collabState.isJoined]);
 
   const handleUpdateTask = useCallback((id: string, updates: Partial<Pick<Task, 'urgency' | 'importance'>>) => {
+    if (collabState.isJoined) {
+      wsClient.send({ type: 'task_update', task_id: id, ...updates } as WsMessage);
+      return;
+    }
     setTasks(prev => {
       const next = prev.map(t => {
         if (t.id !== id) return t;
@@ -169,6 +264,45 @@ export default function App() {
       saveStoredTasks(next);
       return next;
     });
+  }, [collabState.isJoined]);
+
+  const handleCollabStateChange = useCallback((s: CollabState) => {
+    setCollabState(s);
+  }, []);
+
+  const handleCollabTasksReceived = useCallback((serverTasks: Array<Record<string, unknown>>) => {
+    const parsed: Task[] = serverTasks.map(t => ({
+      id: t.id as string,
+      title: String(t.title || ''),
+      description: String(t.description || ''),
+      urgency: Number(t.urgency ?? 0),
+      importance: Number(t.importance ?? 0),
+      quadrant: Number(t.quadrant ?? 1) as 1 | 2 | 3 | 4,
+      completed: Boolean(t.completed),
+      createdAt: new Date(t.createdAt as string),
+    }));
+    setTasks(parsed);
+  }, []);
+
+  const handleMemberJoin = useCallback((nickname: string) => {
+    setCollabState(prev => {
+      const members = prev.members.map(m =>
+        m.nickname === nickname ? { ...m, online: true } : m
+      );
+      if (!members.find(m => m.nickname === nickname)) {
+        members.push({ nickname, online: true });
+      }
+      return { ...prev, members };
+    });
+  }, []);
+
+  const handleMemberLeave = useCallback((nickname: string) => {
+    setCollabState(prev => ({
+      ...prev,
+      members: prev.members.map(m =>
+        m.nickname === nickname ? { ...m, online: false } : m
+      ),
+    }));
   }, []);
 
 
@@ -193,11 +327,6 @@ export default function App() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 py-6">
-        {/* API Key */}
-        {!hasKey && (
-          <ApiKeyInput onKeySet={() => setHasKey(true)} />
-        )}
-
         {/* Error */}
         {error && (
           <div className="neu-raised rounded-2xl mb-6 flex items-start gap-3 p-4 border-red-400/15">
@@ -219,23 +348,10 @@ export default function App() {
         <div className="grid gap-6 lg:grid-cols-12">
           {/* Left sidebar: Input + Actions */}
           <div className="lg:col-span-4 xl:col-span-3 space-y-6 order-2 lg:order-1">
-            {/* API Key (collapsed when set) */}
-            {hasKey && (
-              <div className="flex items-center gap-2 text-xs text-slate-500">
-                <Badge tone="success">API 已连接</Badge>
-                <button
-                  onClick={() => { setHasKey(false); }}
-                  className="ml-auto text-slate-500 underline-offset-4 hover:text-slate-300 hover:underline"
-                >
-                  更换 Key
-                </button>
-              </div>
-            )}
-
             {/* Input form */}
             <TaskInputForm
-              onSubmit={handleAddTask}
-              onImageSubmit={handleImageSubmit}
+              onTextSubmit={handleTextSubmit}
+              onImageReady={handleImageReady}
               loading={loading}
               loadingMessage={loadingMessage}
             />
@@ -243,6 +359,27 @@ export default function App() {
             {/* Action Advice Panel */}
             <div>
               <ActionPanel tasks={tasks} />
+            </div>
+
+            {/* Collaboration Panel */}
+            <div>
+              <CollaborationPanel
+                collabState={collabState}
+                onCollabStateChange={handleCollabStateChange}
+                onTasksReceived={handleCollabTasksReceived}
+                onMemberJoin={handleMemberJoin}
+                onMemberLeave={handleMemberLeave}
+              />
+            </div>
+
+            {/* Connection Status */}
+            <div className="flex items-center gap-2 text-xs">
+              <span className={wsConnected ? 'text-emerald-400' : 'text-amber-400'}>
+                {wsConnected ? '●' : '○'}
+              </span>
+              <span className="text-slate-500">
+                {wsConnected ? '后端已连接' : '后端未连接'}
+              </span>
             </div>
           </div>
 
