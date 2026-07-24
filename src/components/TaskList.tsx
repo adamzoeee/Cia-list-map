@@ -8,9 +8,12 @@ interface Props {
   onTaskDelete: (id: string) => void;
   onToggleComplete: (id: string) => void;
   onUpdateTask: (id: string, updates: Partial<Pick<Task, 'urgency' | 'importance'>>) => void;
+  onAssign?: (taskId: string, action: 'claim' | 'unclaim') => void;
+  collabNickname?: string;
+  isCollab?: boolean;
 }
 
-export default function TaskList({ tasks, selectedTaskId, onTaskClick, onTaskDelete, onToggleComplete, onUpdateTask }: Props) {
+export default function TaskList({ tasks, selectedTaskId, onTaskClick, onTaskDelete, onToggleComplete, onUpdateTask, onAssign, collabNickname = '', isCollab = false }: Props) {
   // Flat sort: pending by U+I desc, completed at bottom
   const sorted = [...tasks].sort((a, b) => {
     if (a.completed !== b.completed) return a.completed ? 1 : -1;
@@ -62,6 +65,9 @@ export default function TaskList({ tasks, selectedTaskId, onTaskClick, onTaskDel
               onToggleComplete={() => onToggleComplete(task.id)}
               onUpdateUrgency={(v) => onUpdateTask(task.id, { urgency: v })}
               onUpdateImportance={(v) => onUpdateTask(task.id, { importance: v })}
+              onAssign={onAssign ? (action) => onAssign(task.id, action) : undefined}
+              collabNickname={collabNickname}
+              isCollab={isCollab}
             />
           </div>
         ))}

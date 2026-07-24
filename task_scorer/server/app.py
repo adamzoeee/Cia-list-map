@@ -366,6 +366,7 @@ async def websocket_endpoint(ws: WebSocket):
                     "importance": i,
                     "quadrant": get_quadrant(u, i),
                     "completed": False,
+                    "assignees": [],
                     "createdBy": nickname,
                     "createdAt": time_module.strftime("%Y-%m-%dT%H:%M:%S"),
                 }
@@ -425,6 +426,31 @@ async def websocket_endpoint(ws: WebSocket):
                     })
                 else:
                     await ws.send_json({"type": "error", "message": "任务不存在"})
+                continue
+
+            if msg_type == "task_assign":
+                task_id = data.get("task_id", "")
+                action = data.get("action", "")
+                if action not in ("claim", "unclaim"):
+                    await ws.send_json({"type": "error", "message": "action 必须为 claim 或 unclaim"})
+                    continue
+                result = group.assign_task(task_id, nickname, action)
+                if result is None:
+                    await ws.send_json({"type": "error", "message": "任务不存在"})
+                    continue
+                group_manager.save_group(group)
+                await ws.send_json({
+                    "type": "task_assigned",
+                    "task_id": task_id,
+                    "assignees": result["assignees"],
+                    "by": nickname,
+                })
+                await group.broadcast({
+                    "type": "task_assigned",
+                    "task_id": task_id,
+                    "assignees": result["assignees"],
+                    "by": nickname,
+                }, exclude=nickname)
                 continue
 
             await ws.send_json({"type": "error", "message": f"未知消息类型: {msg_type}"})

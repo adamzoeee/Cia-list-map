@@ -1,8 +1,8 @@
-# 千列万表·优先级矩阵 | Quadrant Tasks
+# 优先级矩阵 · Priority Matrix
 
 > **AI 驱动的四象限任务管理 —— 输入即分类，聚焦真正重要的事。**
 
-一个基于 **艾森豪威尔矩阵（Eisenhower Matrix）** 方法论、融合 **大语言模型（LLM）自然语言理解** 与 **浏览器端 OCR** 的纯前端单页应用。你只需用文字描述任务（或上传一张待办截图），AI 会瞬间分析每个任务的 **时间紧迫度** 与 **任务重要性**，将其归入四象限并可视化呈现，同时给出优先级排序后的执行建议。
+一个基于 **艾森豪威尔矩阵（Eisenhower Matrix）** 方法论的智能任务管理工具。前端使用 React + TypeScript + Vite 构建，后端基于 **MacBERT 自训练双头回归模型** 进行任务评分，通过 WebSocket 实时通信，支持**多人协作**。同时内置浏览器端 OCR，可将手写/截图中的待办清单一键导入。
 
 ---
 
@@ -13,7 +13,11 @@
 - [技术架构](#技术架构)
 - [项目结构](#项目结构)
 - [快速开始](#快速开始)
-- [API 平台兼容](#api-平台兼容)
+  - [前端](#前端)
+  - [后端推理服务](#后端推理服务)
+- [API 接口](#api-接口)
+- [协作模式](#协作模式)
+- [MacBERT 评分模型](#macbert-评分模型)
 - [设计与交互](#设计与交互)
 - [算法说明](#算法说明)
 - [项目愿景](#项目愿景)
@@ -23,168 +27,167 @@
 
 ## 科学依据：为什么是四象限
 
-### 艾森豪威尔矩阵（Eisenhower Matrix）
+### 艾森豪威尔矩阵
 
-该项目的方法论基础源自美国第 34 任总统 **德怀特·D·艾森豪威尔**（Dwight D. Eisenhower）的时间管理原则，后经管理学家 **史蒂芬·柯维**（Stephen R. Covey）在《高效能人士的七个习惯》中系统化推广：
+该方法论源自美国第 34 任总统 **德怀特·D·艾森豪威尔** 的时间管理原则，后经史蒂芬·柯维在《高效能人士的七个习惯》中系统化推广：
 
 > "I have two kinds of problems: the urgent and the important. The urgent are not important, and the important are never urgent."
->
-> "我有两种问题：紧急的与重要的。紧急的不重要，重要的从来不紧急。"
 
-该矩阵将任务沿两个独立维度——**紧迫度** 与 **重要性**——划分为四个象限：
+矩阵将任务沿两个独立维度——**紧迫度** 与 **重要性**——划分为四个象限：
 
 | 象限 | 特征 | 策略 |
 |------|------|------|
-| **Q1 · 重要且紧急** | 危机、截止日期驱动的核心产出 | **立即去做 (Do First)** |
-| **Q2 · 重要不紧急** | 长期规划、能力建设、深度工作 | **计划去做 (Schedule)** |
-| **Q3 · 不重要不紧急** | 消遣、琐事、无意义的时间消耗 | **减少或消除 (Eliminate)** |
-| **Q4 · 紧急不重要** | 干扰、部分会议、可代理的事务 | **委派或压缩 (Delegate)** |
+| **Q1 · 重要且紧急** | 危机、截止日期驱动的核心产出 | **立即去做** |
+| **Q2 · 重要不紧急** | 长期规划、能力建设、深度工作 | **计划去做** |
+| **Q3 · 不重要不紧急** | 消遣、琐事、无意义的时间消耗 | **减少或消除** |
+| **Q4 · 紧急不重要** | 干扰、部分会议、可代理的事务 | **委派或压缩** |
 
 ### 为什么引入 AI
 
-经典 Eisenhower 矩阵依赖用户 **主观判断** 任务的紧迫度与重要性，存在两个痛点：
+经典 Eisenhower 矩阵依赖用户**主观判断**，存在两个痛点：
 
 1. **自我认知偏差**：人倾向于高估琐事的紧迫性，而低估深度工作的长期价值；
 2. **分类摩擦**：为每个任务手动打分是一种认知负担，阻碍持续使用。
 
-本项目的核心创新在于将 LLM 作为 **外部判断代理**：通过精心设计的 system prompt，LLM 以相对客观的尺度对任务进行双维度连续评分（-5 ~ +5），将传统二元分类扩展为 **连续频谱**，使散点图上的任务分布具有更细粒度的区分力。AI 还内建 **价值导向规则**——将纯娱乐消遣类活动强制归类为负重要性——以此引导用户关注真正创造价值的事务。
-
-### 图片识别的场景价值
-
-对于习惯在笔记本、白板或手机备忘录上手写待办清单的用户，上传截图后由 **Tesseract.js 本地 OCR** 提取文字、再由 LLM 批量拆分并逐一评分的流程，消除了从"纸质想法"到"数字化管理"之间的手动录入鸿沟。
+本项目的解决方案是训练一个专用的 **MacBERT 双头回归模型**，以相对客观的尺度对任务进行双维度连续评分（-5 ~ +5），将传统二元分类扩展为**连续频谱**，使散点图上的任务分布具有更细粒度的区分力。
 
 ---
 
 ## 核心能力
 
-### 1. 文本任务 AI 分析
+### 1. 智能任务评分
 - 输入任务标题 + 可选描述
-- 调用兼容 OpenAI Chat Completions 的 API，返回：精简标题、一句话描述、紧迫度评分、重要性评分、行动建议
-- AI temperature 固定为 0.3，确保评分一致性
-- 评分自动 clamp 到 [-5, 5] 整数区间
+- 后端 MacBERT 模型返回：紧迫度评分（-5~5）、重要性评分（-5~5）、象限归类、行动建议
+- 评分一致性高（模型推理无随机性），响应快速
 
-### 2. 图片 OCR + AI 批量拆分
-- 支持 `jpg / png / gif`，支持 **拖拽上传** 与 **Ctrl+V 剪贴板粘贴**
-- 上传前使用 Canvas API **客户端压缩**（max 1920px，JPEG quality 0.8）
-- **Tesseract.js** 本地 OCR，语言包 `chi_sim + eng`（中英文混合识别）
-- 图片 **不离开用户设备**，仅 OCR 文本发送至 LLM
-- LLM 智能过滤：自动跳过已勾选条目、页眉页脚、时间戳等非任务噪声
-- 识别结果在模态框中预览，支持编辑/删除后批量确认添加
+### 2. 图片 OCR + 批量导入
+- 支持 `jpg / png / gif`，**拖拽上传** 与 **Ctrl+V 剪贴板粘贴**
+- 上传前 Canvas API 客户端压缩（max 1920px）
+- **Tesseract.js** 本地 OCR（`chi_sim + eng` 中英文），图片**不离开用户设备**
+- 识别后在模态框中预览、编辑，批量确认添加
 
 ### 3. SVG 四象限可视化
-- 纯 SVG 渲染的散点图，X 轴 = 时间紧迫度，Y 轴 = 任务重要性
-- 四个象限以不同背景色标注，带虚线分割
-- 每个任务渲染为带颜色标识的小卡片（标题 + 评分元信息 + 时间提示）
-- 卡片入场使用 **spring 弹簧动画**（Motion 库），退出有缩放过渡
-- 点击卡片可选中高亮，悬停显示详情 tooltip
-- 时间关键词匹配：自动识别"今天""DDL""本周"等并在卡片上标注
-- 响应式自适应宽度，任务数量多时自动缩小卡片尺寸
+- 纯 SVG 渲染散点图，X 轴 = 时间紧迫度，Y 轴 = 任务重要性
+- 四个象限以不同背景色标注，虚线分割
+- 任务卡片使用 **Motion spring 弹簧动画** 入场/退出
+- 时间关键词自动识别（"今天""DDL""本周"等）并标注
+- 响应式自适应：任务多时自动缩小卡片
 
 ### 4. 任务列表管理
 - 按 U+I 总分降序排列，已完成任务自动沉底
-- 支持：勾选完成、删除、点击展开编辑
-- 展开后可拖拽 slider 微调紧迫度/重要度（评分实时联动重新计算象限）
-- 已完成与未完成任务之间有视觉分隔线
-- 空状态引导 UI
+- 支持勾选完成、删除、展开拖拽 slider 微调评分
+- 已完成/未完成任务视觉分隔
 
-### 5. 执行建议面板（ActionPanel）
-- 按四象限优先级排序：Q1 → Q2 → Q4 → Q3
-- 展示 Top 5 待办任务及每个的策略建议
-- 随机显示一条中文励志语（8 条库）
-- 全部完成时展示庆祝态
+### 5. 执行建议面板
+- 按 Q1 → Q2 → Q4 → Q3 优先级排序
+- 展示 Top 5 待办及策略建议
+- 随机中文励志语
 
-### 6. 多平台 API 兼容
-| 平台预设 | 说明 |
-|----------|------|
-| **DeepSeek 官方** | `api.deepseek.com` — `deepseek-chat` / `deepseek-reasoner` |
-| **硅基流动 (SiliconFlow)** | `api.siliconflow.cn` — DeepSeek-V3 / R1 / Qwen2.5-72B |
-| **阿里云百炼** | `dashscope.aliyuncs.com` — deepseek-v3 / r1 / qwen-plus |
-| **火山引擎 Ark** | `ark.cn-beijing.volces.com` — deepseek-v3 / r1 |
-| **OpenRouter** | `openrouter.ai` — deepseek-chat / gpt-4o-mini |
-
-- 同时支持自定义 Base URL 与 Model
-- 一键连接测试功能
-- API Key 存储于浏览器 localStorage
+### 6. 多人实时协作 🆕
+- WebSocket 实时通信，支持创建/加入协作组
+- 组内成员可见在线状态
+- 任务增删改完成状态实时广播同步
+- 密码认证 + SHA-256 加盐哈希，JSON 文件持久化
 
 ---
 
 ## 技术架构
 
-### 技术栈一览
-
-| 技术 | 版本 | 类别 | 用途 |
-|------|------|------|------|
-| **React** | ^19.2.7 | 运行时 | UI 组件框架 |
-| **TypeScript** | ^6.0.3 | 语言 | 类型安全 |
-| **Vite** | ^8.1.0 | 构建 | 开发服务器 & 生产打包 |
-| **Tailwind CSS** | ^4.3.2 | 样式 | 原子化 CSS 框架 |
-| **@tailwindcss/vite** | ^4.3.2 | 构建 | Tailwind 的 Vite 集成插件 |
-| **@vitejs/plugin-react** | ^6.0.3 | 构建 | Vite React Fast Refresh |
-| **Motion** (原 Framer Motion) | ^12.42.2 | 运行时 | SVG 卡片 spring 动画 & 进出场过渡 |
-| **Tesseract.js** | ^7.0.0 | 运行时 | 浏览器端 OCR（中英文） |
-
-### 架构特征
-
 ```
-┌──────────────────────────────────────────────────────┐
-│                    Browser Only                      │
-│                                                      │
-│  ┌──────────┐  ┌──────────┐  ┌───────────────────┐  │
-│  │  React   │  │ Tesseract│  │  fetch() → LLM    │  │
-│  │  UI      │  │ OCR      │  │  API (OpenAI      │  │
-│  │  (SVG +  │  │ (local)  │  │  Compatible)      │  │
-│  │  Motion) │  │          │  │                   │  │
-│  └──────────┘  └──────────┘  └───────────────────┘  │
-│        │              │                │             │
-│        └──────────────┴────────────────┘             │
-│                       │                              │
-│               localStorage                          │
-│           (tasks + API config)                      │
-└──────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│                         Browser                                  │
+│                                                                  │
+│  ┌──────────┐  ┌───────────┐  ┌──────────────┐                  │
+│  │  React   │  │ Tesseract │  │  WebSocket   │                  │
+│  │  UI      │  │ OCR       │  │  Client      │                  │
+│  │  (SVG +  │  │ (local)   │  │  (reconnect) │                  │
+│  │  Motion) │  │           │  │              │                  │
+│  └──────────┘  └───────────┘  └──────┬───────┘                  │
+│        │              │               │                          │
+│        └──────────────┴───────────────┘                          │
+│                       │ localStorage                            │
+└───────────────────────┼─────────────────────────────────────────┘
+                        │ ws://host:8001/ws
+                        ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                   FastAPI Server (:8001)                         │
+│                                                                  │
+│  ┌────────────┐  ┌────────────┐  ┌──────────────────────────┐  │
+│  │  /predict  │  │  WebSocket │  │  GroupManager            │  │
+│  │  /predict  │  │  Handler   │  │  - auth/create/join      │  │
+│  │  _batch    │  │            │  │  - task CRUD broadcast   │  │
+│  └─────┬──────┘  └────────────┘  │  - JSON persistence      │  │
+│        │                         └──────────────────────────┘  │
+│  ┌─────▼──────┐                                                  │
+│  │ MacBERT    │                                                  │
+│  │ TaskScorer │  双头回归: urgency + importance                 │
+│  └────────────┘                                                  │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
-- **完全客户端运行**：无后端服务器，无数据库
-- **状态管理**：React `useState` + `useCallback`，无全局状态库
-- **持久化**：`localStorage`（任务数据 + API 配置）
-- **路由**：零依赖，单页条件渲染
-- **无环境变量依赖**：所有配置通过 UI 输入并本地持久化
+### 技术栈
 
-### TypeScript 编译配置
-
-- Target: `ES2020`
-- JSX: `react-jsx`
-- Module: `ESNext`，bundler 解析模式
-- 严格模式全开：`strict`、`noUnusedLocals`、`noUnusedParameters`、`noFallthroughCasesInSwitch`
+| 层 | 技术 | 说明 |
+|----|------|------|
+| **前端框架** | React 19 + TypeScript 5.6 | 函数组件 + Hooks |
+| **构建** | Vite 6 | 开发服务器 & 生产打包 |
+| **样式** | Tailwind CSS 4 + 自定义 Neumorphism | 暗色拟态设计系统 |
+| **动画** | Motion (Framer Motion) | SVG spring 动画 |
+| **OCR** | Tesseract.js 5 | 浏览器端中英文识别 |
+| **通信** | WebSocket (原生) | 自动重连+指数退避 |
+| **后端框架** | FastAPI | Python 异步 Web 框架 |
+| **ML 模型** | MacBERT-base (Chinese) | Hugging Face Transformers |
+| **深度学习** | PyTorch 2.4+ | 双头回归训练 & 推理 |
+| **部署** | GitHub Actions → GitHub Pages | 静态前端自动部署 |
 
 ---
 
 ## 项目结构
 
 ```
-quadrant-tasks/
-├── index.html                  # Vite 入口 HTML
-├── package.json                # 依赖与脚本
-├── tsconfig.json               # TypeScript 配置
-├── vite.config.ts              # Vite 构建配置（React + Tailwind 插件）
-├── README.md                   # 本文件
-└── src/
-    ├── main.tsx                # ReactDOM.createRoot 挂载入口
-    ├── App.tsx                 # 根组件 — 全局状态（tasks, selectedTask, loading, error, imageDrafts）
-    ├── types.ts                # TypeScript 类型定义（Task, AIAnalysisResult, QuadrantInfo 等）
-    ├── index.css               # Tailwind 导入 + Dark Neumorphism 设计系统（~150 行自定义 CSS）
-    ├── vite-env.d.ts           # Vite 客户端类型引用
-    ├── api/
-    │   ├── deepseek.ts         # LLM API 客户端（analyzeTask, analyzeOcrText, testApiConnection, 平台预设, JSON 容错解析）
-    │   └── ocr.ts              # Tesseract.js OCR 封装（recognizeTextFromImage）
-    └── components/
-        ├── ui.tsx              # 设计系统组件库（Panel, Button, TextInput, TextArea, Badge, SectionTitle, cn）
-        ├── ApiKeyInput.tsx     # API 配置面板（Key, Base URL, Model, 平台预设选择器, 连接测试按钮）
-        ├── TaskInputForm.tsx   # 任务输入表单（文字/图片双模式, 拖拽上传, Ctrl+V 粘贴, Canvas 图片压缩）
-        ├── QuadrantChart.tsx   # SVG 四象限散点图（含 QUADRANTS 常量导出, Motion spring 动画）
-        ├── TaskCard.tsx        # 单个任务卡片（展开编辑 U/I slider, 完成/删除操作）
-        ├── TaskList.tsx        # 任务列表（排序逻辑, 已完成分隔线, 空状态）
-        ├── ActionPanel.tsx     # 执行建议面板（Top 5 优先任务, 随机励志语, 全部完成庆祝态）
-        └── ImageTaskPreview.tsx # 图片识别结果预览模态框（编辑/删除/确认批量添加）
+Cia-list-map/
+├── .github/workflows/deploy.yml     # GitHub Pages 自动部署
+├── index.html                       # Vite 入口 HTML
+├── package.json                     # 前端依赖 & 脚本
+├── tsconfig.json                    # TypeScript 严格模式配置
+├── vite.config.ts                   # Vite (React + Tailwind 插件)
+│
+├── src/                             # 前端源码
+│   ├── main.tsx                     # React 挂载入口
+│   ├── App.tsx                      # 根组件 — 全局状态 & 业务逻辑
+│   ├── types.ts                     # TypeScript 类型定义
+│   ├── index.css                    # Tailwind + Dark Neumorphism 设计系统
+│   ├── api/
+│   │   ├── websocket.ts             # WebSocket 客户端（自动重连）
+│   │   └── ocr.ts                   # Tesseract.js OCR 封装
+│   └── components/
+│       ├── ui.tsx                   # 设计系统组件库（Panel/Button/Input/Badge）
+│       ├── TaskInputForm.tsx         # 任务输入（文字/图片双模式+拖拽+粘贴+压缩）
+│       ├── QuadrantChart.tsx         # SVG 四象限散点图（Motion 动画）
+│       ├── TaskCard.tsx              # 任务卡片（展开编辑 U/I slider）
+│       ├── TaskList.tsx              # 任务列表（排序+分隔线+空状态）
+│       ├── ActionPanel.tsx           # 执行建议面板（Top 5+励志语）
+│       ├── CollaborationPanel.tsx    # 云端协作面板（创建/加入组+在线成员）
+│       └── ImageTaskPreview.tsx      # OCR 结果预览模态框
+│
+├── task_scorer/                     # 后端：评分模型 + 推理服务
+│   ├── requirements.txt             # Python 依赖（含 PyTorch）
+│   ├── model/
+│   │   ├── model.py                 # MacBERT 双头回归模型定义
+│   │   ├── dataset.py               # PyTorch Dataset + 数据加载
+│   │   └── train.py                 # 训练脚本
+│   ├── server/
+│   │   ├── app.py                   # FastAPI 服务（REST + WebSocket + 协作）
+│   │   └── group_manager.py         # 协作组管理（CRUD + 广播 + 持久化）
+│   ├── scripts/
+│   │   ├── generate_synthetic.py    # 合成训练数据生成
+│   │   ├── generate_q3_data.py      # Q3 象限数据生成
+│   │   └── convert_csv_to_json.py   # CSV→JSON 数据转换
+│   ├── evaluate.py                  # 模型评估脚本
+│   ├── checkpoints/best_model/      # 预训练模型权重
+│   └── data/                        # 训练/验证/测试数据
+│
+└── dist/                            # 构建产物（GitHub Pages 部署）
 ```
 
 ---
@@ -195,76 +198,176 @@ quadrant-tasks/
 
 - **Node.js** ≥ 18（推荐 20+）
 - **npm** ≥ 9
+- **Python** ≥ 3.9（后端推理服务）
+- **PyTorch** ≥ 2.4.0（推荐 CUDA 版本用于 GPU 推理）
 
-### 安装与运行
+### 前端
 
 ```bash
-# 克隆仓库
-git clone <repo-url> && cd quadrant-tasks
-
 # 安装依赖
 npm install
 
-# 启动开发服务器
+# 启动开发服务器（默认 http://localhost:5173）
 npm run dev
+
+# 构建生产版本
+npm run build
+
+# 本地预览构建产物
+npm run preview
 ```
 
-开发服务器默认运行在 `http://localhost:5173`。
+构建产物输出至 `dist/`，可直接部署到任何静态托管服务。`main` 分支推送自动触发 GitHub Pages 部署。
 
-### 构建生产版本
+### 后端推理服务
 
 ```bash
-npm run build    # TypeScript 类型检查 + Vite 打包
-npm run preview  # 本地预览构建产物
+cd task_scorer
+
+# 安装依赖
+pip install -r requirements.txt
+
+# 启动推理服务（包含 WebSocket 协作）
+python -m server.app
+# 或: uvicorn server.app:app --host 0.0.0.0 --port 8001 --reload
 ```
 
-构建产物输出至 `dist/`，可直接部署到任何静态托管服务（Vercel、Netlify、GitHub Pages、Nginx 等）。
+> **注意**：如果 `checkpoints/best_model/` 中的模型文件因 Git LFS 未拉取，请确保模型权重已下载。服务默认监听 `0.0.0.0:8001`。
 
-### 首次使用
+### 环境变量
 
-1. 在页面中展开 API 配置面板，选择一个平台预设（如 DeepSeek 官方）
-2. 填入你的 API Key，点击 **测试连接** 验证可用性
-3. 在输入框中描述一个任务（或上传待办截图），点击分析
-4. 任务卡片出现在四象限图上，你可点击、编辑、完成或删除
+| 变量 | 默认值 | 说明 |
+|------|--------|------|
+| `MODEL_PATH` | `./checkpoints/best_model` | MacBERT 模型权重路径 |
+| `VITE_WS_URL` | `ws://localhost:8001/ws` | 前端 WebSocket 地址（构建时注入） |
 
 ---
 
-## API 平台兼容
+## API 接口
 
-本项目调用的是兼容 **OpenAI Chat Completions** 格式的 API。只要平台的 `/chat/completions` 端点返回如下结构的响应，即可使用：
+后端（`task_scorer/server/app.py`）提供以下接口：
 
+### REST
+
+| 方法 | 路径 | 说明 |
+|------|------|------|
+| `GET` | `/` | API 信息 |
+| `GET` | `/health` | 健康检查 |
+| `POST` | `/predict` | 单任务评分 |
+| `POST` | `/predict_batch` | 批量任务评分（最多 50 个） |
+
+**`POST /predict` 请求示例：**
 ```json
 {
-  "choices": [
-    {
-      "message": {
-        "content": "..."
-      }
-    }
-  ]
+  "title": "准备期末考试",
+  "description": "下周三考试，还没复习完"
 }
 ```
 
-### System Prompt 设计
+**响应：**
+```json
+{
+  "title": "准备期末考试",
+  "description": "下周三考试，还没复习完",
+  "urgency": 5,
+  "importance": 4,
+  "suggestion": "立即执行，火烧眉毛"
+}
+```
 
-LLM 被给予明确的价值判断编码：
+### WebSocket
 
-- **紧迫度 (urgency)**：deadline 距离、拖延后果 —— 连续谱 -5（毫无压力）到 +5（火烧眉毛）
-- **重要性 (importance)**：对个人成长/工作产出/重要关系的实质贡献 —— 连续谱 -5（纯娱乐消遣）到 +5（影响深远、关乎核心目标）
-- **价值约束**：娱乐消遣、刷视频、打游戏等不创造价值的活动，importance 强制为负
-- 返回纯 JSON，不允许多余文字或 markdown 包裹
+| 端点 | 说明 |
+|------|------|
+| `ws://host:8001/ws` | 主 WebSocket 连接 |
 
-### JSON 解析容错
+**支持的消息类型（单机模式）：**
 
-考虑到不同 LLM 对 "只返回 JSON" 指令的遵循程度参差不齐，解析器实现了三层降级策略：
+| type | 方向 | 说明 |
+|------|------|------|
+| `analyze_text` | C→S | 提交文字任务分析 |
+| `analyze_result` | S→C | 返回单任务分析结果 |
+| `analyze_batch` | C→S | 批量提交（OCR 结果） |
+| `analyze_batch_result` | S→C | 返回批量分析结果 |
+| `error` | S→C | 错误通知 |
 
-1. **直接 `JSON.parse`**
-2. **匹配 markdown code block** （```json ... ```）
-3. **提取首尾 JSON 子串**（定位第一个 `[`/`{` 到最后一个 `]`/`}`）
+---
 
-### 安全注意事项
+## 协作模式
 
-> ⚠️ API Key 存储在浏览器 `localStorage` 中，存在 XSS 泄露风险。本项目设计为 **个人工具**，不推荐在共享设备或不可信网络环境下使用。生产部署时建议通过反向代理或 Edge Function 中转 API 请求以隐藏 Key。
+协作模式允许多人实时共享同一个任务看板。
+
+### 加入协作组
+
+1. 确保后端服务已启动
+2. 在前端「云端协作」面板中输入 **组 ID**、**组密码** 和 **你的昵称**
+3. 点击「加入/创建协作组」——如果组不存在则自动创建
+4. 加入后，你将看到组内所有成员及在线状态
+
+### 协作消息类型
+
+| type | 说明 |
+|------|------|
+| `auth` / `auth_ok` / `auth_fail` | 认证流程 |
+| `task_add` / `task_added` | 添加任务（广播） |
+| `task_update` / `task_updated` | 更新任务评分（广播） |
+| `task_delete` / `task_deleted` | 删除任务（广播） |
+| `task_toggle` / `task_toggled` | 切换完成状态（广播） |
+| `member_join` / `member_leave` | 成员上下线通知 |
+| `members_list` | 成员列表 |
+
+### 数据持久化
+
+协作组数据以 JSON 文件形式存储在 `task_scorer/server/data/groups/` 目录下，密码使用 SHA-256 加盐哈希。
+
+---
+
+## MacBERT 评分模型
+
+### 模型架构
+
+```
+输入文本 (title + description)
+      │
+      ▼
+┌─────────────────┐
+│  MacBERT-base   │  ← hfl/chinese-macbert-base
+│  (Chinese)      │
+└────────┬────────┘
+         │ [CLS] token hidden state (768d)
+         ▼
+┌─────────────────┐
+│  Shared Hidden  │  768 → 128, GELU
+└────────┬────────┘
+         │
+    ┌────┴────┐
+    ▼         ▼
+┌───────┐ ┌───────┐
+│Urgency│ │Import │  各: 128→64→1, tanh×5
+│ Head  │ │ Head  │  输出范围 [-5, 5]
+└───────┘ └───────┘
+```
+
+- **基座模型**：`hfl/chinese-macbert-base`（哈工大中文纠错预训练 BERT）
+- **损失函数**：Smooth L1 Loss（Huber Loss, β=1.0）
+- **输出约束**：`tanh(x) × 5.0`，确保输出在 [-5, 5]
+- **训练数据**：人工标注 + 合成数据，约数千条中文任务样本
+
+### 训练
+
+```bash
+cd task_scorer
+
+# 准备数据：将标注数据放到 data/raw/all.json
+
+# 训练模型
+python -m model.train --data_dir ./data --output_dir ./checkpoints
+
+# 评估模型
+python evaluate.py --test_data ./data/test.json --model_path ./checkpoints/best_model
+```
+
+训练超参数：`MAX_LENGTH=128`, `BATCH_SIZE=32`, `LR=2e-5` (BERT) / `1e-3` (Head), `EPOCHS≤20` (早停 patience=3)。
 
 ---
 
@@ -272,30 +375,30 @@ LLM 被给予明确的价值判断编码：
 
 ### Dark Neumorphism 设计系统
 
-项目实现了一套完整的 **暗色新拟态（Dark Neumorphism）** CSS 设计语言，定义在 `src/index.css` 中：
+项目实现了一套完整的**暗色新拟态** CSS 设计语言（`src/index.css`）：
 
 | 工具类 | 效果 |
 |--------|------|
-| `.neu-raised` / `.neu-raised-sm` | 凸起表面——卡片、面板 |
-| `.neu-inset` | 凹陷表面——输入框、文本域 |
-| `.neu-pressed` | 按下态——用于选中或激活状态 |
-| `.neu-btn` / `.neu-btn-accent` | 按钮——raised 默认 + pressed 按下 |
-| `.neu-selected` | 选中态——inset 发光 + cyan 边框 |
-| `.neu-divider` | 分隔线——渐变凹槽 |
+| `.neu-raised` / `.neu-raised-sm` | 凸起表面 — 卡片、面板 |
+| `.neu-inset` | 凹陷表面 — 输入框、文本域 |
+| `.neu-btn` / `.neu-btn-accent` | 按钮 — raised 默认 + pressed 按下 |
+| `.neu-selected` | 选中态 — inset 发光 + cyan 边框 |
+| `.neu-divider` | 分隔线 — 渐变凹槽 |
 
 设计参数：
 
 - **基底色**：`#111827`（slate-900）
-- **强调色**：cyan（`#22d3ee`）
-- **阴影体系**：多层 box-shadow 模拟凹凸——暗影 `rgba(0,0,0,0.45)` 深压，亮边 `rgba(255,255,255,0.025)` 微提
-- **过渡动画**：全局 250ms，所有颜色/边框/阴影平滑过渡
-- **自定义滚动条**：6px 宽，inset 凹槽轨道 + 凸起滑块
+- **强调色**：cyan `#22d3ee`
+- **阴影体系**：暗影 `rgba(0,0,0,0.45)` 深压 + 亮边 `rgba(255,255,255,0.025)` 微提
+- **全局过渡**：250ms 平滑动画
+- **自定义滚动条**：6px 宽，inset 轨道 + 凸起滑块
 
 ### 响应式布局
 
-- 移动端（< `lg` 断点）：单列纵向布局，图表与表单垂直堆叠
-- 桌面端（≥ `lg`）：12 列网格——左侧栏（输入 + 建议面板，4/12）+ 右侧主区域（图表 + 列表，8/12）
-- 图表容器宽度自适应，卡片尺寸随任务数量动态调整（>14 个任务时缩小）
+| 断点 | 布局 |
+|------|------|
+| `< lg` | 单列纵向堆叠 |
+| `≥ lg` | 12 列网格：左侧栏 4/12 + 右侧主区域 8/12 |
 
 ---
 
@@ -310,73 +413,41 @@ urgency < 0  ∧  importance < 0  →  Q3（不重要不紧急）
 urgency ≥ 0  ∧  importance < 0  →  Q4（紧急不重要）
 ```
 
-零点作为非负侧——即 `urgency = 0` 被视为"有一定紧迫感"，`importance = 0` 被视为"有一定重要性"。
+零点归入非负侧：`urgency = 0` 视为"有一定紧迫感"，`importance = 0` 视为"有一定重要性"。
 
 ### SVG 坐标映射
-
-将 [-5, 5] 评分线性映射到 SVG 绘图区域：
 
 ```
 toX(urgency)   = margin + (urgency + 5) / 10 × plotWidth
 toY(importance) = margin + plotHeight − (importance + 5) / 10 × plotHeight
 ```
 
-### 任务排序策略
+### 任务排序
 
-| 场景 | 排序依据 |
+| 场景 | 排序策略 |
 |------|----------|
-| **任务列表** | `(urgency + importance)` 降序，已完成任务固定沉底 |
-| **执行建议** | Q1 按 U+I↓ → Q2 按 I↓ → Q4 按 U↓ → Q3 按 U+I↓ |
-| **象限内部** | Q1/Q3 按总分降序，Q2 按重要性降序，Q4 按紧迫度降序 |
-
-### 图片压缩算法
-
-上传图片在客户端使用 Canvas API 压缩：
-
-1. 保持宽高比缩放到 max 1920px
-2. 通过 `canvas.toDataURL('image/jpeg', 0.8)` 输出
-3. 压缩后的 base64 传递给 Tesseract.js
-
-### LLM 调用参数
-
-| 参数 | 单任务分析 | 图片批量分析 |
-|------|-----------|-------------|
-| `temperature` | 0.3 | 0.3 |
-| `max_tokens` | 300 | 2,000 |
-| `messages` | system + user | system + user (含 OCR 原文) |
-
-低 temperature 确保评分的一致性与可复现性。
+| 任务列表 | `(urgency + importance)` 降序，已完成沉底 |
+| 执行建议 | Q1(U+I↓) → Q2(I↓) → Q4(U↓) → Q3(U+I↓) |
 
 ---
 
 ## 项目愿景
 
-### 终极追求
-
 **让任务管理从"记录"进化到"洞察"。**
 
-大多数任务管理工具停留在"收集箱"层面——你往里面扔任务，它帮你记着。但真正的瓶颈从来不是"忘记要做"，而是：
+大多数任务管理工具停留在"收集箱"层面。真正的瓶颈从来不是"忘记要做"，而是：
 
-- **分不清轻重缓急**——把所有事情都当紧急处理，陷入救火循环；
+- **分不清轻重缓急**——把所有事情当紧急处理，陷入救火循环；
 - **缺乏外部校准**——自我评估不可靠，娱乐披着"放松"的外衣挤占深度工作时间；
-- **管理成本过高**——为每个任务手动打标签、排优先级本身就成了一个待办项。
+- **管理成本过高**——手动排优先级本身就成了一个待办项。
 
-本项目的追求是：
+本项目的追求：
 
-1. **零摩擦输入**：文字或图片，一句话或一张截图，AI 接管所有分类工作；
-2. **外部视角校准**：LLM 作为价值判断的第三方代理，帮助用户从"我觉得重要"过渡到"客观上值得投入"；
-3. **可视化直觉**：一张四象限散点图，一眼看清所有任务的时间-价值分布——哪些在消耗你，哪些在成就你；
-4. **可执行的优先级**：不仅仅是分类，而是告诉你"接下来 5 件事做什么、为什么、怎么做"。
-
-### 未来方向（Roadmap）
-
-- [ ] **分析历史与趋势**：追踪任务的完成率、平均滞留时间、象限迁移路径
-- [ ] **多模型 A/B 对比**：支持同时调用两个模型分别评分，观察判断差异
-- [ ] **语音输入**：Web Speech API，口述任务直接分析
-- [ ] **导出与分享**：生成四象限截图 / Markdown 报告
-- [ ] **PWA 离线支持**：Service Worker 缓存，作为独立 App 使用
-- [ ] **标签与项目分组**：在四象限之上叠加项目维度过滤
-- [ ] **协作模式**：团队共享任务视图（需后端支持）
+1. **零摩擦输入**：文字或图片，AI 接管所有分类；
+2. **专用模型评分**：MacBERT 自训练模型，一致性远优于通用 LLM；
+3. **可视化直觉**：四象限散点图，一眼看清任务的时间-价值分布；
+4. **可执行优先级**：不仅分类，更告诉你"接下来做什么、为什么、怎么做"；
+5. **团队协作**：实时共享任务看板，成员状态感知。
 
 ---
 
@@ -391,14 +462,11 @@ Copyright (c) 2026 Adam Zoeee
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions: ...
+in the Software without restriction...
 ```
 
 ---
 
 <p align="center">
-  <sub>Powered by Deepseek&Reasonix · 四象限法则（Eisenhower Matrix）· Built with React + TypeScript + Vite</sub>
+  <sub>Powered by MacBERT + FastAPI + React · 四象限法则（Eisenhower Matrix）· Built with TypeScript + Vite + Tailwind CSS</sub>
 </p>
