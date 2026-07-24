@@ -51,7 +51,7 @@ export default function ImageTaskPreview({ drafts: initialDrafts, ocrText, onCon
         <div className="flex items-center justify-between px-5 py-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
           <div>
             <h3 className="text-base font-semibold text-white">识别结果预览</h3>
-            <p className="text-xs text-slate-500 mt-0.5">AI 从图片中识别出 {drafts.length} 个未完成任务，你可以编辑或删除后再确认添加</p>
+            <p className="text-xs text-slate-500 mt-0.5">模型从图片中识别出 {drafts.length} 个未完成任务，你可以编辑或删除后再确认添加</p>
           </div>
           <Button
             onClick={onCancel}
