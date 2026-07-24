@@ -197,30 +197,38 @@ export default function App() {
   }, []);
 
   const handleConfirmImageTasks = useCallback((drafts: ImageTaskDraft[]) => {
-    const newTasks: Task[] = drafts.map(draft => {
-      const quadrant = getQuadrant(draft.urgency, draft.importance);
-      return {
-        id: nextId(),
-        title: draft.title,
-        description: draft.description,
-        urgency: draft.urgency,
-        importance: draft.importance,
-        quadrant,
-        completed: false,
-        createdAt: new Date(),
-      };
-    });
-    setTasks(prev => {
-      const next = [...newTasks, ...prev];
-      saveStoredTasks(next);
-      return next;
-    });
-    if (newTasks.length > 0) {
-      setSelectedTaskId(newTasks[0].id);
+    if (collabState.isJoined) {
+      // 协作模式：逐个通过 WebSocket 发送 task_add，后端评分+广播
+      drafts.forEach(draft => {
+        wsClient.send({ type: 'task_add', title: draft.title, description: draft.description } as WsMessage);
+      });
+    } else {
+      // 单机模式：本地添加
+      const newTasks: Task[] = drafts.map(draft => {
+        const quadrant = getQuadrant(draft.urgency, draft.importance);
+        return {
+          id: nextId(),
+          title: draft.title,
+          description: draft.description,
+          urgency: draft.urgency,
+          importance: draft.importance,
+          quadrant,
+          completed: false,
+          createdAt: new Date(),
+        };
+      });
+      setTasks(prev => {
+        const next = [...newTasks, ...prev];
+        saveStoredTasks(next);
+        return next;
+      });
+      if (newTasks.length > 0) {
+        setSelectedTaskId(newTasks[0].id);
+      }
     }
     setImageDrafts(null);
     setLastOcrText('');
-  }, []);
+  }, [collabState.isJoined]);
 
   const handleCancelImageTasks = useCallback(() => {
     setImageDrafts(null);
