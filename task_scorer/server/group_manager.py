@@ -6,10 +6,13 @@
 """
 import hashlib
 import json
+import logging
+import os
+import re
 import time
 from pathlib import Path
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Set
 from fastapi import WebSocket
 
 DATA_DIR = Path(__file__).resolve().parent / "data" / "groups"
@@ -18,9 +21,9 @@ DATA_DIR = Path(__file__).resolve().parent / "data" / "groups"
 class Group:
     group_id: str
     password_hash: str
-    tasks: list = field(default_factory=list)
-    all_members: set = field(default_factory=set)       # 历史成员昵称
-    connections: dict = field(default_factory=dict)     # nickname -> WebSocket
+    tasks: List[Dict] = field(default_factory=list)
+    all_members: Set[str] = field(default_factory=set)       # 历史成员昵称
+    connections: Dict[str, WebSocket] = field(default_factory=dict)     # nickname -> WebSocket
     created_at: str = ""
 
     def is_member_online(self, nickname: str) -> bool:
@@ -33,7 +36,7 @@ class Group:
     def remove_member(self, nickname: str):
         self.connections.pop(nickname, None)
 
-    def get_members(self) -> list:
+    def get_members(self) -> List[Dict]:
         """返回 [{nickname, online}]"""
         return [
             {"nickname": n, "online": n in self.connections}
@@ -47,6 +50,7 @@ class Group:
     def update_task(self, task_id: str, updates: dict) -> Optional[dict]:
         for t in self.tasks:
             if t["id"] == task_id:
+                updates.pop("id", None)
                 t.update(updates)
                 return t
         return None
@@ -59,7 +63,7 @@ class Group:
     def toggle_task(self, task_id: str) -> Optional[bool]:
         for t in self.tasks:
             if t["id"] == task_id:
-                t["completed"] = not t["completed"]
+                t["completed"] = not t.get("completed", False)
                 return t["completed"]
         return None
 
@@ -97,11 +101,15 @@ class Group:
 
 
 class GroupManager:
+    _ID_RE = re.compile(r"^[a-zA-Z0-9][a-zA-Z0-9._-]{0,63}$")
+
     def __init__(self):
         self._groups: Dict[str, Group] = {}
         DATA_DIR.mkdir(parents=True, exist_ok=True)
 
     def _path(self, group_id: str) -> Path:
+        if not self._ID_RE.match(group_id):
+            raise ValueError(f"无效的 group_id: {group_id!r}")
         return DATA_DIR / f"{group_id}.json"
 
     def _load(self, group_id: str) -> Optional[Group]:
@@ -112,39 +120,58 @@ class GroupManager:
             d = json.loads(p.read_text(encoding="utf-8"))
             return Group.from_dict(d)
         except (json.JSONDecodeError, KeyError):
+            logging.warning("组 %s JSON 损坏", group_id)
             return None
 
     def _save(self, group: Group):
         p = self._path(group.group_id)
-        p.write_text(
+        tmp = p.with_suffix(".json.tmp")
+        tmp.write_text(
             json.dumps(group.to_dict(), ensure_ascii=False, indent=2),
             encoding="utf-8",
         )
+        tmp.replace(p)
+
+    @staticmethod
+    def _hash_password(password: str) -> str:
+        """生成加盐密码哈希，格式 salt:hash"""
+        salt = os.urandom(16).hex()
+        h = hashlib.sha256(salt.encode() + password.encode()).hexdigest()
+        return f"{salt}:{h}"
+
+    @staticmethod
+    def _verify_password(stored: str, password: str) -> bool:
+        """验证密码，兼容旧格式（无盐纯 SHA-256）"""
+        if ":" not in stored:
+            # 旧格式：纯 SHA-256
+            return stored == hashlib.sha256(password.encode()).hexdigest()
+        salt, h = stored.split(":", 1)
+        return h == hashlib.sha256(salt.encode() + password.encode()).hexdigest()
 
     def get_or_create(self, group_id: str, password: str) -> Group:
         """获取已有组或创建新组"""
-        password_hash = hashlib.sha256(password.encode()).hexdigest()
+
+        def _verify(group: Group) -> None:
+            if not self._verify_password(group.password_hash, password):
+                raise ValueError("密码错误")
 
         # 先查内存
         group = self._groups.get(group_id)
         if group:
-            # 验证密码
-            if group.password_hash != password_hash:
-                raise ValueError("密码错误")
+            _verify(group)
             return group
 
         # 查磁盘
         group = self._load(group_id)
         if group:
-            if group.password_hash != password_hash:
-                raise ValueError("密码错误")
+            _verify(group)
             self._groups[group_id] = group
             return group
 
         # 创建新组
         group = Group(
             group_id=group_id,
-            password_hash=password_hash,
+            password_hash=self._hash_password(password),
             created_at=time.strftime("%Y-%m-%dT%H:%M:%S"),
         )
         self._groups[group_id] = group
