@@ -7,6 +7,7 @@ export interface Task {
   quadrant: 1 | 2 | 3 | 4;
   completed: boolean;
   createdAt: Date;
+  assignees?: string[];  // 认领人昵称列表（协作模式）
 }
 
 export interface TaskInput {
@@ -54,6 +55,7 @@ export type WsMessageType =
   | 'task_update' | 'task_updated'
   | 'task_delete' | 'task_deleted'
   | 'task_toggle' | 'task_toggled'
+  | 'task_assign' | 'task_assigned'
   | 'member_join' | 'member_leave' | 'members_list'
   | 'error';
 
