@@ -94,6 +94,68 @@ def get_suggestion(quadrant: int) -> str:
     return suggestions.get(quadrant, "")
 
 
+def do_predict(title: str, description: str = "") -> dict:
+    """单任务推理，返回 {title,description,urgency,importance,suggestion}"""
+    if model is None or tokenizer is None:
+        raise RuntimeError("模型未加载")
+    text = title.strip()
+    if description.strip():
+        text = f"{text}。{description.strip()}"
+    encoding = tokenizer(
+        text, max_length=MAX_LENGTH, padding="max_length",
+        truncation=True, return_tensors="pt",
+    )
+    input_ids = encoding["input_ids"].to(DEVICE)
+    attention_mask = encoding["attention_mask"].to(DEVICE)
+    token_type_ids = encoding.get("token_type_ids", torch.zeros_like(input_ids)).to(DEVICE)
+    with torch.no_grad():
+        outputs = model.predict(input_ids, attention_mask, token_type_ids)
+    urgency = float(outputs["urgency"][0])
+    importance = float(outputs["importance"][0])
+    urgency_int = int(np.clip(round(urgency), -5, 5))
+    importance_int = int(np.clip(round(importance), -5, 5))
+    quadrant = (
+        1 if urgency_int >= 0 and importance_int >= 0 else
+        2 if urgency_int < 0 and importance_int >= 0 else
+        3 if urgency_int < 0 and importance_int < 0 else 4
+    )
+    return {
+        "title": title, "description": description,
+        "urgency": urgency_int, "importance": importance_int,
+        "suggestion": get_suggestion(quadrant),
+    }
+
+
+def do_predict_batch(tasks: list) -> list:
+    """批量推理 [{"title","description"}] → [{"title","description","urgency","importance"}]"""
+    if model is None or tokenizer is None:
+        raise RuntimeError("模型未加载")
+    texts = []
+    for t in tasks:
+        text = t["title"].strip()
+        if t.get("description", "").strip():
+            text = f"{text}。{t['description'].strip()}"
+        texts.append(text)
+    encoding = tokenizer(
+        texts, max_length=MAX_LENGTH, padding="max_length",
+        truncation=True, return_tensors="pt",
+    )
+    input_ids = encoding["input_ids"].to(DEVICE)
+    attention_mask = encoding["attention_mask"].to(DEVICE)
+    token_type_ids = encoding.get("token_type_ids", torch.zeros_like(input_ids)).to(DEVICE)
+    with torch.no_grad():
+        outputs = model.predict(input_ids, attention_mask, token_type_ids)
+    results = []
+    for i, t in enumerate(tasks):
+        results.append({
+            "title": t["title"],
+            "description": t.get("description", ""),
+            "urgency": int(np.clip(round(float(outputs["urgency"][i])), -5, 5)),
+            "importance": int(np.clip(round(float(outputs["importance"][i])), -5, 5)),
+        })
+    return results
+
+
 def load_model():
     """加载模型和 Tokenizer"""
     global model, tokenizer
@@ -139,103 +201,20 @@ async def health_check():
 
 @app.post("/predict", response_model=PredictionOutput)
 async def predict_single(task: TaskInput):
-    """
-    单任务分析
-    返回格式与前端 AIAnalysisResult 完全一致
-    """
-    if model is None or tokenizer is None:
-        raise HTTPException(status_code=503, detail="模型未加载")
-
-    # 拼接文本
-    text = task.title.strip()
-    if task.description.strip():
-        text = f"{text}。{task.description.strip()}"
-
-    # Tokenize
-    encoding = tokenizer(
-        text,
-        max_length=MAX_LENGTH,
-        padding="max_length",
-        truncation=True,
-        return_tensors="pt",
-    )
-
-    input_ids = encoding["input_ids"].to(DEVICE)
-    attention_mask = encoding["attention_mask"].to(DEVICE)
-    token_type_ids = encoding.get("token_type_ids", torch.zeros_like(input_ids)).to(DEVICE)
-
-    # 推理
-    with torch.no_grad():
-        outputs = model.predict(input_ids, attention_mask, token_type_ids)
-
-    urgency = float(outputs["urgency"][0])
-    importance = float(outputs["importance"][0])
-
-    # 四舍五入到整数，并限制范围
-    urgency_int = int(np.clip(round(urgency), -5, 5))
-    importance_int = int(np.clip(round(importance), -5, 5))
-
-    # 判断象限
-    quadrant = 1 if urgency_int >= 0 and importance_int >= 0 else \
-               2 if urgency_int < 0 and importance_int >= 0 else \
-               3 if urgency_int < 0 and importance_int < 0 else 4
-
-    return PredictionOutput(
-        title=task.title,
-        description=task.description,
-        urgency=urgency_int,
-        importance=importance_int,
-        suggestion=get_suggestion(quadrant),
-    )
+    try:
+        result = do_predict(task.title, task.description)
+    except RuntimeError as e:
+        raise HTTPException(status_code=503, detail=str(e))
+    return PredictionOutput(**result)
 
 
 @app.post("/predict_batch", response_model=BatchOutput)
 async def predict_batch(batch: BatchInput):
-    """
-    批量任务分析 (用于 OCR 批量模式)
-    返回格式与前端 ImageTaskDraft 数组对齐
-    """
-    if model is None or tokenizer is None:
-        raise HTTPException(status_code=503, detail="模型未加载")
-
-    texts = []
-    for task in batch.tasks:
-        text = task.title.strip()
-        if task.description.strip():
-            text = f"{text}。{task.description.strip()}"
-        texts.append(text)
-
-    # 批量 Tokenize
-    encoding = tokenizer(
-        texts,
-        max_length=MAX_LENGTH,
-        padding="max_length",
-        truncation=True,
-        return_tensors="pt",
-    )
-
-    input_ids = encoding["input_ids"].to(DEVICE)
-    attention_mask = encoding["attention_mask"].to(DEVICE)
-    token_type_ids = encoding.get("token_type_ids", torch.zeros_like(input_ids)).to(DEVICE)
-
-    # 批量推理
-    with torch.no_grad():
-        outputs = model.predict(input_ids, attention_mask, token_type_ids)
-
-    results = []
-    for i, task in enumerate(batch.tasks):
-        urgency = float(outputs["urgency"][i])
-        importance = float(outputs["importance"][i])
-        urgency_int = int(np.clip(round(urgency), -5, 5))
-        importance_int = int(np.clip(round(importance), -5, 5))
-
-        results.append({
-            "title": task.title,
-            "description": task.description,
-            "urgency": urgency_int,
-            "importance": importance_int,
-        })
-
+    try:
+        tasks_in = [{"title": t.title, "description": t.description} for t in batch.tasks]
+        results = do_predict_batch(tasks_in)
+    except RuntimeError as e:
+        raise HTTPException(status_code=503, detail=str(e))
     return BatchOutput(tasks=results)
 
 
