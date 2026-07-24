@@ -3,7 +3,7 @@ import type { WsMessage } from '../types';
 type MessageHandler = (msg: WsMessage) => void;
 type ConnectionState = 'disconnected' | 'connecting' | 'connected';
 
-const WS_URL = `ws://${window.location.hostname}:8001/ws`;
+const WS_URL = import.meta.env.VITE_WS_URL || `ws://${window.location.hostname}:8001/ws`;
 const RECONNECT_DELAYS = [1000, 2000, 4000, 8000, 16000, 30000];
 
 class WsClient {

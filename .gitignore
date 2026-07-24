@@ -13,3 +13,5 @@ dist-ssr
 .uploads
 .worktrees/
 .reasonix/
+__pycache__/
+task_scorer/checkpoints/
