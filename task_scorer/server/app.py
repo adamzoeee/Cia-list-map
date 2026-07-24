@@ -18,7 +18,7 @@ from typing import List, Dict, Optional
 
 import torch
 import numpy as np
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from transformers import BertTokenizer
@@ -27,6 +27,8 @@ from transformers import BertTokenizer
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from model.model import TaskScorer
+import time as time_module
+from server.group_manager import GroupManager, Group
 
 
 # ============== 配置 ==============
@@ -81,6 +83,7 @@ class BatchOutput(BaseModel):
 # ============== 全局模型实例 ==============
 model: Optional[TaskScorer] = None
 tokenizer: Optional[BertTokenizer] = None
+group_manager: Optional[GroupManager] = None
 
 
 def get_suggestion(quadrant: int) -> str:
@@ -185,7 +188,9 @@ def load_model():
 @app.on_event("startup")
 async def startup_event():
     """服务启动时加载模型"""
+    global group_manager
     load_model()
+    group_manager = GroupManager()
 
 
 # ============== API 路由 ==============
@@ -230,6 +235,180 @@ async def root():
             "health": "GET /health - 健康检查",
         },
     }
+
+
+@app.websocket("/ws")
+async def websocket_endpoint(ws: WebSocket):
+    await ws.accept()
+    authenticated = False
+    current_group: Optional[Group] = None
+    current_nickname: Optional[str] = None
+
+    try:
+        while True:
+            data = await ws.receive_json()
+            msg_type = data.get("type", "")
+
+            # ---- 单机模式：analyze_text / analyze_batch（无需认证）----
+            if msg_type == "analyze_text":
+                try:
+                    result = do_predict(
+                        data.get("title", ""),
+                        data.get("description", ""),
+                    )
+                    await ws.send_json({"type": "analyze_result", "task": result})
+                except RuntimeError as e:
+                    await ws.send_json({"type": "error", "message": str(e)})
+                continue
+
+            if msg_type == "analyze_batch":
+                try:
+                    tasks_in = data.get("texts", [])
+                    results = do_predict_batch(tasks_in)
+                    await ws.send_json({"type": "analyze_batch_result", "tasks": results})
+                except RuntimeError as e:
+                    await ws.send_json({"type": "error", "message": str(e)})
+                continue
+
+            # ---- 认证 ----
+            if msg_type == "auth":
+                group_id = str(data.get("group_id", "")).strip()
+                password = str(data.get("password", "")).strip()
+                nickname = str(data.get("nickname", "")).strip()
+
+                if not group_id or not password or not nickname:
+                    await ws.send_json({"type": "auth_fail", "reason": "组ID、密码、昵称不能为空"})
+                    continue
+
+                try:
+                    group = group_manager.get_or_create(group_id, password)
+                except ValueError:
+                    await ws.send_json({"type": "auth_fail", "reason": "密码错误"})
+                    continue
+
+                if group.is_member_online(nickname):
+                    await ws.send_json({"type": "auth_fail", "reason": "昵称已被使用，请换一个"})
+                    continue
+
+                group.add_member(nickname, ws)
+                authenticated = True
+                current_group = group
+                current_nickname = nickname
+
+                await ws.send_json({
+                    "type": "auth_ok",
+                    "group_id": group.group_id,
+                    "tasks": group.tasks,
+                    "members": group.get_members(),
+                })
+                await group.broadcast({
+                    "type": "member_join",
+                    "nickname": nickname,
+                }, exclude=nickname)
+                continue
+
+            # ---- 需要认证的操作 ----
+            if not authenticated:
+                await ws.send_json({"type": "error", "message": "请先加入协作组"})
+                continue
+
+            group = current_group
+            nickname = current_nickname
+
+            if msg_type == "task_add":
+                title = data.get("title", "").strip()
+                description = data.get("description", "").strip()
+                if not title:
+                    await ws.send_json({"type": "error", "message": "任务标题不能为空"})
+                    continue
+                try:
+                    scored = do_predict(title, description)
+                except RuntimeError as e:
+                    await ws.send_json({"type": "error", "message": str(e)})
+                    continue
+                u = scored["urgency"]
+                i = scored["importance"]
+                task = {
+                    "id": f"task_{int(time_module.time() * 1000)}_{len(group.tasks)}",
+                    "title": scored["title"],
+                    "description": scored["description"],
+                    "urgency": u,
+                    "importance": i,
+                    "quadrant": (
+                        1 if u >= 0 and i >= 0 else
+                        2 if u < 0 and i >= 0 else
+                        3 if u < 0 and i < 0 else 4
+                    ),
+                    "completed": False,
+                    "createdBy": nickname,
+                    "createdAt": time_module.strftime("%Y-%m-%dT%H:%M:%S"),
+                }
+                group.add_task(task)
+                group_manager.save_group(group)
+                await group.broadcast({"type": "task_added", "task": task})
+                continue
+
+            if msg_type == "task_update":
+                task_id = data.get("task_id", "")
+                curr = next((t for t in group.tasks if t["id"] == task_id), None)
+                if not curr:
+                    continue
+                updates = {}
+                if "urgency" in data:
+                    updates["urgency"] = int(np.clip(round(data["urgency"]), -5, 5))
+                if "importance" in data:
+                    updates["importance"] = int(np.clip(round(data["importance"]), -5, 5))
+                u = updates.get("urgency", curr["urgency"])
+                i = updates.get("importance", curr["importance"])
+                updates["quadrant"] = (
+                    1 if u >= 0 and i >= 0 else
+                    2 if u < 0 and i >= 0 else
+                    3 if u < 0 and i < 0 else 4
+                )
+                updated = group.update_task(task_id, updates)
+                if updated:
+                    group_manager.save_group(group)
+                    await group.broadcast({"type": "task_updated", "task": updated})
+                continue
+
+            if msg_type == "task_delete":
+                task_id = data.get("task_id", "")
+                if group.delete_task(task_id):
+                    group_manager.save_group(group)
+                    await group.broadcast({"type": "task_deleted", "task_id": task_id})
+                continue
+
+            if msg_type == "task_toggle":
+                task_id = data.get("task_id", "")
+                completed = group.toggle_task(task_id)
+                if completed is not None:
+                    group_manager.save_group(group)
+                    await group.broadcast({
+                        "type": "task_toggled",
+                        "task_id": task_id,
+                        "completed": completed,
+                    })
+                continue
+
+            await ws.send_json({"type": "error", "message": f"未知消息类型: {msg_type}"})
+
+    except WebSocketDisconnect:
+        pass
+    except Exception as e:
+        try:
+            await ws.send_json({"type": "error", "message": str(e)})
+        except Exception:
+            pass
+    finally:
+        if authenticated and current_group and current_nickname:
+            current_group.remove_member(current_nickname)
+            try:
+                await current_group.broadcast({
+                    "type": "member_leave",
+                    "nickname": current_nickname,
+                })
+            except Exception:
+                pass
 
 
 # ============== 主入口 ==============
