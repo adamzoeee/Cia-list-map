@@ -10,6 +10,9 @@ interface Props {
   onToggleComplete: () => void;
   onUpdateUrgency: (v: number) => void;
   onUpdateImportance: (v: number) => void;
+  onAssign?: (action: 'claim' | 'unclaim') => void;
+  collabNickname?: string;
+  isCollab?: boolean;
 }
 
 export default function TaskCard({
@@ -20,6 +23,9 @@ export default function TaskCard({
   onToggleComplete,
   onUpdateUrgency,
   onUpdateImportance,
+  onAssign,
+  collabNickname = '',
+  isCollab = false,
 }: Props) {
   const q = QUADRANTS.find(q => q.id === task.quadrant)!;
 
@@ -137,6 +143,41 @@ export default function TaskCard({
               />
             </div>
           </div>
+
+          {/* 认领区域 — 仅协作模式 */}
+          {isCollab && (
+            <div className="mt-3 pt-3" style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+              <div className="text-[11px] text-slate-400 mb-2">认领人</div>
+              <div className="flex flex-wrap items-center gap-1.5">
+                {(task.assignees || []).map(name => (
+                  <span
+                    key={name}
+                    className={cn(
+                      'inline-flex items-center gap-1 rounded-lg px-2 py-0.5 text-[11px]',
+                      name === collabNickname
+                        ? 'bg-cyan-400/10 text-cyan-300 border border-cyan-400/20'
+                        : 'bg-white/3 text-slate-400 border border-white/5',
+                    )}
+                  >
+                    {name}
+                    {name === collabNickname && (
+                      <button
+                        onClick={(e) => { e.stopPropagation(); onAssign?.('unclaim'); }}
+                        className="ml-0.5 text-slate-500 hover:text-red-300 transition-colors"
+                        title="取消认领"
+                      >✕</button>
+                    )}
+                  </span>
+                ))}
+                {!(task.assignees || []).includes(collabNickname) && (
+                  <button
+                    onClick={(e) => { e.stopPropagation(); onAssign?.('claim'); }}
+                    className="inline-flex items-center gap-1 rounded-lg px-2 py-0.5 text-[11px] bg-white/3 text-slate-400 border border-white/5 hover:border-cyan-400/20 hover:text-cyan-300 transition-all"
+                  >🙋 认领任务</button>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

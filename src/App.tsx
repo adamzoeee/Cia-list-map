@@ -115,6 +115,7 @@ export default function App() {
         importance: Number(t.importance ?? 0),
         quadrant: Number(t.quadrant ?? 1) as 1 | 2 | 3 | 4,
         completed: Boolean(t.completed),
+        assignees: (t.assignees as string[]) || [],
         createdAt: new Date(t.createdAt as string),
       };
       setTasks(prev => [task, ...prev]);
@@ -142,9 +143,15 @@ export default function App() {
       setTasks(prev => prev.map(t => t.id === tid ? { ...t, completed } : t));
     });
 
+    const unsub8 = wsClient.on('task_assigned', (msg: WsMessage) => {
+      const tid = msg.task_id as string;
+      const assignees = msg.assignees as string[];
+      setTasks(prev => prev.map(t => t.id === tid ? { ...t, assignees } : t));
+    });
+
     return () => {
       unsubState(); unsub1(); unsub2(); unsub3();
-      unsub4(); unsub5(); unsub6(); unsub7();
+      unsub4(); unsub5(); unsub6(); unsub7(); unsub8();
     };
   }, []);
 
@@ -266,6 +273,11 @@ export default function App() {
     });
   }, [collabState.isJoined]);
 
+  const handleAssign = useCallback((taskId: string, action: 'claim' | 'unclaim') => {
+    if (!collabState.isJoined) return;
+    wsClient.send({ type: 'task_assign', task_id: taskId, action } as WsMessage);
+  }, [collabState.isJoined]);
+
   const handleCollabStateChange = useCallback((s: CollabState) => {
     setCollabState(s);
   }, []);
@@ -279,6 +291,7 @@ export default function App() {
       importance: Number(t.importance ?? 0),
       quadrant: Number(t.quadrant ?? 1) as 1 | 2 | 3 | 4,
       completed: Boolean(t.completed),
+      assignees: (t.assignees as string[]) || [],
       createdAt: new Date(t.createdAt as string),
     }));
     setTasks(parsed);
@@ -430,6 +443,9 @@ export default function App() {
                 onTaskDelete={handleTaskDelete}
                 onToggleComplete={handleToggleComplete}
                 onUpdateTask={handleUpdateTask}
+                onAssign={handleAssign}
+                collabNickname={collabState.nickname}
+                isCollab={collabState.isJoined}
               />
             </div>
           </div>
